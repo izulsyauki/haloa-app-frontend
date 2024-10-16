@@ -22,7 +22,7 @@ const signupSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
-type SignupFormIputs = z.infer<typeof signupSchema>;
+type SignupFormInputs = z.infer<typeof signupSchema>;
 
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,18 +31,18 @@ export function SignupForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignupFormIputs>({
+  } = useForm<SignupFormInputs>({
     resolver: zodResolver(signupSchema),
   });
 
-  const onSubmit = (data: SignupFormIputs) => {
+  const onSubmit = (data: SignupFormInputs) => {
     console.log(data);
   };
 
   return (
     <Flex flexDirection={"column"} w="368px" h="412px" gap="20px">
       <Image src={Logo} width={"108px"} />
-      <Text color={"white"}>Create account Haloa!</Text>
+      <Text>Create account Haloa!</Text>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack spacing="3">
@@ -50,12 +50,11 @@ export function SignupForm() {
             <Input
               {...register("fullName")}
               placeholder="Full Name"
-              border="2px solid #545454"
-              color={"white"}
+              border="1px solid #545454"
               paddingTop={"4px"}
               paddingBottom={"4px"}
             />
-            {errors.fullName && <Text color={"red.500"} fontSize={"xs"} marginTop={"2"}>{errors.fullName.message}</Text>}
+            {errors.fullName && <Text  fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>{errors.fullName.message}</Text>}
           </FormControl>
 
           <FormControl>
@@ -63,12 +62,11 @@ export function SignupForm() {
               {...register("email")}
               type="email"
               placeholder="Email"
-              border="2px solid #545454"
-              color={"white"}
+              border="1px solid #545454"
               paddingTop={"4px"}
               paddingBottom={"4px"}
             />
-            {errors.email && <Text color={"red.500"} fontSize={"xs"} marginTop={"2"}>{errors.email.message}</Text>}
+            {errors.email && <Text color={"red.500"} fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>{errors.email.message}</Text>}
           </FormControl>
 
           <FormControl>
@@ -76,15 +74,14 @@ export function SignupForm() {
               {...register("password")}
               type={showPassword ?  "text" : "password"}
               placeholder="Password"
-              border="2px solid #545454"
-              color={"white"}
+              border="1px solid #545454"
               paddingTop={"4px"}
               paddingBottom={"4px"}
             />
-            {errors.password && <Text color={"red.500"} fontSize={"xs"} marginTop={"2"}>{errors.password.message}</Text>}
+            {errors.password && <Text color={"red.500"} fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>{errors.password.message}</Text>}
           </FormControl>
 
-          <Checkbox colorScheme="blue" color={"white"} alignSelf={"start"} marginLeft={"2"} onChange={() => setShowPassword(!showPassword)}>
+          <Checkbox alignSelf={"start"} marginLeft={"2"} borderColor={"grey"} onChange={() => setShowPassword(!showPassword)}>
             Show Password
           </Checkbox>
 
@@ -93,7 +90,6 @@ export function SignupForm() {
             type="submit"
             colorScheme="blue"
             width="full"
-            color={"white"}
             borderRadius={"6px"}
           >
             Create
@@ -101,7 +97,7 @@ export function SignupForm() {
         </VStack>
       </form>
 
-      <Text color={"white"}>
+      <Text>
         Already have an account?{" "}
         <Link as={RouterLink} to="/sign-in" color="#3182CE">
           Sign in

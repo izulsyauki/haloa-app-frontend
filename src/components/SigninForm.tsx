@@ -19,14 +19,13 @@ export function SigninForm() {
   return (
     <Flex flexDirection={"column"} w="368px" h="412px" gap="20px">
       <Image src={Logo} width={"108px"} />
-      <Text color={"white"}>Hi, welcome to Haloa!</Text>
+      <Text>Hi, welcome to Haloa!</Text>
 
       <VStack spacing="3">
         <FormControl>
           <Input
             placeholder="Email/FullName"
             border="2px solid #545454"
-            color={"white"}
             paddingTop={"4px"}
             paddingBottom={"4px"}
           />
@@ -36,7 +35,6 @@ export function SigninForm() {
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             border="2px solid #545454"
-            color={"white"}
             paddingTop={"4px"}
             paddingBottom={"4px"}
           />
@@ -44,7 +42,6 @@ export function SigninForm() {
 
         <Checkbox
           colorScheme="blue"
-          color={"white"}
           alignSelf={"start"}
           marginLeft={"2"}
           onChange={() => setShowPassword(!showPassword)}
@@ -52,19 +49,22 @@ export function SigninForm() {
           Show Password
         </Checkbox>
 
+        <Link as={RouterLink} to="/forgot-password" color="#3182CE">
+          Forgot Password?
+        </Link>
+
         <Button
           marginTop={"3"}
           type="submit"
           colorScheme="blue"
           width="full"
-          color={"white"}
           borderRadius={"6px"}
         >
           Enter
         </Button>
       </VStack>
 
-      <Text color={"white"}>
+      <Text>
         Dont have an account?{" "}
         <Link as={RouterLink} to="/sign-up" color="#3182CE">
           Sign up

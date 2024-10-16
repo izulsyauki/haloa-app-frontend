@@ -1,13 +1,15 @@
-import { ChakraProvider } from "@chakra-ui/react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./Router";
-import theme from "./theme";
+import { ToggleColorMode } from "../components/ToggleColorMode";
+// import { ChakraProvider } from "@chakra-ui/react";
+// import theme from "./theme";
 
 function App() {
   return (
-    <ChakraProvider theme={theme}>
+    <>
+      <ToggleColorMode />
       <RouterProvider router={router} />
-    </ChakraProvider>
+    </>
   );
 }
 

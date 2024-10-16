@@ -4,11 +4,22 @@ import "@fontsource/plus-jakarta-sans/400.css";
 import "@fontsource/plus-jakarta-sans/500.css";
 import "@fontsource/plus-jakarta-sans/700.css";
 
-const theme = extendTheme({
+const theme = {
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: true,
+  },
   fonts: {
     heading: `'Plus Jakarta Sans', sans-serif`,
     body: `'Plus Jakarta Sans', sans-serif`,
   },
-});
+  styles: {
+    global: {
+      body: {
+        margin: 0,
+      }
+    }
+  }
+};
 
-export default theme;
+export default extendTheme(theme);

@@ -3,11 +3,7 @@ import { SigninForm } from "../../components/SigninForm";
 
 export function SigninRoute() {
   return (
-    <Flex
-      justifyContent={"center"}
-      marginTop={"128px"}
-      backgroundColor={"#1D1D1D"}
-    >
+    <Flex justifyContent={"center"} minHeight={"100vh"} alignItems={"center"}> 
       <SigninForm />
     </Flex>
   );

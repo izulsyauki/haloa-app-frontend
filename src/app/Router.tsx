@@ -17,5 +17,9 @@ export const router = createBrowserRouter ([
     {
         path: "/sign-up",
         element: <myRoutes.SignupRoute />,
+    },
+    {
+        path: "/forgot-password",
+        element: <myRoutes.ForgotPassRoute />,
     }
 ]);
