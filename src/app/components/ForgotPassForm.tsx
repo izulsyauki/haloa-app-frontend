@@ -36,7 +36,7 @@ export function ForgotPassForm() {
   return (
     <Flex flexDirection={"column"} w="368px" h="412px" gap="20px">
       <Image src={Logo} width={"108px"} />
-      <Text>Create account Haloa!</Text>
+      <Text>Forgot Password</Text>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack spacing="3">
@@ -45,7 +45,7 @@ export function ForgotPassForm() {
               {...register("email")}
               type="email"
               placeholder="Email"
-              border="2px solid #545454"
+              border="1px solid #545454"
               paddingTop={"4px"}
               paddingBottom={"4px"}
             />
@@ -63,7 +63,7 @@ export function ForgotPassForm() {
             width="full"
             borderRadius={"6px"}
           >
-            Create
+            Send Instruction
           </Button>
         </VStack>
       </form>

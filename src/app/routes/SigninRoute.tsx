@@ -1,5 +1,5 @@
 import { Flex } from "@chakra-ui/react";
-import { SigninForm } from "../../components/SigninForm";
+import { SigninForm } from "../components/SigninForm";
 
 export function SigninRoute() {
   return (

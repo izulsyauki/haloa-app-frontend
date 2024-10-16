@@ -19,6 +19,11 @@ const theme = {
         margin: 0,
       }
     }
+  },
+  colors: {
+    darkMode: {
+      bg: "#1D1D1D",
+    }
   }
 };
 

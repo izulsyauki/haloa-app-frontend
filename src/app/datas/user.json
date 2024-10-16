@@ -1,0 +1,22 @@
+[
+    {
+      "email": "izulsyaukiimani@gmail.com",
+      "username": "izulsyauki",
+      "password": "12345678",
+      "profile" : {
+        "fullName" : "Izulsyauki Imani",
+        "address" : "Jln. Depok",
+        "profilePicture": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL5m2gr2lMb1huhMFwIR41jrDU5ZOxKydgEw&s"
+      }
+    },
+    {
+      "email": "asep@gmail.com",
+      "username": "asep",
+      "password": "12345678",
+      "profile" : {
+        "fullName" : "asep galau",
+        "address" : "Jln. Kenangan",
+        "profilePicture": "https://upload.wikimedia.org/wikipedia/id/3/36/Naruto_Uzumaki.png"
+      }
+    }
+  ]

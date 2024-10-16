@@ -1,28 +1,20 @@
 import {
   Button,
+  Checkbox,
+  Flex,
+  FormControl,
+  Image,
   Input,
+  Link,
   Text,
   VStack,
-  Link,
-  FormControl,
-  Flex,
-  Image,
-  Checkbox,
 } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
-import Logo from "/assets/logo/logo.svg";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-
-const signupSchema = z.object({
-  fullName: z.string().min(1, "Full Name is required"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters long"),
-});
-
-type SignupFormInputs = z.infer<typeof signupSchema>;
+import { useForm } from "react-hook-form";
+import { Link as RouterLink } from "react-router-dom";
+import { SignupFormInputs , signupSchema } from "../utils/signup-schemas";
+import Logo from "/assets/logo/logo.svg";
 
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -55,6 +47,17 @@ export function SignupForm() {
               paddingBottom={"4px"}
             />
             {errors.fullName && <Text  fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>{errors.fullName.message}</Text>}
+          </FormControl>
+          
+          <FormControl>
+            <Input
+              {...register("username")}
+              placeholder="Username"
+              border="1px solid #545454"
+              paddingTop={"4px"}
+              paddingBottom={"4px"}
+            />
+            {errors.username && <Text  fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>{errors.username.message}</Text>}
           </FormControl>
 
           <FormControl>

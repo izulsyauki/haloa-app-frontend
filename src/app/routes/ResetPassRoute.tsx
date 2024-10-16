@@ -1,11 +1,11 @@
 import { Flex } from "@chakra-ui/react";
-import { SignupForm } from "../components/SignupForm";
+import { ResetPassForm } from "../components/ResetPassForm";
 
 
-export function SignupRoute() {
+export function ResetPassRoute() {
   return (
     <Flex justifyContent={"center"} minHeight={"100vh"} alignItems={"center"}> 
-      <SignupForm />
+      <ResetPassForm />
     </Flex>
   );
 }
