@@ -1,18 +1,18 @@
 import {
-  Button,
-  Input,
-  Text,
-  VStack,
-  Link,
-  FormControl,
   Flex,
+  FormControl,
   Image,
+  Input,
+  Link,
+  Text,
+  VStack
 } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
-import Logo from "/assets/logo/logo.svg";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Link as RouterLink } from "react-router-dom";
+import { z } from "zod";
+import { CustomBtnPrimary } from "./CustomBtnPrimary";
+import Logo from "/assets/logo/logo.svg";
 
 const signupSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -56,15 +56,7 @@ export function ForgotPassForm() {
             )}
           </FormControl>
 
-          <Button
-            marginTop={"3"}
-            type="submit"
-            colorScheme="blue"
-            width="full"
-            borderRadius={"6px"}
-          >
-            Send Instruction
-          </Button>
+          <CustomBtnPrimary label="Send Instruction" />
         </VStack>
       </form>
 

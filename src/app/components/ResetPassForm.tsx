@@ -1,5 +1,4 @@
 import {
-  Button,
   Checkbox,
   Flex,
   FormControl,
@@ -9,6 +8,7 @@ import {
   VStack
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { CustomBtnPrimary } from "./CustomBtnPrimary";
 import Logo from "/assets/logo/logo.svg";
 
 export function ResetPassForm() {
@@ -49,15 +49,7 @@ export function ResetPassForm() {
           Show Password
         </Checkbox>
 
-        <Button
-          marginTop={"3"}
-          type="submit"
-          colorScheme="blue"
-          width="full"
-          borderRadius={"6px"}
-        >
-          Reset Password
-        </Button>
+        <CustomBtnPrimary label="Reset Password" />
       </VStack>
 
     </Flex>

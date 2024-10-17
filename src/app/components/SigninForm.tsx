@@ -1,17 +1,17 @@
 import {
-  Button,
-  Input,
-  Text,
-  VStack,
-  Link,
-  FormControl,
-  Flex,
-  Image,
   Checkbox,
+  Flex,
+  FormControl,
+  Image,
+  Input,
+  Link,
+  Text,
+  VStack
 } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
-import Logo from "/assets/logo/logo.svg";
 import { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import { CustomBtnPrimary } from "./CustomBtnPrimary";
+import Logo from "/assets/logo/logo.svg";
 
 export function SigninForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -53,15 +53,7 @@ export function SigninForm() {
           Forgot Password?
         </Link>
 
-        <Button
-          marginTop={"3"}
-          type="submit"
-          colorScheme="blue"
-          width="full"
-          borderRadius={"6px"}
-        >
-          Enter
-        </Button>
+        <CustomBtnPrimary label="Enter" />
       </VStack>
 
       <Text>

@@ -1,5 +1,4 @@
 import {
-  Button,
   Checkbox,
   Flex,
   FormControl,
@@ -7,13 +6,14 @@ import {
   Input,
   Link,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink } from "react-router-dom";
-import { SignupFormInputs , signupSchema } from "../utils/signup-schemas";
+import { SignupFormInputs, signupSchema } from "../utils/signup-schemas";
+import { CustomBtnPrimary } from "./CustomBtnPrimary";
 import Logo from "/assets/logo/logo.svg";
 
 export function SignupForm() {
@@ -46,9 +46,13 @@ export function SignupForm() {
               paddingTop={"4px"}
               paddingBottom={"4px"}
             />
-            {errors.fullName && <Text  fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>{errors.fullName.message}</Text>}
+            {errors.fullName && (
+              <Text fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>
+                {errors.fullName.message}
+              </Text>
+            )}
           </FormControl>
-          
+
           <FormControl>
             <Input
               {...register("username")}
@@ -57,7 +61,11 @@ export function SignupForm() {
               paddingTop={"4px"}
               paddingBottom={"4px"}
             />
-            {errors.username && <Text  fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>{errors.username.message}</Text>}
+            {errors.username && (
+              <Text fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>
+                {errors.username.message}
+              </Text>
+            )}
           </FormControl>
 
           <FormControl>
@@ -69,34 +77,49 @@ export function SignupForm() {
               paddingTop={"4px"}
               paddingBottom={"4px"}
             />
-            {errors.email && <Text color={"red.500"} fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>{errors.email.message}</Text>}
+            {errors.email && (
+              <Text
+                color={"red.500"}
+                fontSize={"xs"}
+                marginTop={"2"}
+                fontWeight={"medium"}
+              >
+                {errors.email.message}
+              </Text>
+            )}
           </FormControl>
 
           <FormControl>
             <Input
               {...register("password")}
-              type={showPassword ?  "text" : "password"}
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               border="1px solid #545454"
               paddingTop={"4px"}
               paddingBottom={"4px"}
             />
-            {errors.password && <Text color={"red.500"} fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>{errors.password.message}</Text>}
+            {errors.password && (
+              <Text
+                color={"red.500"}
+                fontSize={"xs"}
+                marginTop={"2"}
+                fontWeight={"medium"}
+              >
+                {errors.password.message}
+              </Text>
+            )}
           </FormControl>
 
-          <Checkbox alignSelf={"start"} marginLeft={"2"} borderColor={"grey"} onChange={() => setShowPassword(!showPassword)}>
+          <Checkbox
+            alignSelf={"start"}
+            marginLeft={"2"}
+            borderColor={"grey"}
+            onChange={() => setShowPassword(!showPassword)}
+          >
             Show Password
           </Checkbox>
 
-          <Button
-            marginTop={"3"}
-            type="submit"
-            colorScheme="blue"
-            width="full"
-            borderRadius={"6px"}
-          >
-            Create
-          </Button>
+          <CustomBtnPrimary label="Create" />
         </VStack>
       </form>
 
