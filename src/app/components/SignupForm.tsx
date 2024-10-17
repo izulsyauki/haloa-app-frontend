@@ -6,30 +6,17 @@ import {
   Input,
   Link,
   Text,
-  VStack
+  VStack,
 } from "@chakra-ui/react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Link as RouterLink } from "react-router-dom";
-import { SignupFormInputs, signupSchema } from "../utils/signup-schemas";
 import { CustomBtnPrimary } from "./CustomBtnPrimary";
 import Logo from "/assets/logo/logo.svg";
+import { useSignupForm } from "../hooks/useSignupForm";
 
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignupFormInputs>({
-    resolver: zodResolver(signupSchema),
-  });
-
-  const onSubmit = (data: SignupFormInputs) => {
-    console.log(data);
-  };
+  const { register, handleSubmit, onSubmit, errors } = useSignupForm();
 
   return (
     <Flex flexDirection={"column"} w="368px" h="412px" gap="20px">
@@ -47,7 +34,7 @@ export function SignupForm() {
               paddingBottom={"4px"}
             />
             {errors.fullName && (
-              <Text fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>
+              <Text color={"red.500"} fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>
                 {errors.fullName.message}
               </Text>
             )}
@@ -62,7 +49,7 @@ export function SignupForm() {
               paddingBottom={"4px"}
             />
             {errors.username && (
-              <Text fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>
+              <Text color={"red.500"} fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>
                 {errors.username.message}
               </Text>
             )}

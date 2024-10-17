@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const signinSchema = z.object({
-    emailOrUsername: z.string().min(3),
-    password: z.string().min(6),
+    emailOrUsername: z.string().min(3, "Invalid email or username"),
+    password: z.string().min(6, "Invalid password"),
   });
 
-export type SigninForm = z.infer<typeof signinSchema>;
+export type SigninFormInputs = z.infer<typeof signinSchema>;
