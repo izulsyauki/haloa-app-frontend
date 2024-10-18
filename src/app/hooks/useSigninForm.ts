@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import fakeUser from "../datas/user.json";
@@ -8,10 +8,12 @@ import { User } from "../types/user";
 import { SigninFormInputs, signinSchema } from "../utils/signin-schemas";
 
 export const useSigninForm = () => {
+  const [showAlert, setShowAlert] = useState(false);
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<SigninFormInputs>({
     mode: "onSubmit",
     resolver: zodResolver(signinSchema),
@@ -26,11 +28,20 @@ export const useSigninForm = () => {
       const user = fakeUser.find(
         (user) =>
           user.email === data.emailOrUsername ||
-        user.username === data.emailOrUsername
+          user.username === data.emailOrUsername
       ) as User;
 
-      if (!(user?.password === data.password) && !((user?.email || user?.username) === data.emailOrUsername)) {
-        return alert("Email atau Password salah, silahkan coba lagi!");
+      if (
+        !(user?.password === data.password) &&
+        !((user?.email || user?.username) === data.emailOrUsername)
+      ) {
+        setShowAlert(true);
+
+        setTimeout(() => {
+          setShowAlert(false);
+        }, 3000);
+        
+        return;
       }
       user.password = "";
       setUser(user);
@@ -44,5 +55,7 @@ export const useSigninForm = () => {
     onSubmit,
     handleSubmit,
     errors,
+    isSubmitting,
+    showAlert,
   };
 };

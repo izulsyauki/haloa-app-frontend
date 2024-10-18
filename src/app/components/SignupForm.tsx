@@ -16,7 +16,7 @@ import { useSignupForm } from "../hooks/useSignupForm";
 
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const { register, handleSubmit, onSubmit, errors } = useSignupForm();
+  const { register, handleSubmit, onSubmit, errors, isSubmitting } = useSignupForm();
 
   return (
     <Flex flexDirection={"column"} w="368px" h="412px" gap="20px">
@@ -106,7 +106,7 @@ export function SignupForm() {
             Show Password
           </Checkbox>
 
-          <CustomBtnPrimary label="Create" />
+          <CustomBtnPrimary isLoading={isSubmitting} label="Create" />
         </VStack>
       </form>
 

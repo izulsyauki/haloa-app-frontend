@@ -4,7 +4,7 @@ import { ForgotPassForm } from "../components/ForgotPassForm";
 
 export function ForgotPassRoute() {
   return (
-    <Flex justifyContent={"center"} minHeight={"100vh"} alignItems={"center"}> 
+    <Flex justifyContent={"center"} minHeight={"100dvh"} alignItems={"center"}> 
       <ForgotPassForm />
     </Flex>
   );

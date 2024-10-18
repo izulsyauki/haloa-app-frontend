@@ -6,19 +6,26 @@ import {
   Input,
   Link,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
+import { useSigninForm } from "../hooks/useSigninForm";
+import { ChakraAlert } from "./ChakraAlert";
 import { CustomBtnPrimary } from "./CustomBtnPrimary";
 import Logo from "/assets/logo/logo.svg";
-import { useSigninForm } from "../hooks/useSigninForm";
 
 export function SigninForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const { register, onSubmit, handleSubmit, errors } = useSigninForm();
+  const { register, onSubmit, handleSubmit, errors, isSubmitting, showAlert } = useSigninForm();
 
   return (
+    <>
+    {
+      showAlert && (
+        <ChakraAlert status="error" title="Wrong Username or Password" desc="Please try again."/>
+      )
+    }
     <Flex flexDirection={"column"} w="368px" h="412px" gap="20px">
       <Image src={Logo} width={"108px"} />
       <Text>Hi, welcome to Haloa!</Text>
@@ -69,7 +76,7 @@ export function SigninForm() {
             Forgot Password?
           </Link>
 
-          <CustomBtnPrimary label="Enter" type="submit" />
+          <CustomBtnPrimary isLoading={isSubmitting} label="Enter" type="submit" />
         </VStack>
       </form>
 
@@ -80,5 +87,6 @@ export function SigninForm() {
         </Link>
       </Text>
     </Flex>
+    </>
   );
 }
