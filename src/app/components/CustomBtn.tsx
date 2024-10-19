@@ -2,8 +2,10 @@ import { Button, ButtonProps } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
 interface CustomBtnProps extends ButtonProps {
-  icon?: ReactNode;
+  solidIcon?: ReactNode;
+  outlineIcon?: ReactNode;
   label: string;
+  isActive?: boolean;
 }
 
 export function CustomBtnPrimary({ label, ...props }: CustomBtnProps) {
@@ -41,7 +43,7 @@ export function CustomBtnSecondary({ label, ...props }: CustomBtnProps) {
   );
 }
 
-export function CustomBtnSideBar({ icon, label, ...props }: CustomBtnProps) {
+export function CustomBtnSideBar({ solidIcon, outlineIcon, isActive, label, ...props }: CustomBtnProps) {
   return (
     <Button
       w={"100%"}
@@ -56,7 +58,7 @@ export function CustomBtnSideBar({ icon, label, ...props }: CustomBtnProps) {
       borderRadius={"6px"}
       {...props}
     >
-      {icon} {label}
+      {isActive ? solidIcon : outlineIcon} {label}
     </Button>
   );
 }

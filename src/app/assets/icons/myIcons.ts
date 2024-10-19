@@ -13,6 +13,10 @@ import {
   HiOutlineHeart,
   HiOutlineUserCircle,
   HiOutlineLogout,
+  HiHome,
+  HiSearchCircle,
+  HiHeart,
+  HiUserCircle,
 } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaFacebook, FaInstagram } from "react-icons/fa";
 
@@ -35,6 +39,10 @@ const myIcons = {
   FaLinkedin,
   FaFacebook,
   FaInstagram,
+  HiHome,
+  HiSearchCircle,
+  HiHeart,
+  HiUserCircle
 };
 
 export default myIcons;

@@ -5,6 +5,9 @@ import { SigninRoute } from "./SigninRoute";
 import { ForgotPassRoute } from "./ForgotPassRoute";
 import { ResetPassRoute } from "./ResetPassRoute";
 import { SearchUserRoute } from "./SearchUserRoute";
+import { FollowsRoute } from "./FollowsRoute";
+import { ProfileRoutes } from "./ProfileRoutes";
+import { ProtectedRoutes } from "./ProtectedRoute";
 
 export const myRoutes = {
   SignupRoute,
@@ -13,5 +16,8 @@ export const myRoutes = {
   SigninRoute,
   ForgotPassRoute,
   ResetPassRoute,
-  SearchUserRoute
+  SearchUserRoute,
+  FollowsRoute,
+  ProfileRoutes,
+  ProtectedRoutes
 };
