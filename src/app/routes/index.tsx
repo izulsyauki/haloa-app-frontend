@@ -4,6 +4,7 @@ import { Home } from "./Home";
 import { SigninRoute } from "./SigninRoute";
 import { ForgotPassRoute } from "./ForgotPassRoute";
 import { ResetPassRoute } from "./ResetPassRoute";
+import { SearchUserRoute } from "./SearchUserRoute";
 
 export const myRoutes = {
   SignupRoute,
@@ -11,5 +12,6 @@ export const myRoutes = {
   Home,
   SigninRoute,
   ForgotPassRoute,
-  ResetPassRoute
+  ResetPassRoute,
+  SearchUserRoute
 };

@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { SignupFormInputs, signupSchema } from "../utils/signup-schemas";
 
-export function useSignupForm(){
+export const useSignupForm = () => {
     const {
         register,
         handleSubmit,

@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { CustomBtnPrimary } from "./CustomBtnPrimary";
+import { CustomBtnPrimary } from "./CustomBtn";
 import Logo from "/assets/logo/logo.svg";
 import { useSignupForm } from "../hooks/useSignupForm";
 

@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { myRoutes } from "./routes/index";
-import { HaloaLayout } from "./layouts/haloa-layout";
+import { HaloaLayout } from "./layouts/HaloaLayout";
 
 export const router = createBrowserRouter([
   {
@@ -10,6 +10,10 @@ export const router = createBrowserRouter([
         path: "/",
         element: <myRoutes.Home />,
         errorElement: <myRoutes.ErrorPage />,
+      },
+      {
+        path: "/search",
+        element: <myRoutes.SearchUserRoute />
       },
     ],
   },

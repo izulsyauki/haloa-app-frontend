@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink } from "react-router-dom";
 import { z } from "zod";
-import { CustomBtnPrimary } from "./CustomBtnPrimary";
+import { CustomBtnPrimary } from "./CustomBtn";
 import Logo from "/assets/logo/logo.svg";
 
 const signupSchema = z.object({

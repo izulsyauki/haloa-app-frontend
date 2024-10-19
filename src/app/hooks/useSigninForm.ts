@@ -22,7 +22,6 @@ export const useSigninForm = () => {
   const { setUser } = useAuthStore();
   const navigate = useNavigate();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onSubmit = useCallback(
     (data: SigninFormInputs) => {
       const user = fakeUser.find(
@@ -40,7 +39,7 @@ export const useSigninForm = () => {
         setTimeout(() => {
           setShowAlert(false);
         }, 3000);
-        
+
         return;
       }
       user.password = "";

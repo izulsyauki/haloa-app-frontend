@@ -12,7 +12,7 @@ import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useSigninForm } from "../hooks/useSigninForm";
 import { ChakraAlert } from "./ChakraAlert";
-import { CustomBtnPrimary } from "./CustomBtnPrimary";
+import { CustomBtnPrimary } from "./CustomBtn";
 import Logo from "/assets/logo/logo.svg";
 
 export function SigninForm() {

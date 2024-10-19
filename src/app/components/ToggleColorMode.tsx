@@ -8,7 +8,7 @@ export function ToggleColorMode() {
     <>
       {/* <Button
         onClick={toggleColorMode}
-        
+
         pos={"absolute"}
         
       >
@@ -23,11 +23,12 @@ export function ToggleColorMode() {
         direction="row"
         alignItems={"center"}
         pos={"absolute"}
-        top={0}
-        right={0}
+        top={1}
+        right={1}
         m={"1rem"}
+        zIndex={98}
       >
-        <Box position={"relative"} display={"inline-block"} w={"40px"}>
+        <Box position={"relative"} display={"inline-block"} >
           <Switch
             isChecked={colorMode === "dark"}
             onChange={toggleColorMode}
@@ -42,11 +43,11 @@ export function ToggleColorMode() {
             as={colorMode === "light" ? MoonIcon : HiSun }
             position={"absolute"}
             top={"57%"}
-            left={colorMode === "dark" ? "3px" : "calc(100% - 20px)"}
+            left={colorMode === "dark" ? "3px" : "calc(100% - 13px)"}
             transform={"translateY(-50%)"}
             boxSize={"11px"}
             color={colorMode === "light" ? "blue.500" : "yellow.500"}
-            zIndex={1}
+            zIndex={99}
             transition="left 0.3s ease"
           />
         </Box>

@@ -8,7 +8,7 @@ import {
   VStack
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { CustomBtnPrimary } from "./CustomBtnPrimary";
+import { CustomBtnPrimary } from "./CustomBtn";
 import Logo from "/assets/logo/logo.svg";
 
 export function ResetPassForm() {

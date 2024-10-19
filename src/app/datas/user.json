@@ -1,22 +1,152 @@
 [
-    {
-      "email": "izulsyaukiimani@gmail.com",
-      "username": "izulsyauki",
-      "password": "12345678",
-      "profile" : {
-        "fullName" : "Izulsyauki Imani",
-        "address" : "Jln. Depok",
-        "profilePicture": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL5m2gr2lMb1huhMFwIR41jrDU5ZOxKydgEw&s"
-      }
+  {
+    "id": 1,
+    "email": "izulsyaukiimani@gmail.com",
+    "username": "izulsyauki",
+    "password": "12345678",
+    "profile": {
+      "fullName": "Izulsyauki Imani",
+      "address": "Jln. Depok",
+      "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=izulsyauki",
+      "bio": "Saya adalah seorang fullstack web developer"
     },
-    {
-      "email": "asep@gmail.com",
-      "username": "asep",
-      "password": "12345678",
-      "profile" : {
-        "fullName" : "asep galau",
-        "address" : "Jln. Kenangan",
-        "profilePicture": "https://upload.wikimedia.org/wikipedia/id/3/36/Naruto_Uzumaki.png"
-      }
-    }
-  ]
+    "followers": 101,
+    "following": 134,
+    "isFollowed": true
+  },
+  {
+    "id": 2,
+    "email": "asep@gmail.com",
+    "username": "asep",
+    "password": "12345678",
+    "profile": {
+      "fullName": "asep galau",
+      "address": "Jln. Kenangan",
+      "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=asep",
+      "bio": "Aku hidup agar bisa makan, dan makan agar bisa hidup"
+    },
+    "followers": 154,
+    "following": 299,
+    "isFollowed": true
+  },
+  {
+    "id": 3,
+    "email": "budi.santoso@gmail.com",
+    "username": "budisantoso",
+    "password": "santoso123",
+    "profile": {
+      "fullName": "Budi Santoso",
+      "address": "Jln. Merdeka, Jakarta",
+      "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Budi",
+      "bio": "Saya seorang pengembang web dari Jakarta yang hobi mendaki gunung."
+    },
+    "followers": 125,
+    "following": 98,
+    "isFollowed": false
+  },
+  {
+    "id": 4,
+    "email": "siti.nurhaliza@gmail.com",
+    "username": "sitihaliza",
+    "password": "nurhaliza88",
+    "profile": {
+      "fullName": "Siti Nurhaliza",
+      "address": "Jln. Pelabuhan, Surabaya",
+      "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Siti",
+      "bio": "Desainer grafis yang senang traveling dan memotret keindahan alam."
+    },
+    "followers": 340,
+    "following": 280,
+    "isFollowed": true
+  },
+  {
+    "id": 5,
+    "email": "agus.ramdani@gmail.com",
+    "username": "agusramdani",
+    "password": "ramdanipass",
+    "profile": {
+      "fullName": "Agus Ramdani",
+      "address": "Jln. Asia Afrika, Bandung",
+      "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Agus",
+      "bio": "Seorang teknisi IT yang juga senang bermain musik tradisional."
+    },
+    "followers": 150,
+    "following": 130,
+    "isFollowed": false
+  },
+  {
+    "id": 6,
+    "email": "ani.lestari@gmail.com",
+    "username": "anilestari",
+    "password": "lestari2022",
+    "profile": {
+      "fullName": "Ani Lestari",
+      "address": "Jln. Pahlawan, Yogyakarta",
+      "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Ani",
+      "bio": "Pencinta seni dan budaya, khususnya batik dan tari Jawa."
+    },
+    "followers": 410,
+    "following": 305,
+    "isFollowed": true
+  },
+  {
+    "id": 7,
+    "email": "andi.maulana@gmail.com",
+    "username": "andimaulana",
+    "password": "maulana321",
+    "profile": {
+      "fullName": "Andi Maulana",
+      "address": "Jln. Pettarani, Makassar",
+      "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Andi",
+      "bio": "Pengembang aplikasi mobile dari Makassar yang gemar bermain sepak bola."
+    },
+    "followers": 95,
+    "following": 180,
+    "isFollowed": false
+  },
+  {
+    "id": 8,
+    "email": "lisa.pratiwi@gmail.com",
+    "username": "lisapratiwi",
+    "password": "pratiwi2021",
+    "profile": {
+      "fullName": "Lisa Pratiwi",
+      "address": "Jln. Pasir Putih, Bali",
+      "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Lisa",
+      "bio": "Pencinta alam yang senang mendaki gunung dan menjaga lingkungan."
+    },
+    "followers": 230,
+    "following": 210,
+    "isFollowed": true
+  },
+  {
+    "id": 9,
+    "email": "rahmat.syahputra@gmail.com",
+    "username": "rahmatsyahputra",
+    "password": "syahputra234",
+    "profile": {
+      "fullName": "Rahmat Syahputra",
+      "address": "Jln. Diponegoro, Medan",
+      "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Rahmat",
+      "bio": "Pengusaha muda dari Medan yang fokus pada bisnis teknologi."
+    },
+    "followers": 175,
+    "following": 160,
+    "isFollowed": false
+  },
+  {
+    "id": 10,
+    "email": "ina.wardhani@gmail.com",
+    "username": "inawardhani",
+    "password": "wardhaniina",
+    "profile": {
+      "fullName": "Ina Wardhani",
+      "address": "Jln. Brawijaya, Malang",
+      "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Ina",
+      "bio": "Mahasiswi arsitektur yang gemar merancang bangunan ramah lingkungan."
+    },
+    "followers": 290,
+    "following": 220,
+    "isFollowed": true
+  }
+]
