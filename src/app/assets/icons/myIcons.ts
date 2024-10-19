@@ -6,7 +6,15 @@ import Profile from "./profile-circle.svg";
 import ProfileActive from "./profile-circle-active.svg";
 import UserSearch from "./user-search.svg";
 import UserSearchActive from "./user-search-active.svg";
-import { HiOutlineHome, HiOutlineSearchCircle, HiOutlineHeart, HiOutlineUserCircle, HiOutlineLogout } from "react-icons/hi";
+import LogoDw from "./main-logo.svg";
+import {
+  HiOutlineHome,
+  HiOutlineSearchCircle,
+  HiOutlineHeart,
+  HiOutlineUserCircle,
+  HiOutlineLogout,
+} from "react-icons/hi";
+import { FaGithub, FaLinkedin, FaFacebook, FaInstagram } from "react-icons/fa";
 
 const myIcons = {
   Home,
@@ -17,12 +25,16 @@ const myIcons = {
   ProfileActive,
   UserSearch,
   UserSearchActive,
+  LogoDw,
   HiOutlineHome,
   HiOutlineSearchCircle,
   HiOutlineHeart,
   HiOutlineUserCircle,
-  HiOutlineLogout
+  HiOutlineLogout,
+  FaGithub,
+  FaLinkedin,
+  FaFacebook,
+  FaInstagram,
 };
-
 
 export default myIcons;

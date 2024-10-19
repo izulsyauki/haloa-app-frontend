@@ -6,24 +6,25 @@ import {
   CardBody,
   Flex,
   Heading,
+  HStack,
   Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Stack,
   Text,
   useDisclosure,
   VStack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Button,
+  Link
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Logo from "../../../public/assets/logo/logo.svg";
-import myIcons from "../assets/icons/myIcons";
+import myIcons  from "../assets/icons/myIcons";
 import coverImg from "../assets/images/cover.png";
 import {
   CustomBtnPrimary,
@@ -197,7 +198,7 @@ export function HaloaLayout() {
           </CardBody>
         </Card>
         // Modal unfollow user
-        {selectedUser ? (
+        {selectedUser && (
           <>
             <Modal isOpen={isOpen} onClose={onClose}>
               <ModalOverlay />
@@ -211,18 +212,62 @@ export function HaloaLayout() {
                   </Text>
                 </ModalBody>
 
-                <ModalFooter alignItems={"center"} justifyContent={"flex-end"} gap={"10px"} w={"300px"} alignSelf={"flex-end"}>
+                <ModalFooter
+                  alignItems={"center"}
+                  justifyContent={"flex-end"}
+                  gap={"10px"}
+                  w={"300px"}
+                  alignSelf={"flex-end"}
+                >
                   <CustomBtnSecondary
                     label="Unfollow"
                     onClick={handleUnfollow}
                     m={"0px"}
                   />
-                  <CustomBtnPrimary label="Close" m={"0px"} p={"5px 20px"} w={"fit-content"} onClick={onClose}/>
+                  <CustomBtnPrimary
+                    label="Close"
+                    m={"0px"}
+                    p={"5px 20px"}
+                    w={"fit-content"}
+                    onClick={onClose}
+                  />
                 </ModalFooter>
               </ModalContent>
             </Modal>
           </>
-        ) : null}
+        )}
+        <Card maxW="sm">
+          <CardBody p={"10px 20px"}>
+            <HStack fontSize={"12px"} spacing={1}>
+              <Text>Developed by</Text>
+              <Text fontWeight={"bold"}>Izulsyauki Imani</Text>
+              <Text fontSize={"8px"} mt={"-2px"}> • </Text>
+              <HStack spacing={1} fontSize={"14px"}>
+                <Link href='https://github.com/izulsyauki' isExternal>
+                <myIcons.FaGithub/>
+                </Link>
+                <Link href='https://www.linkedin.com/in/izulsyaukiimani' isExternal>
+                <myIcons.FaLinkedin/>
+                </Link>
+                <Link href='https://www.facebook.com/izulsyauki' isExternal>
+                <myIcons.FaFacebook/>
+                </Link>
+                <Link href='https://www.instagram.com/izulsyauki' isExternal>
+                <myIcons.FaInstagram/>
+                </Link>
+              </HStack>
+            </HStack>
+            <HStack fontSize={"10px"} spacing={1}>
+              <Text>Powered by </Text>
+              <Link href='https://dumbways.id/' isExternal>
+              <Image src={myIcons.LogoDw} w={"18px"} mt={"-3px"}/>
+              </Link>
+              <Text> DumbWays Indonesia </Text>
+              <Text fontSize={"8px"} mt={"-2px"}> • </Text>
+              <Text>#1 Coding Bootcamp</Text>
+            </HStack>
+          </CardBody>
+        </Card>
       </Stack>
     </Flex>
   );
