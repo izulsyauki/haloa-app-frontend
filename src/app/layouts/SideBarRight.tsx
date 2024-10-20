@@ -35,7 +35,7 @@ export function SideBarRight() {
   const location = useLocation();
   const { user: loggedInUser } = useAuthStore();
   const [suggestedUser, setSuggestedUser] = useState<User[]>(fakeUsers);
-  const fontColor = useColorModeValue ("blackAlpha.700", "whiteAlpha.500")
+  const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -63,7 +63,16 @@ export function SideBarRight() {
   };
 
   return (
-    <Stack w={"28vw"} h={"fit-content"} p={"1rem"} spacing={3}>
+    <Stack
+      ml={"72vw"}
+      w={"28vw"}
+      h={"fit-content"}
+      p={"1rem"}
+      spacing={3}
+      position={"fixed"}
+      zIndex={999}
+      overflowY={"auto"}
+    >
       {!(location.pathname === "/profile") && (
         <Card maxW="sm">
           <CardBody>
@@ -129,6 +138,7 @@ export function SideBarRight() {
             <Text fontSize={"18px"} fontWeight={"bold"}>
               Suggested for you
             </Text>
+            {location.pathname === "/profile" && <ToggleColorMode />}
           </Flex>
           <Stack spacing="2">
             {suggestedUser

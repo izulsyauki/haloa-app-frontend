@@ -15,6 +15,7 @@ export function HaloaLayout() {
       <SideBarLeft />
 
       <Box
+        ml={"21vw"}
         w={"51vw"}
         minHeight={"100dvh"}
         borderLeft={"1px solid #3F3F3F"}
