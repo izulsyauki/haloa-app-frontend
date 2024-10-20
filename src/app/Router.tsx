@@ -11,7 +11,7 @@ export const router = createBrowserRouter([
         children: [
           {
             path: "/",
-            element: <myRoutes.Home />,
+            element: <myRoutes.HomeRoutes />,
             errorElement: <myRoutes.ErrorPage />,
           },
           {
@@ -25,18 +25,6 @@ export const router = createBrowserRouter([
           {
             path: "/profile",
             element: <myRoutes.ProfileRoutes />,
-            children: [
-              {
-                path: "/post",
-                element: <myRoutes.ProfileRoutes />,
-                children: [
-                  {
-                    path: "/media",
-                    element: <myRoutes.ProfileRoutes/>
-                  }
-                ] 
-              }
-            ]
           },
         ],
       },

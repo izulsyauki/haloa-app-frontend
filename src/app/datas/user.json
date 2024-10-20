@@ -10,6 +10,7 @@
       "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=izulsyauki",
       "bio": "Saya adalah seorang fullstack web developer"
     },
+    "dummyStatus" : "Kalau ada orang yang tidak suka saya tinggal bilang saja, biar gk repotkan!", 
     "followers": 101,
     "following": 134,
     "isFollowed": true
@@ -20,11 +21,12 @@
     "username": "asep",
     "password": "12345678",
     "profile": {
-      "fullName": "asep galau",
+      "fullName": "Asep Galau",
       "address": "Jln. Kenangan",
       "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=asep",
       "bio": "Aku hidup agar bisa makan, dan makan agar bisa hidup"
     },
+    "dummyStatus": "Laper nih, ada yang mau traktir gk?", 
     "followers": 154,
     "following": 299,
     "isFollowed": true
@@ -40,6 +42,7 @@
       "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Budi",
       "bio": "Saya seorang pengembang web dari Jakarta yang hobi mendaki gunung."
     },
+    "dummyStatus": "Gunung mana nih yang bakal ditaklukin weekend ini?", 
     "followers": 125,
     "following": 98,
     "isFollowed": false
@@ -55,6 +58,7 @@
       "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Siti",
       "bio": "Desainer grafis yang senang traveling dan memotret keindahan alam."
     },
+    "dummyStatus": "Bosen di rumah, yuk ke pantai liat sunset!", 
     "followers": 340,
     "following": 280,
     "isFollowed": true
@@ -70,6 +74,7 @@
       "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Agus",
       "bio": "Seorang teknisi IT yang juga senang bermain musik tradisional."
     },
+    "dummyStatus": "Habis nyetel angklung, sekarang waktunya coding lagi!", 
     "followers": 150,
     "following": 130,
     "isFollowed": false
@@ -85,6 +90,7 @@
       "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Ani",
       "bio": "Pencinta seni dan budaya, khususnya batik dan tari Jawa."
     },
+    "dummyStatus": "Nge-batik dulu sambil nunggu ide desain baru dateng.", 
     "followers": 410,
     "following": 305,
     "isFollowed": true
@@ -100,6 +106,7 @@
       "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Andi",
       "bio": "Pengembang aplikasi mobile dari Makassar yang gemar bermain sepak bola."
     },
+    "dummyStatus": "Main bola sore ini, ada yang mau join?", 
     "followers": 95,
     "following": 180,
     "isFollowed": false
@@ -115,6 +122,7 @@
       "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Lisa",
       "bio": "Pencinta alam yang senang mendaki gunung dan menjaga lingkungan."
     },
+    "dummyStatus": "Jaga alam, alam jaga kita. Yukk hijaukan bumi lagi!", 
     "followers": 230,
     "following": 210,
     "isFollowed": true
@@ -130,6 +138,7 @@
       "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Rahmat",
       "bio": "Pengusaha muda dari Medan yang fokus pada bisnis teknologi."
     },
+    "dummyStatus": "Startup gue lagi jalan, semangat terus buat masa depan!", 
     "followers": 175,
     "following": 160,
     "isFollowed": false
@@ -145,6 +154,7 @@
       "profilePicture": "https://api.dicebear.com/9.x/pixel-art-neutral/svg?seed=Ina",
       "bio": "Mahasiswi arsitektur yang gemar merancang bangunan ramah lingkungan."
     },
+    "dummyStatus": "Lagi sibuk ngerjain desain eco-friendly, doain lancar ya!", 
     "followers": 290,
     "following": 220,
     "isFollowed": true

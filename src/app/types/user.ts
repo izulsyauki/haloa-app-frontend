@@ -4,6 +4,7 @@ export interface User {
     username: string;
     password: string;
     profile: Profile;
+    dummyStatus: string;
     followers: number;
     following: number;
     isFollowed: boolean;

@@ -1,6 +1,6 @@
 import { SignupRoute } from "./SignupRoute";
 import { ErrorPage } from "./ErrorPage";
-import { Home } from "./Home";
+import { HomeRoutes } from "./HomeRoutes";
 import { SigninRoute } from "./SigninRoute";
 import { ForgotPassRoute } from "./ForgotPassRoute";
 import { ResetPassRoute } from "./ResetPassRoute";
@@ -12,7 +12,7 @@ import { ProtectedRoutes } from "./ProtectedRoute";
 export const myRoutes = {
   SignupRoute,
   ErrorPage,
-  Home,
+  HomeRoutes,
   SigninRoute,
   ForgotPassRoute,
   ResetPassRoute,

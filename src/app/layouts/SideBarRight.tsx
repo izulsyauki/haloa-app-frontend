@@ -18,6 +18,7 @@ import {
   ModalOverlay,
   Stack,
   Text,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
@@ -34,6 +35,7 @@ export function SideBarRight() {
   const location = useLocation();
   const { user: loggedInUser } = useAuthStore();
   const [suggestedUser, setSuggestedUser] = useState<User[]>(fakeUsers);
+  const fontColor = useColorModeValue ("blackAlpha.700", "whiteAlpha.500")
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -95,7 +97,7 @@ export function SideBarRight() {
             </Flex>
             <Stack spacing="1">
               <Heading size="md">✨{loggedInUser?.profile?.fullName}✨</Heading>
-              <Text fontSize={"14px"} color={"whiteAlpha.500"}>
+              <Text fontSize={"14px"} color={fontColor}>
                 @{loggedInUser?.username}
               </Text>
               <Text fontSize={"14px"}>{loggedInUser?.profile.bio}</Text>
@@ -105,7 +107,7 @@ export function SideBarRight() {
                 <Text fontWeight={"bold"} fontSize={"14px"}>
                   {loggedInUser?.following}
                 </Text>
-                <Text fontSize={"14px"} color={"whiteAlpha.500"}>
+                <Text fontSize={"14px"} color={fontColor}>
                   Following
                 </Text>
               </HStack>
@@ -113,7 +115,7 @@ export function SideBarRight() {
                 <Text fontWeight={"bold"} fontSize={"14px"}>
                   {loggedInUser?.followers}
                 </Text>
-                <Text fontSize={"14px"} color={"whiteAlpha.500"}>
+                <Text fontSize={"14px"} color={fontColor}>
                   Followers
                 </Text>
               </HStack>
@@ -143,7 +145,7 @@ export function SideBarRight() {
                     <Text fontSize={"12px"} fontWeight={"medium"}>
                       {user.profile.fullName}
                     </Text>
-                    <Text color={"whiteAlpha.500"} fontSize={"12px"}>
+                    <Text color={fontColor} fontSize={"12px"}>
                       @{user.username}
                     </Text>
                   </Box>
