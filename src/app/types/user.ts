@@ -5,6 +5,7 @@ export interface User {
     password: string;
     profile: Profile;
     dummyStatus: string;
+    imageUrl?: string;
     followers: number;
     following: number;
     isFollowed: boolean;

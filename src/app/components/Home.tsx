@@ -167,6 +167,14 @@ export function Home() {
                     </Text>
                   </HStack>
                   <Text fontSize={"13px"} p={"5px 0px"} fontWeight={"normal"}>{user.dummyStatus}</Text>
+                  {user.imageUrl && (
+                    <Image
+                    src={user.imageUrl} 
+                    alt="User post image"
+                    borderRadius={"md"}
+                    boxSize={"full"}
+                    />
+                  )}
                   <HStack
                     spacing={5}
                     marginY={"5px"}

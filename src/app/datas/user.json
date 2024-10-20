@@ -75,6 +75,7 @@
       "bio": "Seorang teknisi IT yang juga senang bermain musik tradisional."
     },
     "dummyStatus": "Habis nyetel angklung, sekarang waktunya coding lagi!", 
+    "imageUrl": "https://images.pexels.com/photos/1181271/pexels-photo-1181271.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     "followers": 150,
     "following": 130,
     "isFollowed": false
@@ -123,6 +124,7 @@
       "bio": "Pencinta alam yang senang mendaki gunung dan menjaga lingkungan."
     },
     "dummyStatus": "Jaga alam, alam jaga kita. Yukk hijaukan bumi lagi!", 
+    "imageUrl": "https://images.pexels.com/photos/1250260/pexels-photo-1250260.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     "followers": 230,
     "following": 210,
     "isFollowed": true
@@ -155,6 +157,7 @@
       "bio": "Mahasiswi arsitektur yang gemar merancang bangunan ramah lingkungan."
     },
     "dummyStatus": "Lagi sibuk ngerjain desain eco-friendly, doain lancar ya!", 
+    "imageUrl": "https://images.pexels.com/photos/4219521/pexels-photo-4219521.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     "followers": 290,
     "following": 220,
     "isFollowed": true

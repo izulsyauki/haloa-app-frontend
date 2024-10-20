@@ -18,49 +18,25 @@ import {
   ModalOverlay,
   Stack,
   Text,
-  useColorModeValue,
-  useDisclosure,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import myIcons from "../assets/icons/myIcons";
 import coverImg from "../assets/images/cover.png";
 import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
 import { ToggleColorMode } from "../components/ToggleColorMode";
 import fakeUsers from "../datas/user.json";
+import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
 import { useAuthStore } from "../store/auth";
 import { User } from "../types/user";
-import { useLocation } from "react-router-dom";
 
 export function SideBarRight() {
   const location = useLocation();
   const { user: loggedInUser } = useAuthStore();
-  const [suggestedUser, setSuggestedUser] = useState<User[]>(fakeUsers);
   const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
-  const handleFollowClick = (user: User) => {
-    if (!user.isFollowed) {
-      const followedUser = suggestedUser.map((u) =>
-        u.username === user.username ? { ...u, isFollowed: true } : u
-      );
-      setSuggestedUser(followedUser);
-    } else {
-      setSelectedUser(user);
-      onOpen();
-    }
-  };
-
-  const handleUnfollow = () => {
-    if (selectedUser) {
-      const unfollowedUser = suggestedUser.map((u) =>
-        u.username === selectedUser.username ? { ...u, isFollowed: false } : u
-      );
-      setSuggestedUser(unfollowedUser);
-      onClose();
-    }
-  };
+  const [suggestedUser, setSuggestedUser] = useState<User[]>(fakeUsers);
+  const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } = useHandleFollowUser();
 
   return (
     <Stack
@@ -165,7 +141,7 @@ export function SideBarRight() {
                     fontSize={"12px"}
                     fontWeight={"medium"}
                     onClick={() => {
-                      handleFollowClick(user);
+                      handleFollowClick(user, suggestedUser, setSuggestedUser);
                     }}
                     label={user.isFollowed ? "Following" : "Follow"}
                   />
@@ -197,7 +173,7 @@ export function SideBarRight() {
               >
                 <CustomBtnSecondary
                   label="Unfollow"
-                  onClick={handleUnfollow}
+                  onClick={() => handleUnfollow(suggestedUser, setSuggestedUser)}
                   m={"0px"}
                 />
                 <CustomBtnPrimary

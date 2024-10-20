@@ -55,7 +55,7 @@ export function CustomBtnSideBar({ solidIcon, outlineIcon, isActive, label, ...p
       bg={"0px"}
       fontSize={"14px"}
       variant={"ghost"}
-      borderRadius={"6px"}
+      borderRadius={"0px"}
       {...props}
     >
       {isActive ? solidIcon : outlineIcon} {label}
