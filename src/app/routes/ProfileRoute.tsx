@@ -1,6 +1,6 @@
 import { Profile } from "../components/Profile";
 
-export function ProfileRoutes() {
+export function ProfileRoute() {
   return (
     <>
     <Profile />

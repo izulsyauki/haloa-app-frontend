@@ -7,12 +7,16 @@ export const router = createBrowserRouter([
     element: <HaloaLayout />,
     children: [
       {
-        element: <myRoutes.ProtectedRoutes />,
+        element: <myRoutes.ProtectedRoute />,
         children: [
           {
             path: "/",
-            element: <myRoutes.HomeRoutes />,
+            element: <myRoutes.HomeRoute />,
             errorElement: <myRoutes.ErrorPage />,
+          },
+          {
+            path: "/post/:postId",
+            element: <myRoutes.PostDetailRoute />,
           },
           {
             path: "/search",
@@ -24,7 +28,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "/profile",
-            element: <myRoutes.ProfileRoutes />,
+            element: <myRoutes.ProfileRoute />,
           },
         ],
       },

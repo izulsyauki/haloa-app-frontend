@@ -19,18 +19,19 @@ import {
   Textarea,
   useDisclosure,
   VStack,
-  useColorModeValue
+  useColorModeValue,
 } from "@chakra-ui/react";
 import myIcons from "../assets/icons/myIcons";
 import { CustomBtnPrimary } from "../components/CustomBtn";
 import { useAuthStore } from "../store/auth";
 import fakeUsers from "../datas/user.json";
 import { User } from "../types/user";
+import { Link } from "react-router-dom";
 
 export function Home() {
   const { user: loggedInUser } = useAuthStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const fontColor = useColorModeValue ("blackAlpha.700", "whiteAlpha.500")
+  const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
 
   return (
     <>
@@ -54,11 +55,7 @@ export function Home() {
             src={loggedInUser?.profile?.profilePicture}
             size={"sm"}
           />
-          <Text
-            color={fontColor}
-            fontWeight={"normal"}
-            fontSize={"18px"}
-          >
+          <Text color={fontColor} fontWeight={"normal"} fontSize={"18px"}>
             What is happening?!
           </Text>
           <Spacer />
@@ -127,76 +124,77 @@ export function Home() {
           .filter((user) => user.username !== loggedInUser?.username)
           .slice(0, 7)
           .map((user: User) => (
-            <Button
-              variant={"ghost"}
-              w={"100%"}
-              h={"fit-content"}
-              borderRadius={"none"}
-              justifyContent={"flex-start"}
-              borderBottom={"1px solid #3F3F3F"}
-              p={"0px"}
-              m={"0px"}
-            >
-              <Flex
-                padding="1rem"
-                gap={"15px"}
+            <Link to={`/post/${user.id}`} key={user.id}>
+              <Box
+                w={"100%"}
+                h={"fit-content"}
+                borderRadius={"none"}
+                justifyContent={"flex-start"}
+                borderBottom={"1px solid #3F3F3F"}
+                p={"0px"}
+                m={"0px"}
               >
-                <Avatar
-                  name="Other Profile Avatar"
-                  src={user.profile.profilePicture}
-                  size={"sm"}
-                />
-                <VStack w={"100%"} spacing={1} alignItems={"start"} fontWeight={"normal"}>
-                  <HStack spacing={1} pb={"3px"}>
-                    <Heading size={"sm"} fontSize={"14px"}>
-                      {user.profile.fullName}
-                    </Heading>
-                    <Text color={fontColor} fontSize={"14px"}>
-                      @{user.username}
-                    </Text>
-                    <Text
-                      color={fontColor}
-                      fontSize={"14px"}
-                      mt={"-2px"}
-                    >
-                      {" "}
-                      •{" "}
-                    </Text>
-                    <Text color={fontColor} fontSize={"14px"}>
-                      4h
-                    </Text>
-                  </HStack>
-                  <Text fontSize={"13px"} p={"5px 0px"} fontWeight={"normal"}>{user.dummyStatus}</Text>
-                  {user.imageUrl && (
-                    <Image
-                    src={user.imageUrl} 
-                    alt="User post image"
-                    borderRadius={"md"}
-                    boxSize={"full"}
-                    />
-                  )}
-                  <HStack
-                    spacing={5}
-                    marginY={"5px"}
-                    color={fontColor}
-                    fontSize={"14px"}
+                <Flex padding="1rem" gap={"15px"}>
+                  <Avatar
+                    name="Other Profile Avatar"
+                    src={user.profile.profilePicture}
+                    size={"sm"}
+                  />
+                  <VStack
+                    w={"100%"}
+                    spacing={1}
+                    alignItems={"start"}
+                    fontWeight={"normal"}
                   >
-                    <HStack spacing={1}>
-                      <myIcons.HiOutlineHeart
-                        fontSize={"22px"}
-                        color={fontColor}
+                    <HStack spacing={1} pb={"3px"}>
+                      <Heading size={"sm"} fontSize={"14px"}>
+                        {user.profile.fullName}
+                      </Heading>
+                      <Text color={fontColor} fontSize={"14px"}>
+                        @{user.username}
+                      </Text>
+                      <Text color={fontColor} fontSize={"14px"} mt={"-2px"}>
+                        {" "}
+                        •{" "}
+                      </Text>
+                      <Text color={fontColor} fontSize={"14px"}>
+                        4h
+                      </Text>
+                    </HStack>
+                    <Text fontSize={"13px"} p={"5px 0px"} fontWeight={"normal"}>
+                      {user.dummyStatus}
+                    </Text>
+                    {user.imageUrl && (
+                      <Image
+                        src={user.imageUrl}
+                        alt="User post image"
+                        borderRadius={"md"}
+                        boxSize={"full"}
                       />
-                      <Text>{Math.floor(Math.random() * 900) + 100}</Text>
+                    )}
+                    <HStack
+                      spacing={5}
+                      marginY={"5px"}
+                      color={fontColor}
+                      fontSize={"13px"}
+                    >
+                      <HStack spacing={1}>
+                        <myIcons.HiOutlineHeart
+                          fontSize={"22px"}
+                          color={fontColor}
+                        />
+                        <Text>{Math.floor(Math.random() * 900) + 100}</Text>
+                      </HStack>
+                      <HStack spacing={1}>
+                        <myIcons.HiOutlineAnnotation fontSize={"22px"} />
+                        <Text>{Math.floor(Math.random() * 90) + 10}</Text>
+                        <Text>Replies</Text>
+                      </HStack>
                     </HStack>
-                    <HStack spacing={1}>
-                      <myIcons.HiOutlineAnnotation fontSize={"22px"} />
-                      <Text>{Math.floor(Math.random() * 90) + 10}</Text>
-                      <Text>Replies</Text>
-                    </HStack>
-                  </HStack>
-                </VStack>
-              </Flex>
-            </Button>
+                  </VStack>
+                </Flex>
+              </Box>
+            </Link>
           ))}
       </Box>
     </>

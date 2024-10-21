@@ -4,7 +4,7 @@ import { User } from "../types/user";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useEffect, useState } from "react";
 
-export const useSearchUser = () => {
+export const useSearchUser = (setSuggestedUser: (user: User[]) => void) => {
   const { register, watch } = useForm({
     defaultValues: {
       search: "",
@@ -20,7 +20,8 @@ export const useSearchUser = () => {
     );
 
     setUsers(filteredUser);
-  }, [debouncedUsers]);
+    setSuggestedUser(filteredUser);
+  }, [debouncedUsers, setSuggestedUser]);
 
   return {
     register,

@@ -35,6 +35,7 @@ export function SideBarRight() {
   const location = useLocation();
   const { user: loggedInUser } = useAuthStore();
   const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
+  const outlineColor = useColorModeValue("white", "#2d3748");
   const [suggestedUser, setSuggestedUser] = useState<User[]>(fakeUsers);
   const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } = useHandleFollowUser();
 
@@ -67,7 +68,8 @@ export function SideBarRight() {
                   position={"absolute"}
                   left={"20px"}
                   bottom={"-23px"}
-                  outline={"3px solid #2d3748"}
+                  outline={"3px solid"}
+                  outlineColor={outlineColor}
                 />
               </Box>
               <CustomBtnSecondary

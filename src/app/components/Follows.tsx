@@ -113,6 +113,8 @@ export function Follows() {
           </Box>
         ))}
       </Stack>
+
+      {/* Modal unfollow */}
       {selectedUser && (
         <>
           <Modal isOpen={isOpen} onClose={onClose}>

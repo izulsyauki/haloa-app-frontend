@@ -18,7 +18,8 @@ import {
   HiSearchCircle,
   HiHeart,
   HiUserCircle,
-  HiOutlineAnnotation
+  HiOutlineAnnotation,
+  HiArrowLeft
 } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaFacebook, FaInstagram } from "react-icons/fa";
 
@@ -46,7 +47,8 @@ const myIcons = {
   HiSearchCircle,
   HiHeart,
   HiUserCircle,
-  HiOutlineAnnotation
+  HiOutlineAnnotation,
+  HiArrowLeft
 };
 
 export default myIcons;

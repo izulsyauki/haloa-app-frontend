@@ -9,6 +9,7 @@ export const useHandleFollowUser = () => {
 
   const handleFollowClick = (user: User, suggestedUser: User[], setSuggestedUser: (users: User[]) => void ) => {
     if (!user.isFollowed) {
+      console.log("Following: ", user.username)
       const followedUser = suggestedUser.map((u) =>
         u.username === user.username ? { ...u, isFollowed: true } : u
       );
