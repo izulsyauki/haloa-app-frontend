@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 interface CustomBtnProps extends ButtonProps {
   solidIcon?: ReactNode;
   outlineIcon?: ReactNode;
-  label: string;
+  label?: string;
   isActive?: boolean;
 }
 

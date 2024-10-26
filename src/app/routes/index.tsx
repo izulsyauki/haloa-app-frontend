@@ -9,6 +9,7 @@ import { FollowsRoute } from "./FollowsRoute";
 import { ProfileRoute } from "./ProfileRoute";
 import { PostDetailRoute } from "./PostDetailRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { PublicRoute } from "./PublicRoute";
 
 export const myRoutes = {
   SignupRoute,
@@ -21,5 +22,6 @@ export const myRoutes = {
   FollowsRoute,
   ProfileRoute,
   ProtectedRoute,
-  PostDetailRoute
+  PostDetailRoute,
+  PublicRoute
 };
