@@ -39,6 +39,7 @@ import { User } from "../types/user";
 export function SideBarRight() {
     const location = useLocation();
     const { user: loggedInUser } = useAuthStore();
+    const typedUser = loggedInUser as User;
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const outlineColor = useColorModeValue("white", "#2d3748");
     const [suggestedUser, setSuggestedUser] = useState<User[]>(fakeUsers);
@@ -81,7 +82,7 @@ export function SideBarRight() {
                                 />
                                 <Avatar
                                     name="Profile Avatar"
-                                    src={loggedInUser?.profile?.profilePicture}
+                                    src={typedUser?.profile?.profilePicture}
                                     position={"absolute"}
                                     left={"20px"}
                                     bottom={"-23px"}
@@ -129,10 +130,7 @@ export function SideBarRight() {
                                             <Image src={coverImg} alt="Cover" />
                                             <Avatar
                                                 name="Profile Avatar"
-                                                src={
-                                                    loggedInUser?.profile
-                                                        ?.profilePicture
-                                                }
+                                                src={typedUser?.profile?.profilePicture}
                                                 position={"absolute"}
                                                 left={"30px"}
                                                 bottom={"-30px"}
@@ -177,8 +175,8 @@ export function SideBarRight() {
                                                 Full Name
                                             </Text>
                                             <Input
-                                                defaultValue={`${fullName}`}
-                                                onChange={(e) => handleInputChange('fullName', e.target.value)}
+                                                // defaultValue={`${fullName}`}
+                                                // onChange={(e) => handleInputChange('fullName', e.target.value)}
                                             />
                                         </VStack>
                                         <VStack
@@ -194,8 +192,8 @@ export function SideBarRight() {
                                                 Username
                                             </Text>
                                             <Input
-                                                defaultValue={username}
-                                                onChange={(e) => handleInputChange('username', e.target.value)}
+                                                // defaultValue={username}
+                                                // onChange={(e) => handleInputChange('username', e.target.value)}
                                             />
                                         </VStack>
                                         <VStack
@@ -212,8 +210,8 @@ export function SideBarRight() {
                                             </Text>
                                             <Textarea
                                                 resize={"none"}
-                                                defaultValue={bio}
-                                                onChange={(e) => handleInputChange('bio', e.target.value)}
+                                                defaultValue={"bio"}
+                                                // onChange={(e) => handleInputChange('bio', e.target.value)}
                                             />
                                         </VStack>
                                     </ModalBody>
@@ -240,19 +238,19 @@ export function SideBarRight() {
                         </Flex>
                         <Stack spacing="1">
                             <Heading size="md">
-                                ✨{loggedInUser?.profile?.fullName}✨
+                                ✨{typedUser?.profile?.fullName}✨
                             </Heading>
                             <Text fontSize={"14px"} color={fontColor}>
-                                @{loggedInUser?.username}
+                                @{typedUser?.username}
                             </Text>
                             <Text fontSize={"14px"}>
-                                {loggedInUser?.profile.bio}
+                                {typedUser?.profile?.bio}
                             </Text>
                         </Stack>
                         <HStack spacing={2}>
                             <HStack spacing={1}>
                                 <Text fontWeight={"bold"} fontSize={"14px"}>
-                                    {loggedInUser?.following}
+                                    {/* {loggedInUser?.following} */}
                                 </Text>
                                 <Text fontSize={"14px"} color={fontColor}>
                                     Following
@@ -260,7 +258,7 @@ export function SideBarRight() {
                             </HStack>
                             <HStack spacing={1}>
                                 <Text fontWeight={"bold"} fontSize={"14px"}>
-                                    {loggedInUser?.followers}
+                                    {/* {loggedInUser?.followers} */}
                                 </Text>
                                 <Text fontSize={"14px"} color={fontColor}>
                                     Followers

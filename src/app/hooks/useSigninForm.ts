@@ -2,13 +2,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import fakeUser from "../datas/user.json";
 import { useAuthStore } from "../store/auth";
-import { User } from "../types/user";
 import { SigninFormInputs, signinSchema } from "../utils/signin-schemas";
+import API from "../libs/axios";
+import { User } from "../types/user";
+
+interface SignInResponse {
+  user: User;
+  token: string;
+}
 
 export const useSigninForm = () => {
   const [showAlert, setShowAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const {
     register,
@@ -19,34 +25,38 @@ export const useSigninForm = () => {
     resolver: zodResolver(signinSchema),
   });
 
-  const { setUser } = useAuthStore();
+  const { setUser, setToken } = useAuthStore();
   const navigate = useNavigate();
 
   const onSubmit = useCallback(
-    (data: SigninFormInputs) => {
-      const user = fakeUser.find(
-        (user) =>
-          user.email === data.emailOrUsername ||
-          user.username === data.emailOrUsername
-      ) as User;
-
-      if (
-        !(user?.password === data.password) &&
-        !((user?.email || user?.username) === data.emailOrUsername)
-      ) {
+    async (data: SigninFormInputs) => {
+      try {
+        const response = await API.post<SignInResponse>("/auth/sign-in", data);
+        const { user, token } = response.data;
+        
+        setUser(user);
+        setToken(token);
+        
+        // Simpan token ke localStorage
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        
+        // Set token sebagai default header untuk request selanjutnya
+        API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        
+        navigate("/");
+      } catch (error) {
+        console.error("Login error:", error);
         setShowAlert(true);
-
+        setErrorMessage("Email/username atau password salah. Silakan coba lagi.");
+        
         setTimeout(() => {
           setShowAlert(false);
+          setErrorMessage("");
         }, 3000);
-
-        return;
       }
-      user.password = "";
-      setUser(user);
-      navigate("/");
     },
-    [navigate, setUser]
+    [navigate, setUser, setToken]
   );
 
   return {
@@ -56,5 +66,6 @@ export const useSigninForm = () => {
     errors,
     isSubmitting,
     showAlert,
+    errorMessage,
   };
 };

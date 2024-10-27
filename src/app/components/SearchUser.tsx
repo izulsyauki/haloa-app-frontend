@@ -15,18 +15,15 @@ import {
     ModalOverlay,
     Text,
     useColorModeValue,
+    Spinner,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import myIcons from "../assets/icons/myIcons";
-import fakeUsers from "../datas/user.json";
 import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
 import { useSearchUser } from "../hooks/useSearchUser";
-import { User } from "../types/user";
 import { CustomBtnPrimary, CustomBtnSecondary } from "./CustomBtn";
 
 export function SearchUser() {
-    const [suggestedUser, setSuggestedUser] = useState<User[]>(fakeUsers);
-    const { register, watch, users } = useSearchUser(setSuggestedUser);
+    const { register, watch, users, isLoading } = useSearchUser();
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } =
         useHandleFollowUser();
@@ -61,6 +58,15 @@ export function SearchUser() {
                         </Text>
                     </Box>
                 </Flex>
+            ) : isLoading ? (
+                <Flex
+                    w={"100%"}
+                    h={"500px"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                >
+                    <Spinner />
+                </Flex>
             ) : (
                 <>
                     {!users.length ? (
@@ -82,8 +88,8 @@ export function SearchUser() {
                         </Flex>
                     ) : (
                         <>
-                            {suggestedUser.map((user) => (
-                                <Box padding={"10px 0px"}>
+                            {users.map((user) => (
+                                <Box key={user.id} padding={"10px 0px"}>
                                     <Flex
                                         gap={"15px"}
                                         fontSize={"12px"}
@@ -92,7 +98,7 @@ export function SearchUser() {
                                         <Avatar
                                             src={user.profile.profilePicture}
                                             h={"36px"}
-                                            w={"36 px"}
+                                            w={"36px"}
                                         />
                                         <Box flex={5} gap={"10px"}>
                                             <Text fontWeight={"medium"}>
@@ -107,26 +113,8 @@ export function SearchUser() {
                                             h={"fit-content"}
                                             fontSize={"12px"}
                                             fontWeight={"medium"}
-                                            onClick={() => {
-                                                console.log(
-                                                    "Follow ini di klik untuk user: ",
-                                                    user
-                                                );
-                                                handleFollowClick(
-                                                    user,
-                                                    suggestedUser,
-                                                    setSuggestedUser
-                                                );
-                                                console.log(
-                                                    "Update user setelah follow/unfollow: ",
-                                                    suggestedUser
-                                                );
-                                            }}
-                                            label={
-                                                user.isFollowed
-                                                    ? "Following"
-                                                    : "Follow"
-                                            }
+                                            onClick={() => handleFollowClick(user, users, setUsers)}
+                                            label={user.isFollowed ? "Following" : "Follow"}
                                         />
                                     </Flex>
                                     <Text fontSize={"12px"} ml={"52px"}>
@@ -139,54 +127,52 @@ export function SearchUser() {
                 </>
             )}
             {selectedUser && (
-                <>
-                    <Modal isOpen={isOpen} onClose={onClose}>
-                        <ModalOverlay />
-                        <ModalContent>
-                            <ModalHeader>
-                                Unfollow @{selectedUser.username}?
-                            </ModalHeader>
-                            <ModalCloseButton />
-                            <ModalBody>
-                                <Text>
-                                    Are you sure want to unfollow{" "}
-                                    {selectedUser.profile.fullName}?
-                                </Text>
-                            </ModalBody>
+                <Modal isOpen={isOpen} onClose={onClose}>
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>
+                            Unfollow @{selectedUser.username}?
+                        </ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                            <Text>
+                                Are you sure want to unfollow{" "}
+                                {selectedUser.profile.fullName}?
+                            </Text>
+                        </ModalBody>
 
-                            <ModalFooter
-                                alignItems={"center"}
-                                justifyContent={"flex-end"}
-                                gap={"10px"}
-                                w={"300px"}
-                                alignSelf={"flex-end"}
-                            >
-                                <CustomBtnSecondary
-                                    label="Unfollow"
-                                    onClick={() =>
-                                        handleUnfollow(
-                                            suggestedUser,
-                                            setSuggestedUser
-                                        )
-                                    }
-                                    m={"0px"}
-                                    w={"fit-content"}
-                                    h={"fit-content"}
-                                    fontSize={"14px"}
-                                />
-                                <CustomBtnPrimary
-                                    label="Close"
-                                    m={"0px"}
-                                    p={"10px 20px"}
-                                    w={"fit-content"}
-                                    h={"fit-content"}
-                                    fontSize={"14px"}
-                                    onClick={onClose}
-                                />
-                            </ModalFooter>
-                        </ModalContent>
-                    </Modal>
-                </>
+                        <ModalFooter
+                            alignItems={"center"}
+                            justifyContent={"flex-end"}
+                            gap={"10px"}
+                            w={"300px"}
+                            alignSelf={"flex-end"}
+                        >
+                            <CustomBtnSecondary
+                                label="Unfollow"
+                                onClick={() =>
+                                    handleUnfollow(
+                                        users,
+                                        setUsers
+                                    )
+                                }
+                                m={"0px"}
+                                w={"fit-content"}
+                                h={"fit-content"}
+                                fontSize={"14px"}
+                            />
+                            <CustomBtnPrimary
+                                label="Close"
+                                m={"0px"}
+                                p={"10px 20px"}
+                                w={"fit-content"}
+                                h={"fit-content"}
+                                fontSize={"14px"}
+                                onClick={onClose}
+                            />
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
             )}
         </Box>
     );

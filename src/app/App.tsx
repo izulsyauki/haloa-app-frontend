@@ -1,14 +1,26 @@
 import { RouterProvider } from "react-router-dom";
 import { router } from "./Router";
-// import { ChakraProvider } from "@chakra-ui/react";
-// import theme from "./theme";
+import { useEffect } from "react";
+import { useAuthStore } from "./store/auth";
 
 function App() {
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  );
+  const { setUser, setToken } = useAuthStore();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (token && user){
+      setToken(token);
+      setUser(JSON.parse(user));
+    }
+  }, [setUser, setToken]);
+
+    return (
+        <>
+            <RouterProvider router={router} />
+        </>
+    );
 }
 
 export default App;
