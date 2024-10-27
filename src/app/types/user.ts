@@ -1,19 +1,18 @@
 export interface User {
-    id: number
-    email: string;
-    username: string;
-    password: string;
-    profile: Profile;
-    dummyStatus: string;
-    imageUrl?: string;
-    followers: number;
-    following: number;
-    isFollowed: boolean;
-}
-
-export interface Profile {
-    fullName: string;
-    address: string;
-    profilePicture: string;
-    bio: string;
+        id: number;
+        email: string;
+        username: string;
+        password: string;
+        profile: {
+            profile: any;
+            username: string;
+            avatar: string | null;
+            banner: string | null;
+            bio: string | null;
+            fullName: string | null;
+            id: number;
+            userId: number;
+        };
+        createdAt: string;
+        updatedAt: string;
 }

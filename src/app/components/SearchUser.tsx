@@ -96,7 +96,7 @@ export function SearchUser() {
                                         alignItems={"center"}
                                     >
                                         <Avatar
-                                            src={user.profile.profilePicture}
+                                            src={user.profile.avatar || undefined}
                                             h={"36px"}
                                             w={"36px"}
                                         />

@@ -24,7 +24,7 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import myIcons from "../assets/icons/myIcons";
 import coverImg from "../assets/images/cover.png";
@@ -35,19 +35,102 @@ import { useHandleEditProfile } from "../hooks/useHandleEditProfile";
 import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
 import { useAuthStore } from "../store/auth";
 import { User } from "../types/user";
+import { getProfile } from "../api/profile";
+import { getFollowCounts } from "../api/follow";
+import { getSuggestedUsers } from "../api/user";
 
 export function SideBarRight() {
     const location = useLocation();
-    const { user: loggedInUser } = useAuthStore();
-    const typedUser = loggedInUser as User;
+    const { token } = useAuthStore();
+    const [userProfile, setUserProfile] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const outlineColor = useColorModeValue("white", "#2d3748");
-    const [suggestedUser, setSuggestedUser] = useState<User[]>(fakeUsers);
+    const [suggestedUser, setSuggestedUser] = useState<User[]>([]);
     const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } =
         useHandleFollowUser();
     const galleryButtonBg = useColorModeValue("white", "#2d3748");
+    const [followCounts, setFollowCounts] = useState({
+        followers: 0,
+        following: 0,
+    });
 
-    const { isEditProfileOpen, fullName, username, bio, handleEditProfileOpen, handleEditProfileClose, handleInputChange, handleSaveProfile } = useHandleEditProfile();
+    // handle untuk edit profile
+    const {
+        isEditProfileOpen,
+        handleEditProfileOpen,
+        handleEditProfileClose,
+        handleInputChange,
+        handleSaveProfile,
+    } = useHandleEditProfile();
+
+    // fetch follow counts
+    const fetchFollowCounts = useCallback(async () => {
+        if (token) {
+            try {
+                const counts = await getFollowCounts();
+                setFollowCounts(
+                    counts as { followers: number; following: number }
+                );
+            } catch (error) {
+                console.error("Error fetching follow counts:", error);
+                setError("Gagal mengambil data follow counts");
+            }
+        }
+    }, [token]);
+
+    // fetch profile
+    const fetchProfile = useCallback(async () => {
+        if (token) {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const profile = await getProfile();
+                setUserProfile(profile as User);
+            } catch (error) {
+                console.error("Error fetching profile:", error);
+                setError("Gagal mengambil data profil");
+            } finally {
+                setIsLoading(false);
+            }
+        }
+    }, [token]);
+
+    const fetchSuggestedUser = useCallback(async () => {
+        if (!token) return;
+        setIsLoading(true);
+        try {
+            const users = await getSuggestedUsers(3);
+            setSuggestedUser(users as User[]);
+        } catch (error) {
+            console.error("Error fetching suggested users:", error);
+            setError("Gagal mengambil data pengguna yang direkomendasikan");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [token]);
+
+    // hook fetch
+    useEffect(() => {
+        fetchProfile();
+        fetchFollowCounts();
+        fetchSuggestedUser();
+    }, [fetchFollowCounts, fetchProfile, fetchSuggestedUser]);
+
+    // desructuring agar lebih mudah
+    const getUserData = (userProfile: User | null) => {
+        if (!userProfile) return null;
+        const { profile } = userProfile;
+        return {
+            fullName: profile.profile.fullName,
+            username: profile.username,
+            bio: profile.profile.bio,
+            avatar: profile.profile.avatar,
+            banner: profile.profile.banner,
+        };
+    };
+    const userData = getUserData(userProfile);
 
     return (
         <Stack
@@ -76,13 +159,16 @@ export function SideBarRight() {
                         <Flex flexDir={"column"} justifyContent={"flex-end"}>
                             <Box position={"relative"}>
                                 <Image
-                                    src={coverImg}
-                                    alt="Cocer Image"
+                                    src={userData?.banner || coverImg}
+                                    alt="Cover Image"
                                     h={"80px"}
+                                    objectFit={"cover"}
+                                    borderRadius={"10px"}
+                                    w={"100%"}
                                 />
                                 <Avatar
                                     name="Profile Avatar"
-                                    src={typedUser?.profile?.profilePicture}
+                                    src={userData?.avatar ?? undefined}
                                     position={"absolute"}
                                     left={"20px"}
                                     bottom={"-23px"}
@@ -127,10 +213,22 @@ export function SideBarRight() {
                                             position={"relative"}
                                             mb={"30px"}
                                         >
-                                            <Image src={coverImg} alt="Cover" />
+                                            <Image
+                                                src={
+                                                    userData?.banner || coverImg
+                                                }
+                                                alt="Cover Image"
+                                                h={"100px"}
+                                                objectFit={"cover"}
+                                                borderRadius={"10px"}
+                                                w={"100%"}
+                                            />
                                             <Avatar
                                                 name="Profile Avatar"
-                                                src={typedUser?.profile?.profilePicture}
+                                                src={
+                                                    userData?.avatar ??
+                                                    undefined
+                                                }
                                                 position={"absolute"}
                                                 left={"30px"}
                                                 bottom={"-30px"}
@@ -175,8 +273,13 @@ export function SideBarRight() {
                                                 Full Name
                                             </Text>
                                             <Input
-                                                // defaultValue={`${fullName}`}
-                                                // onChange={(e) => handleInputChange('fullName', e.target.value)}
+                                                defaultValue={`${userData?.fullName}`}
+                                                onChange={(e) =>
+                                                    handleInputChange(
+                                                        "fullName",
+                                                        e.target.value
+                                                    )
+                                                }
                                             />
                                         </VStack>
                                         <VStack
@@ -192,8 +295,15 @@ export function SideBarRight() {
                                                 Username
                                             </Text>
                                             <Input
-                                                // defaultValue={username}
-                                                // onChange={(e) => handleInputChange('username', e.target.value)}
+                                                defaultValue={
+                                                    userData?.username
+                                                }
+                                                onChange={(e) =>
+                                                    handleInputChange(
+                                                        "username",
+                                                        e.target.value
+                                                    )
+                                                }
                                             />
                                         </VStack>
                                         <VStack
@@ -210,8 +320,15 @@ export function SideBarRight() {
                                             </Text>
                                             <Textarea
                                                 resize={"none"}
-                                                defaultValue={"bio"}
-                                                // onChange={(e) => handleInputChange('bio', e.target.value)}
+                                                defaultValue={
+                                                    userData?.bio ?? ""
+                                                }
+                                                onChange={(e) =>
+                                                    handleInputChange(
+                                                        "bio",
+                                                        e.target.value
+                                                    )
+                                                }
                                             />
                                         </VStack>
                                     </ModalBody>
@@ -236,35 +353,55 @@ export function SideBarRight() {
                                 </ModalContent>
                             </Modal>
                         </Flex>
-                        <Stack spacing="1">
-                            <Heading size="md">
-                                ✨{typedUser?.profile?.fullName}✨
-                            </Heading>
-                            <Text fontSize={"14px"} color={fontColor}>
-                                @{typedUser?.username}
-                            </Text>
-                            <Text fontSize={"14px"}>
-                                {typedUser?.profile?.bio}
-                            </Text>
-                        </Stack>
-                        <HStack spacing={2}>
-                            <HStack spacing={1}>
-                                <Text fontWeight={"bold"} fontSize={"14px"}>
-                                    {/* {loggedInUser?.following} */}
-                                </Text>
+                        {isLoading ? (
+                            <Text>Loading profile...</Text>
+                        ) : error ? (
+                            <Text color="red.500">{error}</Text>
+                        ) : userData ? (
+                            <>
+                                <Heading size="md">
+                                    ✨{userData.fullName ?? "Nama pengguna"}✨
+                                </Heading>
                                 <Text fontSize={"14px"} color={fontColor}>
-                                    Following
+                                    @{userData.username ?? "Username belum ada"}
                                 </Text>
-                            </HStack>
-                            <HStack spacing={1}>
-                                <Text fontWeight={"bold"} fontSize={"14px"}>
-                                    {/* {loggedInUser?.followers} */}
+                                <Text fontSize={"14px"}>
+                                    {userData.bio ?? "Bio belum ada"}
                                 </Text>
-                                <Text fontSize={"14px"} color={fontColor}>
-                                    Followers
-                                </Text>
-                            </HStack>
-                        </HStack>
+                                <HStack spacing={3}>
+                                    <HStack spacing={1}>
+                                        <Text
+                                            fontWeight={"bold"}
+                                            fontSize={"14px"}
+                                        >
+                                            {followCounts.following}
+                                        </Text>
+                                        <Text
+                                            fontSize={"14px"}
+                                            color={fontColor}
+                                        >
+                                            Following
+                                        </Text>
+                                    </HStack>
+                                    <HStack spacing={1}>
+                                        <Text
+                                            fontWeight={"bold"}
+                                            fontSize={"14px"}
+                                        >
+                                            {followCounts.followers}
+                                        </Text>
+                                        <Text
+                                            fontSize={"14px"}
+                                            color={fontColor}
+                                        >
+                                            Followers
+                                        </Text>
+                                    </HStack>
+                                </HStack>
+                            </>
+                        ) : (
+                            <Text>Profil tidak tersedia</Text>
+                        )}
                     </CardBody>
                 </Card>
             )}
@@ -283,57 +420,50 @@ export function SideBarRight() {
                         )}
                     </Flex>
                     <Stack spacing="2">
-                        {suggestedUser
-                            .filter(
-                                (user) =>
-                                    user.username !== loggedInUser?.username
-                            )
-                            .slice(0, 3)
-                            .map((user) => (
-                                <Flex
-                                    gap={"15px"}
-                                    fontSize={"14px"}
-                                    alignItems={"center"}
-                                >
-                                    <Avatar
-                                        src={user.profile.profilePicture}
-                                        h={"36px"}
-                                        w={"36 px"}
-                                    />
-                                    <Box flex={5} gap={"10px"}>
-                                        <Text
-                                            fontSize={"12px"}
-                                            fontWeight={"medium"}
-                                        >
-                                            {user.profile.fullName}
-                                        </Text>
-                                        <Text
-                                            color={fontColor}
-                                            fontSize={"12px"}
-                                        >
-                                            @{user.username}
-                                        </Text>
-                                    </Box>
-                                    <CustomBtnSecondary
-                                        p={"6px 12px"}
-                                        h={"fit-content"}
+                        {suggestedUser.map((user) => (
+                            <Flex
+                                gap={"15px"}
+                                fontSize={"14px"}
+                                alignItems={"center"}
+                            >
+                                <Avatar
+                                    src={user.profile.avatar || undefined}
+                                    h={"36px"}
+                                    w={"36px"}
+                                />
+                                <Box flex={5} gap={"10px"}>
+                                    <Text
                                         fontSize={"12px"}
                                         fontWeight={"medium"}
-                                        onClick={() => {
-                                            handleFollowClick(
-                                                user,
-                                                suggestedUser,
-                                                setSuggestedUser
-                                            );
-                                        }}
-                                        label={
-                                            user.isFollowed
-                                                ? "Following"
-                                                : "Follow"
-                                        }
-                                    />
-                                </Flex>
-                            ))}
+                                    >
+                                        {user.profile.fullName ??
+                                            "Nama pengguna"}
+                                    </Text>
+                                    <Text color={fontColor} fontSize={"12px"}>
+                                        @{user.username ?? "Username belum ada"}
+                                    </Text>
+                                </Box>
+                                <CustomBtnSecondary
+                                    p={"6px 12px"}
+                                    h={"fit-content"}
+                                    fontSize={"12px"}
+                                    fontWeight={"medium"}
+                                    onClick={() => {
+                                        handleFollowClick(
+                                            user,
+                                            suggestedUser,
+                                            setSuggestedUser
+                                        );
+                                    }}
+                                    label={
+                                        // user.isFollowed
+                                        //     ? "Following"
+                                        //     : "Follow"
+                                        "Follow"
+                                    }
+                                />
+                            </Flex>
+                        ))}
                     </Stack>
                 </CardBody>
             </Card>

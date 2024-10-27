@@ -26,43 +26,71 @@ import { CustomBtnPrimary } from "../components/CustomBtn";
 import { useAuthStore } from "../store/auth";
 // import fakeUsers from "../datas/user.json";
 import { User } from "../types/user";
+import { Thread } from "../types/thread";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import API from "../libs/axios";
+import { getProfile } from "../api/profile";
+import { getThread } from "../api/thread";
 
-// Definisikan interface untuk thread
-interface Thread {
-    id: number;
-    content: string;
-    user: User;
-    created_at: string;
-    media: {
-        url: string;
-    }[];
-    _count: {
-        like: number;
-    };
-    isLiked: boolean;
-    // tambahkan properti lain sesuai dengan respons API Anda
-}
 
 export function Home() {
-    const { user: loggedInUser } = useAuthStore();
+    const { token } = useAuthStore();
+    const [userProfile, setUserProfile] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
-    const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
+    const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>(
+        {}
+    );
     const [threads, setThreads] = useState<Thread[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
 
+    // hook fetch profile
+    useEffect(() => {
+        const fetchProfile = async () => {
+            if (token) {
+                setIsLoading(true);
+                setError(null);
+                try {
+                    const profile = await getProfile();
+                    setUserProfile(profile as User);
+                } catch (error) {
+                    console.error("Error fetching profile:", error);
+                    setError("Gagal mengambil data profil");
+                } finally {
+                    setIsLoading(false);
+                }
+            }
+        };
+        fetchProfile();
+    }, [setIsLoading, token]);
+
+    // destructuring user data
+    const getUserData = (userProfile: User | null) => {
+        if (!userProfile) return null;
+        const { profile } = userProfile;
+        return {
+            fullName: profile.profile.fullName,
+            username: profile.username,
+            bio: profile.profile.bio,
+            avatar: profile.profile.avatar,
+            banner: profile.profile.banner,
+        };
+    };
+    const userData = getUserData(userProfile);
+
+    // hook fetch threads
     useEffect(() => {
         fetchThreads();
     }, []);
 
+    // fetch threads
     const fetchThreads = async () => {
         try {
             setIsLoading(true);
-            const response = await API.get<Thread[]>("/threads");
-            setThreads(response.data);
+            const response = await getThread();
+            setThreads(response);
         } catch (error) {
             console.error("Error fetching threads:", error);
         } finally {
@@ -75,12 +103,6 @@ export function Home() {
         return response.data;
     };
 
-    // const handleLike = (userId: number) => {
-    //     setLikedPosts((prevLikedPosts) => ({
-    //         ...prevLikedPosts,
-    //         [userId]: !prevLikedPosts[userId],
-    //     }));
-    // };
 
     return (
         <>
@@ -101,7 +123,7 @@ export function Home() {
                 >
                     <Avatar
                         name="Profile Avatar"
-                        src={loggedInUser?.profile?.profilePicture}
+                        src={userData?.avatar}
                         size={"sm"}
                     />
                     <Text
@@ -132,7 +154,7 @@ export function Home() {
                             <Flex gap={3}>
                                 <Avatar
                                     name="Profile Avatar"
-                                    src={loggedInUser?.profile?.profilePicture}
+                                    src={userData?.avatar}
                                     size={"sm"}
                                 />
                                 <Textarea
@@ -189,7 +211,10 @@ export function Home() {
                                 <Link to={`/post/${thread.id}`} key={thread.id}>
                                     <Avatar
                                         name="Other Profile Avatar"
-                                        src={thread.user.profile.profilePicture}
+                                        src={
+                                            thread.user.profile.avatar ||
+                                            undefined
+                                        }
                                         size={"sm"}
                                     />
                                 </Link>
@@ -199,13 +224,17 @@ export function Home() {
                                     alignItems={"start"}
                                     fontWeight={"normal"}
                                 >
-                                    <Link to={`/post/${thread.id}`} key={thread.id}>
+                                    <Link
+                                        to={`/post/${thread.id}`}
+                                        key={thread.id}
+                                    >
                                         <HStack spacing={1} pb={"3px"}>
                                             <Heading
                                                 size={"sm"}
                                                 fontSize={"14px"}
                                             >
-                                                {thread.user.profile.fullName}
+                                                {thread.user.profile.fullName ??
+                                                    "Nama pengguna"}
                                             </Heading>
                                             <Text
                                                 color={fontColor}
@@ -225,7 +254,9 @@ export function Home() {
                                                 color={fontColor}
                                                 fontSize={"14px"}
                                             >
-                                                {new Date(thread.created_at).toLocaleTimeString()}
+                                                {new Date(
+                                                    thread.created_at
+                                                ).toLocaleTimeString()}
                                             </Text>
                                         </HStack>
                                         <Text
@@ -237,16 +268,20 @@ export function Home() {
                                         </Text>
                                         {thread.media.length > 0 && (
                                             <Flex flexWrap="wrap" gap={1}>
-                                                {thread.media.map((media, index) => (
-                                                    <Image
-                                                        key={index}
-                                                        src={media.url}
-                                                        alt={`User post image ${index + 1}`}
-                                                        borderRadius="md"
-                                                        maxWidth="100%"
-                                                        height="auto"
-                                                    />
-                                                ))}
+                                                {thread.media.map(
+                                                    (media, index) => (
+                                                        <Image
+                                                            key={index}
+                                                            src={media.url}
+                                                            alt={`User post image ${
+                                                                index + 1
+                                                            }`}
+                                                            borderRadius="md"
+                                                            maxWidth="100%"
+                                                            maxHeight="300px"
+                                                        />
+                                                    )
+                                                )}
                                             </Flex>
                                         )}
                                     </Link>

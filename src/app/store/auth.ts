@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { User } from "../types/user";
 
 interface AuthState {
-  user: unknown | null;
+  user: User | null;
   token: string | null;
-  setUser: (user: unknown) => void;
+  setUser: (user: User) => void;
   setToken: (token: string) => void;
   logout: () => void;
 }
@@ -23,3 +24,8 @@ export const useAuthStore = create(
     }
   )
 );
+
+// // Saat login atau fetch profile
+// const setUserData = (userData: User) => {
+//     useAuthStore.getState().setUser(userData);
+// };
