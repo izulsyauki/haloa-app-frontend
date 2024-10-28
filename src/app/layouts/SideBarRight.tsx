@@ -48,8 +48,14 @@ export function SideBarRight() {
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const outlineColor = useColorModeValue("white", "#2d3748");
     const [suggestedUser, setSuggestedUser] = useState<User[]>([]);
-    const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } =
-        useHandleFollowUser();
+    const {
+        isOpen,
+        onClose,
+        selectedUser,
+        handleFollowClick,
+        handleUnfollow,
+        isLoading: followLoading,
+    } = useHandleFollowUser();
     const galleryButtonBg = useColorModeValue("white", "#2d3748");
     const [followCounts, setFollowCounts] = useState({
         followers: 0,
@@ -102,14 +108,19 @@ export function SideBarRight() {
         setIsLoading(true);
         try {
             const users = await getSuggestedUsers(3);
-            setSuggestedUser(users as User[]);
+            // Filter user yang sudah di-follow
+            const filteredUsers = (users as User[]).filter(user => !user.isFollowed);
+            setSuggestedUser(filteredUsers);
+            
+            // Fetch ulang follow counts
+            await fetchFollowCounts();
         } catch (error) {
             console.error("Error fetching suggested users:", error);
             setError("Gagal mengambil data pengguna yang direkomendasikan");
         } finally {
             setIsLoading(false);
         }
-    }, [token]);
+    }, [token, fetchFollowCounts]);
 
     // hook fetch
     useEffect(() => {
@@ -131,6 +142,20 @@ export function SideBarRight() {
         };
     };
     const userData = getUserData(userProfile);
+
+    useEffect(() => {
+        const fetchCounts = async () => {
+            try {
+                const counts = await getFollowCounts();
+                console.log("Frontend received counts:", counts); // debugging
+                setFollowCounts(counts as { followers: number; following: number });
+            } catch (error) {
+                console.error("Error fetching counts:", error);
+            }
+        };
+        
+        fetchCounts();
+    }, []);
 
     return (
         <Stack
@@ -422,9 +447,12 @@ export function SideBarRight() {
                     <Stack spacing="2">
                         {suggestedUser.map((user) => (
                             <Flex
+                                key={user.id}
                                 gap={"15px"}
                                 fontSize={"14px"}
                                 alignItems={"center"}
+                                opacity={user.isFollowed ? "0.5" : "1"}
+                                transition="all 0.5s ease"
                             >
                                 <Avatar
                                     src={user.profile.avatar || undefined}
@@ -432,12 +460,8 @@ export function SideBarRight() {
                                     w={"36px"}
                                 />
                                 <Box flex={5} gap={"10px"}>
-                                    <Text
-                                        fontSize={"12px"}
-                                        fontWeight={"medium"}
-                                    >
-                                        {user.profile.fullName ??
-                                            "Nama pengguna"}
+                                    <Text fontSize={"12px"} fontWeight={"medium"}>
+                                        {user.profile.fullName ?? "Nama pengguna"}
                                     </Text>
                                     <Text color={fontColor} fontSize={"12px"}>
                                         @{user.username ?? "Username belum ada"}
@@ -448,26 +472,24 @@ export function SideBarRight() {
                                     h={"fit-content"}
                                     fontSize={"12px"}
                                     fontWeight={"medium"}
-                                    onClick={() => {
-                                        handleFollowClick(
-                                            user,
-                                            suggestedUser,
-                                            setSuggestedUser
-                                        );
-                                    }}
-                                    label={
-                                        // user.isFollowed
-                                        //     ? "Following"
-                                        //     : "Follow"
-                                        "Follow"
-                                    }
+                                    isLoading={followLoading} // Gunakan followLoading untuk loading state
+                                    onClick={() => handleFollowClick(
+                                        user, 
+                                        suggestedUser, 
+                                        setSuggestedUser,
+                                        fetchSuggestedUser  // Pastikan ini dipassing
+                                    )}
+                                    label={user.isFollowed ? "Following" : "Follow"} // Pastikan kondisi ini benar
+                                    bg={user.isFollowed ? "green.100" : undefined}
+                                    color={user.isFollowed ? "green.500" : undefined}
                                 />
                             </Flex>
                         ))}
                     </Stack>
                 </CardBody>
             </Card>
-            // Modal unfollow user
+            
+            {/* Modal konfirmasi unfollow user */}
             {selectedUser && (
                 <>
                     <Modal isOpen={isOpen} onClose={onClose}>
@@ -493,12 +515,11 @@ export function SideBarRight() {
                             >
                                 <CustomBtnSecondary
                                     label="Unfollow"
-                                    onClick={() =>
-                                        handleUnfollow(
-                                            suggestedUser,
-                                            setSuggestedUser
-                                        )
-                                    }
+                                    onClick={() => handleUnfollow(
+                                        suggestedUser,
+                                        setSuggestedUser,
+                                        fetchSuggestedUser  // Pastikan ini dipassing
+                                    )}
                                     m={"0px"}
                                     w={"fit-content"}
                                     h={"fit-content"}

@@ -2,13 +2,13 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./Router";
 import { useEffect } from "react";
 import { useAuthStore } from "./store/auth";
-
+import Cookies from "js-cookie";
 function App() {
   const { setUser, setToken } = useAuthStore();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
+    const token = Cookies.get("token");
+    const user = Cookies.get("user");
 
     if (token && user){
       setToken(token);

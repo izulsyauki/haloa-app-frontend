@@ -14,29 +14,46 @@ import {
     Text,
     useColorModeValue,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
 import fakeUsers from "../datas/user.json";
 import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
 import { useAuthStore } from "../store/auth";
-import { User } from "../types/user";
+import { User, Follow } from "../types/user";
+import { getFollowers, getFollowing } from "../api/follow";
 
 export function Follows() {
-    const { user: loggedInUser } = useAuthStore();
-    const [suggestedUser, setSuggestedUser] = useState<User[]>(fakeUsers);
+    // const { user: loggedInUser } = useAuthStore();
+    // const [suggestedUser, setSuggestedUser] = useState<User[]>(fakeUsers as User[]);
     const [view, setView] = useState<"followers" | "following">("followers");
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } =
         useHandleFollowUser();
+    const [followers, setFollowers] = useState<User[]>([]);
+    const [following, setFollowing] = useState<User[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    //filter user berdasarkan view
-    const filteredUsers = suggestedUser.filter((user) => {
-        if (view === "followers") {
-            return user.username !== loggedInUser?.username;
-        } else if (view === "following") {
-            return user.username !== loggedInUser?.username && user.isFollowed;
+    useEffect(() => {
+        fetchFollowData();
+    }, []);
+
+    const fetchFollowData = async () => {
+        try {
+            setIsLoading(true);
+            const [followersData, followingData] = await Promise.all([
+                getFollowers(),
+                getFollowing()
+            ]);
+            setFollowers(followersData as User[]);
+            setFollowing(followingData as User[]);
+        } catch (error) {
+            console.error("Error fetching follow data:", error);
+        } finally {
+            setIsLoading(false);
         }
-    });
+    };
+
+    const filteredUsers = view === "followers" ? followers : following;
 
     return (
         <Box w={"100%"}>
@@ -86,41 +103,41 @@ export function Follows() {
                 />
             </HStack>
             <Stack spacing="3" p={"1rem"}>
-                {filteredUsers.slice(0, 10).map((user) => (
-                    <Box>
+                {filteredUsers.map((user) => (
+                    <Box key={user.id}>
                         <Flex
                             gap={"15px"}
                             fontSize={"12px"}
                             alignItems={"center"}
                         >
                             <Avatar
-                                src={user.profile.profilePicture}
+                                src={view === "followers" ? user.follower?.profile.avatar : user.following?.profile.avatar || ""}
                                 h={"36px"}
-                                w={"36 px"}
+                                w={"36px"}
                             />
                             <Box flex={5} gap={"10px"}>
                                 <Text fontWeight={"medium"}>
-                                    {user.profile.fullName}
+                                    {view === "followers"
+                                        ? user.follower?.profile.fullName
+                                        : user.following?.profile.fullName}
                                 </Text>
-                                <Text color={fontColor}>@{user.username}</Text>
+                                <Text color={fontColor}>
+                                    @{view === "followers" ? user.follower?.username : user.following?.username}
+                                </Text>
                             </Box>
                             <CustomBtnSecondary
                                 p={"6px 12px"}
                                 h={"fit-content"}
                                 fontSize={"12px"}
                                 fontWeight={"medium"}
-                                onClick={() => {
-                                    handleFollowClick(
-                                        user,
-                                        suggestedUser,
-                                        setSuggestedUser
-                                    );
-                                }}
+                                onClick={() => handleFollowClick(user)}
                                 label={user.isFollowed ? "Following" : "Follow"}
                             />
                         </Flex>
                         <Text fontSize={"12px"} ml={"52px"}>
-                            {user.profile.bio}
+                            {view === "followers"
+                                ? user.follower?.profile.bio
+                                : user.following?.profile.bio || ""}
                         </Text>
                     </Box>
                 ))}
@@ -139,7 +156,7 @@ export function Follows() {
                             <ModalBody>
                                 <Text>
                                     Are you sure want to unfollow{" "}
-                                    {selectedUser.profile.fullName}?
+                                    {selectedUser?.profile?.fullName || selectedUser?.username}?
                                 </Text>
                             </ModalBody>
 
@@ -152,12 +169,7 @@ export function Follows() {
                             >
                                 <CustomBtnSecondary
                                     label="Unfollow"
-                                    onClick={() =>
-                                        handleUnfollow(
-                                            suggestedUser,
-                                            setSuggestedUser
-                                        )
-                                    }
+                                    onClick={() => handleUnfollow(selectedUser.id)}
                                     m={"0px"}
                                     w={"fit-content"}
                                     h={"fit-content"}

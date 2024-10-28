@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { User } from "../types/user";
+import Cookies from "js-cookie";
 
 interface AuthState {
   user: User | null;
@@ -17,7 +18,11 @@ export const useAuthStore = create(
       token: null,
       setUser: (user) => set({ user }),
       setToken: (token) => set({ token }),
-      logout: () => set({ user: null, token: null }),
+      logout: () => {
+        Cookies.remove("token");
+        Cookies.remove("user");
+        set({ user: null, token: null });
+      },
     }),
     {
       name: "auth-storage",
