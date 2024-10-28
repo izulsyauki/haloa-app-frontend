@@ -30,9 +30,9 @@ export interface User {
     profile: Profile;
     createdAt: string;
     updatedAt: string;
-    isFollowed: boolean;
-    follower?: Follow[];    // User yang mengikuti
-    following?: Follow[];   // User yang diikuti
+    isFollowed: boolean; // Pastikan ini selalu ada
+    follower?: Follow[];
+    following?: Follow[];
     _count?: {
         follower: number;
         following: number;

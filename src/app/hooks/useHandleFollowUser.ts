@@ -2,9 +2,11 @@
 import { useDisclosure } from "@chakra-ui/react";
 import { useState } from "react";
 import { User } from "../types/user";
-import { followUser } from "../api/follow";
+import { followUser, unfollowUser } from "../api/follow";
+import { useFollowStore } from "../store/follow";
 
 export const useHandleFollowUser = () => {
+  const { addFollowing, removeFollowingId } = useFollowStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,14 +27,18 @@ export const useHandleFollowUser = () => {
     setIsLoading(true);
     setError(null);
 
-    // Optimistic UI update
-    const updatedUsers = suggestedUser.map(u => 
-        u.id === user.id ? { ...u, isFollowed: true } : u
-    );
-    setSuggestedUser(updatedUsers);
-
     try {
         await followUser(user.id);
+        addFollowing(user.id);
+
+        // Update local state dengan isFollowed
+        const updatedUsers = suggestedUser.map(u => 
+            u.id === user.id 
+                ? { ...u, isFollowed: true } 
+                : u
+        ).filter(u => !u.isFollowed); // Filter yang belum di-follow
+
+        setSuggestedUser(updatedUsers);
 
         // Fetch data suggested users yang baru
         if (fetchNewSuggested) {
@@ -42,12 +48,6 @@ export const useHandleFollowUser = () => {
     } catch (error) {
         console.error("Error following user:", error);
         setError("Gagal follow user");
-
-        // Revert UI update if there's an error
-        const revertedUsers = suggestedUser.map(u => 
-            u.id === user.id ? { ...u, isFollowed: false } : u
-        );
-        setSuggestedUser(revertedUsers);
     } finally {
         setIsLoading(false);
     }
@@ -64,19 +64,21 @@ export const useHandleFollowUser = () => {
     setError(null);
 
     try {
-      await followUser(selectedUser.id);
-      onClose();
-      
-      // Fetch data suggested users yang baru setelah unfollow
-      if (fetchNewSuggested) {
-        await fetchNewSuggested();
-      }
-      
+        await unfollowUser(selectedUser.id);
+        removeFollowingId(selectedUser.id);
+        
+        onClose();
+        
+        // Tambahkan kembali user ke suggested users
+        if (fetchNewSuggested) {
+            await fetchNewSuggested();
+        }
+        
     } catch (error) {
-      setError("Failed to unfollow user");
+        setError("Failed to unfollow user");
     } finally {
-      setIsLoading(false);
-      setSelectedUser(null);
+        setIsLoading(false);
+        setSelectedUser(null);
     }
   };
 

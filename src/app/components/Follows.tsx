@@ -21,6 +21,7 @@ import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
 import { useAuthStore } from "../store/auth";
 import { User, Follow } from "../types/user";
 import { getFollowers, getFollowing } from "../api/follow";
+import { useFollowStore } from '../store/follow';
 
 export function Follows() {
     // const { user: loggedInUser } = useAuthStore();
@@ -32,26 +33,44 @@ export function Follows() {
     const [followers, setFollowers] = useState<User[]>([]);
     const [following, setFollowing] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const followingIds = useFollowStore((state) => state.followingIds);
+    const setFollowingIds = useFollowStore((state) => state.setFollowingIds);
 
     useEffect(() => {
-        fetchFollowData();
-    }, []);
+        const fetchFollowData = async () => {
+            try {
+                setIsLoading(true);
+                const [followersData, followingData] = await Promise.all([
+                    getFollowers(),
+                    getFollowing()
+                ]);
+                
+                // Update followingIds di store
+                const followingIds = followingData.map((user: User) => user.id);
+                setFollowingIds(followingIds);
+                
+                // Update data dengan status isFollowed yang benar
+                const followersWithStatus = followersData.map((user: User) => ({
+                    ...user,
+                    isFollowed: followingIds.includes(user.id)
+                }));
+                
+                const followingWithStatus = followingData.map((user: User) => ({
+                    ...user,
+                    isFollowed: true // Following selalu true
+                }));
 
-    const fetchFollowData = async () => {
-        try {
-            setIsLoading(true);
-            const [followersData, followingData] = await Promise.all([
-                getFollowers(),
-                getFollowing()
-            ]);
-            setFollowers(followersData as User[]);
-            setFollowing(followingData as User[]);
-        } catch (error) {
-            console.error("Error fetching follow data:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+                setFollowers(followersWithStatus);
+                setFollowing(followingWithStatus);
+            } catch (error) {
+                console.error("Error fetching follow data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchFollowData();
+    }, [setFollowingIds]);
 
     const filteredUsers = view === "followers" ? followers : following;
 

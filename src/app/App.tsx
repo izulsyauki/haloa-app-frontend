@@ -3,8 +3,13 @@ import { router } from "./Router";
 import { useEffect } from "react";
 import { useAuthStore } from "./store/auth";
 import Cookies from "js-cookie";
+import { useFollowStore } from "./store/follow";
+import { getFollowing } from "./api/follow";
+import { Follow } from "./types/user";
+
 function App() {
   const { setUser, setToken } = useAuthStore();
+  const { setFollowingIds } = useFollowStore();
 
   useEffect(() => {
     const token = Cookies.get("token");
@@ -15,6 +20,22 @@ function App() {
       setUser(JSON.parse(user));
     }
   }, [setUser, setToken]);
+
+  useEffect(() => {
+    const initializeFollowingIds = async () => {
+      try {
+        const followingData = await getFollowing() as Follow[];
+        const followingIds = followingData.map((follow: Follow) => 
+          follow.following!.id
+        ).filter((id): id is number => id !== undefined);
+        setFollowingIds(followingIds as number[]);
+      } catch (error) {
+        console.error("Error initializing following ids:", error);
+      }
+    };
+
+    initializeFollowingIds();
+  }, [setFollowingIds]);
 
     return (
         <>

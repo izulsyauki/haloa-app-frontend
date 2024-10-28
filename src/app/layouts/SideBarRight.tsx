@@ -38,6 +38,7 @@ import { User } from "../types/user";
 import { getProfile } from "../api/profile";
 import { getFollowCounts } from "../api/follow";
 import { getSuggestedUsers } from "../api/user";
+import { useFollowStore } from '../store/follow';
 
 export function SideBarRight() {
     const location = useLocation();
@@ -61,6 +62,7 @@ export function SideBarRight() {
         followers: 0,
         following: 0,
     });
+    const followingIds = useFollowStore((state) => state.followingIds);
 
     // handle untuk edit profile
     const {
@@ -108,19 +110,21 @@ export function SideBarRight() {
         setIsLoading(true);
         try {
             const users = await getSuggestedUsers(3);
-            // Filter user yang sudah di-follow
-            const filteredUsers = (users as User[]).filter(user => !user.isFollowed);
+            // Tambahkan isFollowed berdasarkan followingIds dari store
+            const usersWithFollowStatus = (users as User[]).map(user => ({
+                ...user,
+                isFollowed: followingIds.includes(user.id)
+            }));
+            // Filter hanya user yang belum di-follow
+            const filteredUsers = usersWithFollowStatus.filter(user => !user.isFollowed);
             setSuggestedUser(filteredUsers);
-            
-            // Fetch ulang follow counts
-            await fetchFollowCounts();
         } catch (error) {
             console.error("Error fetching suggested users:", error);
             setError("Gagal mengambil data pengguna yang direkomendasikan");
         } finally {
             setIsLoading(false);
         }
-    }, [token, fetchFollowCounts]);
+    }, [token, followingIds]);
 
     // hook fetch
     useEffect(() => {
@@ -472,16 +476,16 @@ export function SideBarRight() {
                                     h={"fit-content"}
                                     fontSize={"12px"}
                                     fontWeight={"medium"}
-                                    isLoading={followLoading} // Gunakan followLoading untuk loading state
+                                    isLoading={followLoading}
                                     onClick={() => handleFollowClick(
                                         user, 
                                         suggestedUser, 
                                         setSuggestedUser,
-                                        fetchSuggestedUser  // Pastikan ini dipassing
+                                        fetchSuggestedUser
                                     )}
-                                    label={user.isFollowed ? "Following" : "Follow"} // Pastikan kondisi ini benar
-                                    bg={user.isFollowed ? "green.100" : undefined}
-                                    color={user.isFollowed ? "green.500" : undefined}
+                                    label="Follow"  // Karena suggested user hanya menampilkan yang belum di-follow
+                                    bg={undefined}
+                                    color={undefined}
                                 />
                             </Flex>
                         ))}
