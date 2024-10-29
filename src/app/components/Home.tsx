@@ -15,6 +15,7 @@ import {
     ModalHeader,
     ModalOverlay,
     Spacer,
+    Spinner,
     Text,
     Textarea,
     useColorModeValue,
@@ -32,6 +33,7 @@ import { useThreadsFeeds } from "../hooks/useThreadsFeeds";
 import API from "../libs/axios";
 import { Thread } from "../types/thread";
 import { User } from "../types/user";
+import { formatDate } from "../utils/fomatDate";
 
 
 export function Home() {
@@ -44,7 +46,10 @@ export function Home() {
     const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>(
         {}
     );
-    const { threads } = useThreadsFeeds();
+    const { threads } = useThreadsFeeds(isLoading, setIsLoading);
+
+    console.log("ini threads: ", threads);
+    console.log("ini threads: ", threads?.[0]?.createdAt);
 
     // hook fetch profile
     useEffect(() => {
@@ -81,7 +86,6 @@ export function Home() {
     const userData = getUserData(userProfile);
 
    
-
     const handleLike = async (threadId: number) => {
         const response = await API.post(`/like/${threadId}`);
         return response.data;
@@ -178,9 +182,16 @@ export function Home() {
                 </Modal>
 
                 {isLoading ? (
-                    <Box p={4}>Loading...</Box>
+                    <Box display={"flex"} justifyContent={"center"} alignItems={"center"} p={4} w={"100%"} h={"75%"}>
+                        <Spinner 
+                            thickness='4px'
+                            speed= "0.65s"
+                            emptyColor= "gray.200"
+                            size="lg"
+                        />
+                    </Box>
                 ) : (
-                    threads!.map((thread: Thread) => (
+                    threads?.map((thread: Thread) => (
                         <Box
                             key={thread.id}
                             w={"100%"}
@@ -238,9 +249,7 @@ export function Home() {
                                                 color={fontColor}
                                                 fontSize={"14px"}
                                             >
-                                                {new Date(
-                                                    thread.created_at
-                                                ).toLocaleTimeString()}
+                                                {formatDate(thread.createdAt)}
                                             </Text>
                                         </HStack>
                                         <Text

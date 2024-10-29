@@ -1,13 +1,12 @@
-import { RouterProvider } from "react-router-dom";
-import { router } from "./Router";
-import { useEffect } from "react";
-import { useAuthStore } from "./store/auth";
 import Cookies from "js-cookie";
-import { useFollowStore } from "./store/follow";
+import { useEffect } from "react";
+import { RouterProvider } from "react-router-dom";
 import { getFollowing } from "./api/follow";
-import { Follow } from "./types/user";
-import { ChakraProvider, theme, ColorModeScript } from "@chakra-ui/react";
 import { Providers } from "./providers";
+import { router } from "./Router";
+import { useAuthStore } from "./store/auth";
+import { useFollowStore } from "./store/follow";
+import { Follow } from "./types/user";
 
 function App() {
     const { setUser, setToken } = useAuthStore();

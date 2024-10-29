@@ -1,115 +1,121 @@
 {
-  "hash": "bc9d7d90",
+  "hash": "c89d6012",
   "configHash": "ec1e20bc",
-  "lockfileHash": "ee0ef8a9",
-  "browserHash": "95c48f9a",
+  "lockfileHash": "655af511",
+  "browserHash": "41cef583",
   "optimized": {
     "react": {
       "src": "../../node_modules/react/index.js",
       "file": "react.js",
-      "fileHash": "9e1ea126",
+      "fileHash": "8ae19fd9",
       "needsInterop": true
     },
     "react/jsx-dev-runtime": {
       "src": "../../node_modules/react/jsx-dev-runtime.js",
       "file": "react_jsx-dev-runtime.js",
-      "fileHash": "7ae3d633",
+      "fileHash": "76f87f90",
       "needsInterop": true
     },
     "react/jsx-runtime": {
       "src": "../../node_modules/react/jsx-runtime.js",
       "file": "react_jsx-runtime.js",
-      "fileHash": "4f43620a",
+      "fileHash": "925cca0d",
       "needsInterop": true
     },
     "@chakra-ui/icons": {
       "src": "../../node_modules/@chakra-ui/icons/dist/esm/index.mjs",
       "file": "@chakra-ui_icons.js",
-      "fileHash": "72e5daef",
+      "fileHash": "f20627cf",
       "needsInterop": false
     },
     "@chakra-ui/react": {
       "src": "../../node_modules/@chakra-ui/react/dist/esm/index.mjs",
       "file": "@chakra-ui_react.js",
-      "fileHash": "cf8d3a57",
+      "fileHash": "0ad1396e",
       "needsInterop": false
     },
     "@hookform/resolvers/zod": {
       "src": "../../node_modules/@hookform/resolvers/zod/dist/zod.mjs",
       "file": "@hookform_resolvers_zod.js",
-      "fileHash": "cfe9b67f",
+      "fileHash": "8dc90ed6",
       "needsInterop": false
     },
     "@uidotdev/usehooks": {
       "src": "../../node_modules/@uidotdev/usehooks/index.js",
       "file": "@uidotdev_usehooks.js",
-      "fileHash": "5d251239",
+      "fileHash": "bc89d94d",
       "needsInterop": false
     },
     "axios": {
       "src": "../../node_modules/axios/index.js",
       "file": "axios.js",
-      "fileHash": "c4cb9b7e",
+      "fileHash": "8967a429",
       "needsInterop": false
     },
     "js-cookie": {
       "src": "../../node_modules/js-cookie/dist/js.cookie.mjs",
       "file": "js-cookie.js",
-      "fileHash": "16497a20",
+      "fileHash": "ccc90b8a",
       "needsInterop": false
     },
     "react-dom/client": {
       "src": "../../node_modules/react-dom/client.js",
       "file": "react-dom_client.js",
-      "fileHash": "a9234fdf",
+      "fileHash": "6a3cf355",
       "needsInterop": true
     },
     "react-hook-form": {
       "src": "../../node_modules/react-hook-form/dist/index.esm.mjs",
       "file": "react-hook-form.js",
-      "fileHash": "1022f04e",
+      "fileHash": "f0a7aafe",
       "needsInterop": false
     },
     "react-icons/fa": {
       "src": "../../node_modules/react-icons/fa/index.mjs",
       "file": "react-icons_fa.js",
-      "fileHash": "9a8e5bf9",
+      "fileHash": "9d1d66cf",
       "needsInterop": false
     },
     "react-icons/hi": {
       "src": "../../node_modules/react-icons/hi/index.mjs",
       "file": "react-icons_hi.js",
-      "fileHash": "48e827c9",
+      "fileHash": "2a2190dd",
       "needsInterop": false
     },
     "react-router-dom": {
       "src": "../../node_modules/react-router-dom/dist/index.js",
       "file": "react-router-dom.js",
-      "fileHash": "05d4e2db",
+      "fileHash": "df5c6088",
       "needsInterop": false
     },
     "zod": {
       "src": "../../node_modules/zod/lib/index.mjs",
       "file": "zod.js",
-      "fileHash": "c9273dc3",
+      "fileHash": "896734e1",
       "needsInterop": false
     },
     "zustand": {
       "src": "../../node_modules/zustand/esm/index.mjs",
       "file": "zustand.js",
-      "fileHash": "b943f67a",
+      "fileHash": "a7e2f8d9",
       "needsInterop": false
     },
     "zustand/middleware": {
       "src": "../../node_modules/zustand/esm/middleware.mjs",
       "file": "zustand_middleware.js",
-      "fileHash": "fcc825d7",
+      "fileHash": "a0ebf140",
       "needsInterop": false
     },
     "@tanstack/react-query": {
       "src": "../../node_modules/@tanstack/react-query/build/modern/index.js",
       "file": "@tanstack_react-query.js",
-      "fileHash": "b4a5f246",
+      "fileHash": "54c2507f",
+      "needsInterop": false
+    },
+    "timeago.js": {
+      "src": "../../node_modules/timeago.js/esm/index.js",
+      "file": "timeago__js.js",
+      "fileHash": "b155b8d0",
       "needsInterop": false
     }
   },

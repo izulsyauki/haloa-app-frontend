@@ -4,7 +4,7 @@ export interface Thread {
     id: number;
     content: string;
     user: User;
-    created_at: string;
+    createdAt: string;
     media: {
         url: string;
     }[];
