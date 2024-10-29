@@ -1,9 +1,9 @@
 import {
   require_react
-} from "./chunk-65KY755N.js";
+} from "./chunk-BYIBYIM7.js";
 import {
   __toESM
-} from "./chunk-V4OQ3NZ2.js";
+} from "./chunk-HXA6O6EE.js";
 
 // node_modules/react-icons/lib/iconBase.mjs
 var import_react2 = __toESM(require_react(), 1);
@@ -146,4 +146,4 @@ function IconBase(props) {
 export {
   GenIcon
 };
-//# sourceMappingURL=chunk-2CVX3UOB.js.map
+//# sourceMappingURL=chunk-G2V4VTK2.js.map

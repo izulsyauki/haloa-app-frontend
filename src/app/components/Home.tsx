@@ -17,21 +17,21 @@ import {
     Spacer,
     Text,
     Textarea,
+    useColorModeValue,
     useDisclosure,
     VStack,
-    useColorModeValue,
 } from "@chakra-ui/react";
 import myIcons from "../assets/icons/myIcons";
 import { CustomBtnPrimary } from "../components/CustomBtn";
 import { useAuthStore } from "../store/auth";
 // import fakeUsers from "../datas/user.json";
-import { User } from "../types/user";
-import { Thread } from "../types/thread";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import API from "../libs/axios";
 import { getProfile } from "../api/profile";
-import { getThread } from "../api/thread";
+import { useThreadsFeeds } from "../hooks/useThreadsFeeds";
+import API from "../libs/axios";
+import { Thread } from "../types/thread";
+import { User } from "../types/user";
 
 
 export function Home() {
@@ -44,7 +44,7 @@ export function Home() {
     const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>(
         {}
     );
-    const [threads, setThreads] = useState<Thread[]>([]);
+    const { threads } = useThreadsFeeds();
 
     // hook fetch profile
     useEffect(() => {
@@ -80,23 +80,7 @@ export function Home() {
     };
     const userData = getUserData(userProfile);
 
-    // hook fetch threads
-    useEffect(() => {
-        fetchThreads();
-    }, []);
-
-    // fetch threads
-    const fetchThreads = async () => {
-        try {
-            setIsLoading(true);
-            const response = await getThread();
-            setThreads(response);
-        } catch (error) {
-            console.error("Error fetching threads:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+   
 
     const handleLike = async (threadId: number) => {
         const response = await API.post(`/like/${threadId}`);
@@ -196,7 +180,7 @@ export function Home() {
                 {isLoading ? (
                     <Box p={4}>Loading...</Box>
                 ) : (
-                    threads.map((thread: Thread) => (
+                    threads!.map((thread: Thread) => (
                         <Box
                             key={thread.id}
                             w={"100%"}
