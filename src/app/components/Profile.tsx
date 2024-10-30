@@ -26,7 +26,7 @@ import coverImg from "../assets/images/cover.png";
 import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
 import { useAuthStore } from "../store/auth";
 import { User } from "../types/user";
-import { getProfile } from "../api/profile";
+import { getProfileData } from "../api/profile";
 import { getFollowCounts } from "../api/follow";
 import { useHandleEditProfile } from "../hooks/useHandleEditProfile";
 
@@ -137,7 +137,7 @@ export function Profile() {
                 setIsLoading(true);
                 setError(null);
                 try {
-                    const profile = await getProfile();
+                    const profile = await getProfileData();
                     setUserProfile(profile as User);
                 } catch (error) {
                     console.error("Error fetching profile:", error);

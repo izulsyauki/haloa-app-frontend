@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
     Avatar,
     Box,
@@ -24,68 +25,25 @@ import {
 } from "@chakra-ui/react";
 import myIcons from "../assets/icons/myIcons";
 import { CustomBtnPrimary } from "../components/CustomBtn";
-import { useAuthStore } from "../store/auth";
 // import fakeUsers from "../datas/user.json";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { getProfile } from "../api/profile";
-import { useThreadsFeeds } from "../hooks/useThreadsFeeds";
+import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
+import { useAllThreadsFeeds } from "../hooks/useThreadsFeeds";
 import API from "../libs/axios";
 import { Thread } from "../types/thread";
-import { User } from "../types/user";
 import { formatDate } from "../utils/fomatDate";
 
 
 export function Home() {
-    const { token } = useAuthStore();
-    const [userProfile, setUserProfile] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen, onOpen, onClose } = useDisclosure();    
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>(
         {}
     );
-    const { threads } = useThreadsFeeds(isLoading, setIsLoading);
+    const { threads, isLoadingThreads } = useAllThreadsFeeds();
+    const { userProfile } = useGetLoginUserProfile();
 
-    console.log("ini threads: ", threads);
-    console.log("ini threads: ", threads?.[0]?.createdAt);
-
-    // hook fetch profile
-    useEffect(() => {
-        const fetchProfile = async () => {
-            if (token) {
-                setIsLoading(true);
-                setError(null);
-                try {
-                    const profile = await getProfile();
-                    setUserProfile(profile as User);
-                } catch (error) {
-                    console.error("Error fetching profile:", error);
-                    setError("Gagal mengambil data profil");
-                } finally {
-                    setIsLoading(false);
-                }
-            }
-        };
-        fetchProfile();
-    }, [setIsLoading, token]);
-
-    // destructuring user data
-    const getUserData = (userProfile: User | null) => {
-        if (!userProfile) return null;
-        const { profile } = userProfile;
-        return {
-            fullName: profile.profile.fullName,
-            username: profile.username,
-            bio: profile.profile.bio,
-            avatar: profile.profile.avatar,
-            banner: profile.profile.banner,
-        };
-    };
-    const userData = getUserData(userProfile);
-
-   
     const handleLike = async (threadId: number) => {
         const response = await API.post(`/like/${threadId}`);
         return response.data;
@@ -111,7 +69,7 @@ export function Home() {
                 >
                     <Avatar
                         name="Profile Avatar"
-                        src={userData?.avatar}
+                        src={userProfile?.profile?.avatar || ""}
                         size={"sm"}
                     />
                     <Text
@@ -142,7 +100,7 @@ export function Home() {
                             <Flex gap={3}>
                                 <Avatar
                                     name="Profile Avatar"
-                                    src={userData?.avatar}
+                                    src={userProfile?.profile?.avatar || ""}
                                     size={"sm"}
                                 />
                                 <Textarea
@@ -181,7 +139,7 @@ export function Home() {
                     </ModalContent>
                 </Modal>
 
-                {isLoading ? (
+                {isLoadingThreads ? (
                     <Box display={"flex"} justifyContent={"center"} alignItems={"center"} p={4} w={"100%"} h={"75%"}>
                         <Spinner 
                             thickness='4px'

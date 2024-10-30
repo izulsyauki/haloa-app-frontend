@@ -35,15 +35,15 @@ import { useHandleEditProfile } from "../hooks/useHandleEditProfile";
 import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
 import { useAuthStore } from "../store/auth";
 import { User } from "../types/user";
-import { getProfile } from "../api/profile";
+import { getProfileData } from "../api/profile";
 import { getFollowCounts } from "../api/follow";
 import { getSuggestedUsers } from "../api/user";
 import { useFollowStore } from '../store/follow';
+import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
 
 export function SideBarRight() {
     const location = useLocation();
     const { token } = useAuthStore();
-    const [userProfile, setUserProfile] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
@@ -63,6 +63,7 @@ export function SideBarRight() {
         following: 0,
     });
     const followingIds = useFollowStore((state) => state.followingIds);
+    const { userProfile, isLoadingProfile } = useGetLoginUserProfile();
 
     // handle untuk edit profile
     const {
@@ -84,23 +85,6 @@ export function SideBarRight() {
             } catch (error) {
                 console.error("Error fetching follow counts:", error);
                 setError("Gagal mengambil data follow counts");
-            }
-        }
-    }, [token]);
-
-    // fetch profile
-    const fetchProfile = useCallback(async () => {
-        if (token) {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const profile = await getProfile();
-                setUserProfile(profile as User);
-            } catch (error) {
-                console.error("Error fetching profile:", error);
-                setError("Gagal mengambil data profil");
-            } finally {
-                setIsLoading(false);
             }
         }
     }, [token]);
@@ -128,30 +112,15 @@ export function SideBarRight() {
 
     // hook fetch
     useEffect(() => {
-        fetchProfile();
         fetchFollowCounts();
         fetchSuggestedUser();
-    }, [fetchFollowCounts, fetchProfile, fetchSuggestedUser]);
+    }, [fetchFollowCounts, fetchSuggestedUser]);
 
-    // desructuring agar lebih mudah
-    const getUserData = (userProfile: User | null) => {
-        if (!userProfile) return null;
-        const { profile } = userProfile;
-        return {
-            fullName: profile.profile.fullName,
-            username: profile.username,
-            bio: profile.profile.bio,
-            avatar: profile.profile.avatar,
-            banner: profile.profile.banner,
-        };
-    };
-    const userData = getUserData(userProfile);
 
     useEffect(() => {
         const fetchCounts = async () => {
             try {
                 const counts = await getFollowCounts();
-                console.log("Frontend received counts:", counts); // debugging
                 setFollowCounts(counts as { followers: number; following: number });
             } catch (error) {
                 console.error("Error fetching counts:", error);
@@ -188,7 +157,7 @@ export function SideBarRight() {
                         <Flex flexDir={"column"} justifyContent={"flex-end"}>
                             <Box position={"relative"}>
                                 <Image
-                                    src={userData?.banner || coverImg}
+                                    src={userProfile?.profile?.banner || coverImg}
                                     alt="Cover Image"
                                     h={"80px"}
                                     objectFit={"cover"}
@@ -197,7 +166,7 @@ export function SideBarRight() {
                                 />
                                 <Avatar
                                     name="Profile Avatar"
-                                    src={userData?.avatar ?? undefined}
+                                    src={userProfile?.profile?.avatar ?? undefined}
                                     position={"absolute"}
                                     left={"20px"}
                                     bottom={"-23px"}
@@ -215,7 +184,8 @@ export function SideBarRight() {
                                 marginY={"12px"}
                                 onClick={handleEditProfileOpen}
                             />
-
+                            
+                            {/* Modal edit profile */}
                             <Modal
                                 isOpen={isEditProfileOpen}
                                 onClose={handleEditProfileClose}
@@ -244,7 +214,7 @@ export function SideBarRight() {
                                         >
                                             <Image
                                                 src={
-                                                    userData?.banner || coverImg
+                                                    userProfile?.profile?.banner || coverImg
                                                 }
                                                 alt="Cover Image"
                                                 h={"100px"}
@@ -255,7 +225,7 @@ export function SideBarRight() {
                                             <Avatar
                                                 name="Profile Avatar"
                                                 src={
-                                                    userData?.avatar ??
+                                                    userProfile?.profile?.avatar ??
                                                     undefined
                                                 }
                                                 position={"absolute"}
@@ -302,7 +272,7 @@ export function SideBarRight() {
                                                 Full Name
                                             </Text>
                                             <Input
-                                                defaultValue={`${userData?.fullName}`}
+                                                defaultValue={`${userProfile?.profile?.fullName}`}
                                                 onChange={(e) =>
                                                     handleInputChange(
                                                         "fullName",
@@ -325,7 +295,7 @@ export function SideBarRight() {
                                             </Text>
                                             <Input
                                                 defaultValue={
-                                                    userData?.username
+                                                    userProfile?.username
                                                 }
                                                 onChange={(e) =>
                                                     handleInputChange(
@@ -350,7 +320,7 @@ export function SideBarRight() {
                                             <Textarea
                                                 resize={"none"}
                                                 defaultValue={
-                                                    userData?.bio ?? ""
+                                                    userProfile?.profile?.bio ?? ""
                                                 }
                                                 onChange={(e) =>
                                                     handleInputChange(
@@ -381,21 +351,22 @@ export function SideBarRight() {
                                     </ModalFooter>
                                 </ModalContent>
                             </Modal>
+
                         </Flex>
-                        {isLoading ? (
+                        {isLoadingProfile ? (
                             <Text>Loading profile...</Text>
                         ) : error ? (
                             <Text color="red.500">{error}</Text>
-                        ) : userData ? (
+                        ) : userProfile ? (
                             <>
                                 <Heading size="md">
-                                    ✨{userData.fullName ?? "Nama pengguna"}✨
+                                    ✨{userProfile?.profile?.fullName ?? "Nama pengguna"}✨
                                 </Heading>
                                 <Text fontSize={"14px"} color={fontColor}>
-                                    @{userData.username ?? "Username belum ada"}
+                                    @{userProfile?.username ?? "Username belum ada"}
                                 </Text>
                                 <Text fontSize={"14px"}>
-                                    {userData.bio ?? "Bio belum ada"}
+                                    {userProfile?.profile?.bio ?? "Bio belum ada"}
                                 </Text>
                                 <HStack spacing={3}>
                                     <HStack spacing={1}>
