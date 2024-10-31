@@ -26,20 +26,18 @@ import {
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { getFollowCounts } from "../api/follow";
+import { getSuggestedUsers } from "../api/user";
 import myIcons from "../assets/icons/myIcons";
 import coverImg from "../assets/images/cover.png";
 import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
 import { ToggleColorMode } from "../components/ToggleColorMode";
-import fakeUsers from "../datas/user.json";
+import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
 import { useHandleEditProfile } from "../hooks/useHandleEditProfile";
 import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
 import { useAuthStore } from "../store/auth";
-import { User } from "../types/user";
-import { getProfileData } from "../api/profile";
-import { getFollowCounts } from "../api/follow";
-import { getSuggestedUsers } from "../api/user";
 import { useFollowStore } from '../store/follow';
-import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
+import { User } from "../types/user";
 
 export function SideBarRight() {
     const location = useLocation();

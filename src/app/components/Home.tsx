@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { CloseIcon } from "@chakra-ui/icons";
 import {
     Avatar,
     Box,
@@ -7,7 +8,9 @@ import {
     Flex,
     Heading,
     HStack,
+    IconButton,
     Image,
+    Input,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -23,32 +26,96 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { z } from "zod";
 import myIcons from "../assets/icons/myIcons";
 import { CustomBtnPrimary } from "../components/CustomBtn";
-// import fakeUsers from "../datas/user.json";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import useCreateThread from "../hooks/useCreateThread";
 import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
 import { useAllThreadsFeeds } from "../hooks/useThreadsFeeds";
 import API from "../libs/axios";
 import { Thread } from "../types/thread";
 import { formatDate } from "../utils/fomatDate";
 
-
 export function Home() {
-    const { isOpen, onOpen, onClose } = useDisclosure();    
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>(
         {}
     );
     const { threads, isLoadingThreads } = useAllThreadsFeeds();
     const { userProfile } = useGetLoginUserProfile();
+    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const createThreadMutation = useCreateThread();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const {
+        isOpen: isImageOpen,
+        onOpen: onImageOpen,
+        onClose: onImageClose,
+    } = useDisclosure();
 
     const handleLike = async (threadId: number) => {
         const response = await API.post(`/like/${threadId}`);
         return response.data;
     };
 
+    const postThreadSchema = z.object({
+        content: z.string(),
+        media: z.array(z.instanceof(File)).optional(),
+    });
+
+    const form = useForm<z.infer<typeof postThreadSchema>>({
+        resolver: zodResolver(postThreadSchema),
+    });
+
+    const handleOpenFileExplorer = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files) {
+            const newFiles = Array.from(files);
+            if (selectedFiles.length + newFiles.length > 4) {
+                alert("You can only upload up to 4 files");
+                return;
+            }
+
+            setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
+
+            newFiles.forEach((file) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPreviewUrls((prevImages) => [
+                        ...prevImages,
+                        reader.result as string,
+                    ]);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    };
+
+    const onSubmit = form.handleSubmit(async (data) => {
+        try {
+            await createThreadMutation.mutateAsync({
+                content: data.content,
+                media: selectedFiles,
+            });
+
+            form.reset();
+            setSelectedFiles([]);
+            setPreviewUrls([]);
+            onClose();
+        } catch (error) {
+            console.error("Error posting thread:", error);
+        }
+    });
 
     return (
         <>
@@ -91,60 +158,157 @@ export function Home() {
                     />
                 </Button>
 
+                {/* Modal post thread */}
                 <Modal isOpen={isOpen} onClose={onClose}>
                     <ModalOverlay />
                     <ModalContent padding={"10px 10px"}>
-                        <ModalHeader></ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody padding={"0px 10px"}>
-                            <Flex gap={3}>
-                                <Avatar
-                                    name="Profile Avatar"
-                                    src={userProfile?.profile?.avatar || ""}
-                                    size={"sm"}
-                                />
-                                <Textarea
-                                    placeholder="What is happening?!"
-                                    size="sm"
-                                    resize="none"
-                                    variant={"unstyled"}
-                                />
-                            </Flex>
-                        </ModalBody>
-                        <Divider />
-                        <ModalFooter padding={"10px 0px"}>
-                            <Flex
-                                justifyContent={"space-between"}
-                                w={"100%"}
-                                alignItems={"center"}
-                            >
-                                <Button
-                                    variant={"ghost"}
-                                    padding={"10px"}
-                                    borderRadius={"0px"}
+                        <form
+                            onSubmit={(e) => {
+                                console.log("form submitted");
+                                onSubmit(e);
+                            }}
+                        >
+                            <ModalHeader></ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody padding={"0px 10px"}>
+                                <Flex gap={3}>
+                                    <Avatar
+                                        name="Profile Avatar"
+                                        src={userProfile?.profile?.avatar || ""}
+                                        size={"sm"}
+                                    />
+                                    <Textarea
+                                        placeholder="What is happening?!"
+                                        size="sm"
+                                        resize="none"
+                                        variant={"unstyled"}
+                                        {...form.register("content")}
+                                    />
+                                </Flex>
+
+                                {/* Preview post images */}
+                                {previewUrls.length > 0 && (
+                                    <Flex gap={1} flexWrap="wrap" pb={3}>
+                                        {previewUrls.map((url, index) => (
+                                            <Box
+                                                key={index}
+                                                position="relative"
+                                            >
+                                                <Image
+                                                    src={url}
+                                                    alt={`Preview ${index}`}
+                                                    maxH={"100px"}
+                                                    borderRadius={"md"}
+                                                />
+                                                <IconButton
+                                                    aria-label="Remove image"
+                                                    icon={<CloseIcon />}
+                                                    size={"xs"}
+                                                    position={"absolute"}
+                                                    top={1}
+                                                    right={1}
+                                                    colorScheme="gray"
+                                                    onClick={() => {
+                                                        setPreviewUrls((prev) =>
+                                                            prev.filter(
+                                                                (_, i) =>
+                                                                    i !== index
+                                                            )
+                                                        );
+                                                        setSelectedFiles(
+                                                            (prev) =>
+                                                                prev.filter(
+                                                                    (_, i) =>
+                                                                        i !==
+                                                                        index
+                                                                )
+                                                        );
+                                                    }}
+                                                />
+                                            </Box>
+                                        ))}
+                                    </Flex>
+                                )}
+                            </ModalBody>
+                            <Divider />
+                            <ModalFooter padding={"10px 0px"}>
+                                <Flex
+                                    justifyContent={"space-between"}
+                                    w={"100%"}
+                                    alignItems={"center"}
                                 >
-                                    <Image src={myIcons.GalleryAdd} />
-                                </Button>
-                                <CustomBtnPrimary
-                                    label="Post"
-                                    w={"fit-content"}
-                                    p={"6px 15px"}
-                                    fontSize={"14px"}
-                                    h={"fit-content"}
-                                    mt={"0px"}
-                                    mr={"10px"}
-                                />
-                            </Flex>
-                        </ModalFooter>
+                                    <Button
+                                        variant={"ghost"}
+                                        padding={"10px"}
+                                        borderRadius={"0px"}
+                                        disabled={selectedFiles.length >= 4}
+                                        onClick={handleOpenFileExplorer}
+                                    >
+                                        <Input
+                                            type="file"
+                                            hidden
+                                            accept="image/*"
+                                            multiple
+                                            onChange={handleFileSelect}
+                                            ref={fileInputRef}
+                                        />
+                                        <Image src={myIcons.GalleryAdd} />
+                                    </Button>
+                                    <CustomBtnPrimary
+                                        type="submit"
+                                        label={
+                                            createThreadMutation.isPending
+                                                ? "Posting..."
+                                                : "Post"
+                                        }
+                                        w={"fit-content"}
+                                        p={"6px 15px"}
+                                        fontSize={"14px"}
+                                        h={"fit-content"}
+                                        mt={"0px"}
+                                        mr={"10px"}
+                                        isLoading={
+                                            createThreadMutation.isPending
+                                        }
+                                    />
+                                </Flex>
+                            </ModalFooter>
+                        </form>
                     </ModalContent>
                 </Modal>
 
+                {/* Modal image preview */}
+                <Modal isOpen={isImageOpen} onClose={onImageClose} size="xl">
+                    <ModalOverlay />
+                    <ModalContent bg="transparent" boxShadow="none">
+                        <ModalCloseButton color="white" />
+                        <ModalBody p={0}>
+                            {selectedImage && (
+                                <Image
+                                    src={selectedImage}
+                                    alt="Preview"
+                                    w="100%"
+                                    objectFit="contain"
+                                />
+                            )}
+                        </ModalBody>
+                    </ModalContent>
+                </Modal>
+
+                {/* Content threads / feeds */}
                 {isLoadingThreads ? (
-                    <Box display={"flex"} justifyContent={"center"} alignItems={"center"} p={4} w={"100%"} h={"75%"}>
-                        <Spinner 
-                            thickness='4px'
-                            speed= "0.65s"
-                            emptyColor= "gray.200"
+                    <Box
+                        display={"flex"}
+                        justifyContent={"center"}
+                        alignItems={"center"}
+                        p={4}
+                        w={"100%"}
+                        h={"75%"}
+                    >
+                        <Spinner
+                            thickness="4px"
+                            speed="0.65s"
+                            emptyColor="gray.200"
                             size="lg"
                         />
                     </Box>
@@ -161,7 +325,11 @@ export function Home() {
                             m={"0px"}
                         >
                             <Flex padding="1rem" gap={"15px"}>
-                                <Link to={`/post/${thread.id}`} key={thread.id}>
+                                <Link
+                                    to={`/post/${thread.id}`}
+                                    key={thread.id}
+                                    style={{ cursor: "pointer" }}
+                                >
                                     <Avatar
                                         name="Other Profile Avatar"
                                         src={
@@ -180,6 +348,7 @@ export function Home() {
                                     <Link
                                         to={`/post/${thread.id}`}
                                         key={thread.id}
+                                        style={{ cursor: "pointer" }}
                                     >
                                         <HStack spacing={1} pb={"3px"}>
                                             <Heading
@@ -217,73 +386,149 @@ export function Home() {
                                         >
                                             {thread.content}
                                         </Text>
-                                        {thread.media.length > 0 && (
-                                            <Flex flexWrap="wrap" gap={1}>
-                                                {thread.media.map(
-                                                    (media, index) => (
+                                    </Link>
+
+                                    {/* Preview post images */}
+                                    {thread.media.length > 0 && (
+                                        <Flex
+                                            flexWrap="wrap"
+                                            gap={1}
+                                            sx={{
+                                                "& > div": {
+                                                    flex: `1 1 ${
+                                                        thread.media.length ===
+                                                        1
+                                                            ? "100%"
+                                                            : thread.media
+                                                                  .length === 2
+                                                            ? "45%"
+                                                            : thread.media
+                                                                  .length >= 3
+                                                            ? "30%"
+                                                            : "auto"
+                                                    }`,
+                                                },
+                                            }}
+                                        >
+                                            {thread.media.map(
+                                                (media, index) => (
+                                                    <Box
+                                                        key={index}
+                                                        position="relative"
+                                                        _hover={{
+                                                            "&::before": {
+                                                                content: '""',
+                                                                position:
+                                                                    "absolute",
+                                                                top: 0,
+                                                                left: 0,
+                                                                right: 0,
+                                                                bottom: 0,
+                                                                bg: "blackAlpha.600",
+                                                                zIndex: 1,
+                                                                borderRadius:
+                                                                    "md",
+                                                            },
+                                                            ".view-text": {
+                                                                opacity: 1,
+                                                            },
+                                                        }}
+                                                        cursor="pointer"
+                                                        onClick={() => {
+                                                            setSelectedImage(
+                                                                media.url
+                                                            );
+                                                            onImageOpen();
+                                                        }}
+                                                    >
                                                         <Image
-                                                            key={index}
                                                             src={media.url}
                                                             alt={`User post image ${
                                                                 index + 1
                                                             }`}
-                                                            borderRadius="md"
-                                                            maxWidth="100%"
-                                                            maxHeight="300px"
+                                                            w="100%"
+                                                            h="200px"
+                                                            objectFit="cover"
                                                         />
-                                                    )
-                                                )}
-                                            </Flex>
-                                        )}
-                                    </Link>
-                                    <HStack
-                                        spacing={5}
-                                        marginY={"5px"}
-                                        color={fontColor}
-                                        fontSize={"13px"}
+                                                        <Text
+                                                            className="view-text"
+                                                            position="absolute"
+                                                            top="50%"
+                                                            left="50%"
+                                                            transform="translate(-50%, -50%)"
+                                                            color="white"
+                                                            fontSize="lg"
+                                                            fontWeight="bold"
+                                                            opacity={0}
+                                                            zIndex={2}
+                                                            transition="opacity 0.2s"
+                                                        >
+                                                            View
+                                                        </Text>
+                                                    </Box>
+                                                )
+                                            )}
+                                        </Flex>
+                                    )}
+
+                                    <Link
+                                        to={`/post/${thread.id}`}
+                                        key={thread.id}
+                                        style={{ cursor: "pointer" }}
                                     >
-                                        <HStack spacing={1}>
-                                            <Button
-                                                variant={"ghost"}
-                                                padding={"5px 5px"}
-                                                margin={"0px"}
-                                                h={"fit-content"}
-                                                onClick={() =>
-                                                    handleLike(thread.user.id)
-                                                }
-                                                fontWeight={"normal"}
-                                                fontSize={"14px"}
-                                                color={fontColor}
-                                                gap={"5px"}
-                                            >
-                                                {!likedPosts[thread.user.id] ? (
-                                                    <myIcons.HiOutlineHeart
-                                                        fontSize={"22px"}
-                                                        color={fontColor}
-                                                    />
-                                                ) : (
-                                                    <myIcons.HiHeart
-                                                        fontSize={"22px"}
-                                                        color={"#f87171"}
-                                                    />
-                                                )}
+                                        <HStack
+                                            spacing={5}
+                                            marginY={"5px"}
+                                            color={fontColor}
+                                            fontSize={"13px"}
+                                        >
+                                            <HStack spacing={1}>
+                                                <Button
+                                                    variant={"ghost"}
+                                                    padding={"5px 5px"}
+                                                    margin={"0px"}
+                                                    h={"fit-content"}
+                                                    onClick={() =>
+                                                        handleLike(
+                                                            thread.user.id
+                                                        )
+                                                    }
+                                                    fontWeight={"normal"}
+                                                    fontSize={"14px"}
+                                                    color={fontColor}
+                                                    gap={"5px"}
+                                                >
+                                                    {!likedPosts[
+                                                        thread.user.id
+                                                    ] ? (
+                                                        <myIcons.HiOutlineHeart
+                                                            fontSize={"22px"}
+                                                            color={fontColor}
+                                                        />
+                                                    ) : (
+                                                        <myIcons.HiHeart
+                                                            fontSize={"22px"}
+                                                            color={"#f87171"}
+                                                        />
+                                                    )}
+                                                    <Text>
+                                                        {thread._count.like}
+                                                    </Text>
+                                                </Button>
+                                            </HStack>
+                                            <HStack spacing={1}>
+                                                <myIcons.HiOutlineAnnotation
+                                                    fontSize={"22px"}
+                                                />
                                                 <Text>
-                                                    {thread._count.like}
+                                                    {Math.floor(
+                                                        Math.random() * 90
+                                                    ) + 10}
                                                 </Text>
-                                            </Button>
+                                                <Text>Replies</Text>
+                                            </HStack>
                                         </HStack>
-                                        <HStack spacing={1}>
-                                            <myIcons.HiOutlineAnnotation
-                                                fontSize={"22px"}
-                                            />
-                                            <Text>
-                                                {Math.floor(
-                                                    Math.random() * 90
-                                                ) + 10}
-                                            </Text>
-                                            <Text>Replies</Text>
-                                        </HStack>
-                                    </HStack>
+                                    </Link>
                                 </VStack>
                             </Flex>
                         </Box>

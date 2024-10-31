@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
     Avatar,
     Box,
@@ -29,6 +30,7 @@ import { User } from "../types/user";
 import { getProfileData } from "../api/profile";
 import { getFollowCounts } from "../api/follow";
 import { useHandleEditProfile } from "../hooks/useHandleEditProfile";
+import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
 
 interface dummyPost {
     post: string;
@@ -100,9 +102,8 @@ const dummyPost: dummyPost[] = [
 
 export function Profile() {
     const { token } = useAuthStore();
-    const [userProfile, setUserProfile] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const { userProfile } = useGetLoginUserProfile();
     const [followCounts, setFollowCounts] = useState({
         followers: 0,
         following: 0,
@@ -130,26 +131,6 @@ export function Profile() {
         }
     });
 
-    // hook fetch profile
-    useEffect(() => {
-        const fetchProfile = async () => {
-            if (token) {
-                setIsLoading(true);
-                setError(null);
-                try {
-                    const profile = await getProfileData();
-                    setUserProfile(profile as User);
-                } catch (error) {
-                    console.error("Error fetching profile:", error);
-                    setError("Gagal mengambil data profil");
-                } finally {
-                    setIsLoading(false);
-                }
-            }
-        };
-        fetchProfile();
-    }, [setIsLoading, token]);
-
     // hook fetch follow counts
     useEffect(() => {
         const fetchFollowCounts = async () => {
@@ -168,19 +149,6 @@ export function Profile() {
         fetchFollowCounts();
     }, [token]);
 
-    // destructuring user data
-    const getUserData = (userProfile: User | null) => {
-        if (!userProfile) return null;
-        const { profile } = userProfile;
-        return {
-            fullName: profile.profile.fullName,
-            username: profile.username,
-            bio: profile.profile.bio,
-            avatar: profile.profile.avatar,
-            banner: profile.profile.banner,
-        };
-    };
-    const userData = getUserData(userProfile);
 
     return (
         <Box w={"100%"}>
@@ -193,7 +161,7 @@ export function Profile() {
                 <Flex flexDir={"column"} justifyContent={"flex-end"}>
                     <Box position={"relative"}>
                         <Image
-                            src={userData?.banner ?? coverImg}
+                            src={userProfile?.profile?.banner ?? coverImg}
                             alt="Cover Image"
                             h={"120px"}
                             w={"100%"}
@@ -203,7 +171,7 @@ export function Profile() {
                         <Avatar
                             name="Profile Avatar"
                             size={"lg"}
-                            src={userData?.avatar}
+                            src={userProfile?.profile?.avatar ?? undefined}
                             position={"absolute"}
                             left={"25px"}
                             bottom={"-35px"}
@@ -247,7 +215,7 @@ export function Profile() {
                                     mb={"30px"}
                                 >
                                     <Image
-                                        src={userData?.banner || coverImg}
+                                        src={userProfile?.profile?.banner || coverImg}
                                         alt="Cover Image"
                                         h={"100px"}
                                         objectFit={"cover"}
@@ -256,7 +224,7 @@ export function Profile() {
                                     />
                                     <Avatar
                                         name="Profile Avatar"
-                                        src={userData?.avatar ?? undefined}
+                                        src={userProfile?.profile?.avatar ?? undefined}
                                         position={"absolute"}
                                         left={"30px"}
                                         bottom={"-30px"}
@@ -301,7 +269,7 @@ export function Profile() {
                                         Full Name
                                     </Text>
                                     <Input
-                                        defaultValue={`${userData?.fullName}`}
+                                        defaultValue={`${userProfile?.profile?.fullName}`}
                                         onChange={(e) =>
                                             handleInputChange(
                                                 "fullName",
@@ -323,7 +291,7 @@ export function Profile() {
                                         Username
                                     </Text>
                                     <Input
-                                        defaultValue={userData?.username}
+                                        defaultValue={userProfile?.username}
                                         onChange={(e) =>
                                             handleInputChange(
                                                 "username",
@@ -346,7 +314,7 @@ export function Profile() {
                                     </Text>
                                     <Textarea
                                         resize={"none"}
-                                        defaultValue={userData?.bio ?? ""}
+                                        defaultValue={userProfile?.profile?.bio ?? ""}
                                         onChange={(e) =>
                                             handleInputChange(
                                                 "bio",
@@ -378,11 +346,11 @@ export function Profile() {
                     </Modal>
                 </Flex>
                 <Stack spacing="1">
-                    <Heading size="md">✨{userData?.fullName}✨</Heading>
+                    <Heading size="md">✨{userProfile?.profile?.fullName}✨</Heading>
                     <Text fontSize={"14px"} color={"whiteAlpha.500"}>
-                        @{userData?.username}
+                        @{userProfile?.username}
                     </Text>
-                    <Text fontSize={"14px"}>{userData?.bio}</Text>
+                    <Text fontSize={"14px"}>{userProfile?.profile?.bio}</Text>
                     <HStack spacing={2}>
                         <HStack spacing={1}>
                             <Text fontWeight={"bold"} fontSize={"14px"}>
@@ -458,7 +426,7 @@ export function Profile() {
                         <Flex padding="1rem" gap={"15px"}>
                             <Avatar
                                 name="Profile Avatar"
-                                src={userData?.avatar}
+                                src={userProfile?.profile?.avatar ?? undefined}
                                 size={"sm"}
                             />
                             <VStack
@@ -469,10 +437,10 @@ export function Profile() {
                             >
                                 <HStack spacing={1} pb={"3px"}>
                                     <Heading size={"sm"} fontSize={"14px"}>
-                                        {userData?.fullName}
+                                        {userProfile?.profile?.fullName}
                                     </Heading>
                                     <Text color={fontColor} fontSize={"14px"}>
-                                        @{userData?.username}
+                                        @{userProfile?.username}
                                     </Text>
                                     <Text
                                         color={fontColor}

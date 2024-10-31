@@ -5,12 +5,21 @@ export interface Thread {
     content: string;
     user: User;
     createdAt: string;
-    media: {
-        url: string;
-    }[];
+    media: ThreadMedia[];
     _count: {
         like: number;
+        replies: number;
     };
     isLiked: boolean;
-    // tambahkan properti lain sesuai dengan respons API Anda
+}
+
+export interface ThreadMedia {
+    id: number;
+    url: string;
+    threadId: number;
+}
+
+export interface CreateThreadRequest {
+    content: string;
+    media?: File[];
 }
