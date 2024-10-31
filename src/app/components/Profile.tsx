@@ -15,22 +15,27 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Spinner,
     Stack,
     Text,
     Textarea,
     useColorModeValue,
+    useDisclosure,
     VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import myIcons from "../assets/icons/myIcons";
 import coverImg from "../assets/images/cover.png";
 import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
 import { useAuthStore } from "../store/auth";
-import { User } from "../types/user";
-import { getProfileData } from "../api/profile";
 import { getFollowCounts } from "../api/follow";
 import { useHandleEditProfile } from "../hooks/useHandleEditProfile";
 import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
+import { useGetUserThreads } from "../hooks/useGetUserThreads";
+import { Thread } from "../types/thread";
+import { formatDate } from "../utils/fomatDate";
+import API from "../libs/axios";
 
 interface dummyPost {
     post: string;
@@ -112,6 +117,16 @@ export function Profile() {
     const galleryButtonBg = useColorModeValue("white", "#2d3748");
     const [view, setView] = useState<"all" | "media">("all");
     const outlineColor = useColorModeValue("white", "#2d3748");
+    const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>(
+        {}
+    );
+    const userThreads = useGetUserThreads();
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const {
+        isOpen: isImageOpen,
+        onOpen: onImageOpen,
+        onClose: onImageClose,
+    } = useDisclosure();
 
     // handle untuk edit profile
     const {
@@ -122,13 +137,19 @@ export function Profile() {
         handleSaveProfile,
     } = useHandleEditProfile();
 
+    const handleLike = async (threadId: number) => {
+        const response = await API.post(`/like/${threadId}`);
+        return response.data;
+    };
+
     //filter user berdasarkan view
-    const filteredPost = dummyPost.filter((post) => {
+    const filteredThreads = userThreads.data?.filter((thread) => {
         if (view === "all") {
-            return post.post;
+            return thread;
         } else if (view === "media") {
-            return post.imageUrl;
+            return thread.media && thread.media.length > 0;
         }
+        return false;
     });
 
     // hook fetch follow counts
@@ -148,7 +169,6 @@ export function Profile() {
         };
         fetchFollowCounts();
     }, [token]);
-
 
     return (
         <Box w={"100%"}>
@@ -215,7 +235,10 @@ export function Profile() {
                                     mb={"30px"}
                                 >
                                     <Image
-                                        src={userProfile?.profile?.banner || coverImg}
+                                        src={
+                                            userProfile?.profile?.banner ||
+                                            coverImg
+                                        }
                                         alt="Cover Image"
                                         h={"100px"}
                                         objectFit={"cover"}
@@ -224,7 +247,10 @@ export function Profile() {
                                     />
                                     <Avatar
                                         name="Profile Avatar"
-                                        src={userProfile?.profile?.avatar ?? undefined}
+                                        src={
+                                            userProfile?.profile?.avatar ??
+                                            undefined
+                                        }
                                         position={"absolute"}
                                         left={"30px"}
                                         bottom={"-30px"}
@@ -314,7 +340,9 @@ export function Profile() {
                                     </Text>
                                     <Textarea
                                         resize={"none"}
-                                        defaultValue={userProfile?.profile?.bio ?? ""}
+                                        defaultValue={
+                                            userProfile?.profile?.bio ?? ""
+                                        }
                                         onChange={(e) =>
                                             handleInputChange(
                                                 "bio",
@@ -346,7 +374,9 @@ export function Profile() {
                     </Modal>
                 </Flex>
                 <Stack spacing="1">
-                    <Heading size="md">✨{userProfile?.profile?.fullName}✨</Heading>
+                    <Heading size="md">
+                        ✨{userProfile?.profile?.fullName}✨
+                    </Heading>
                     <Text fontSize={"14px"} color={"whiteAlpha.500"}>
                         @{userProfile?.username}
                     </Text>
@@ -411,7 +441,250 @@ export function Profile() {
                     }}
                 />
             </HStack>
-            <Stack>
+
+            {/* Content threads / feeds */}
+            {userThreads.isLoading ? (
+                <Box
+                    display={"flex"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    p={4}
+                    w={"100%"}
+                    h={"75%"}
+                >
+                    <Spinner
+                        thickness="4px"
+                        speed="0.65s"
+                        emptyColor="gray.200"
+                        size="lg"
+                    />
+                </Box>
+            ) : (
+                filteredThreads?.map((thread: Thread) => (
+                    <Box
+                        key={thread.id}
+                        w={"100%"}
+                        h={"fit-content"}
+                        borderRadius={"none"}
+                        justifyContent={"flex-start"}
+                        borderBottom={"1px solid #3F3F3F"}
+                        p={"0px"}
+                        m={"0px"}
+                    >
+                        <Flex padding="1rem" gap={"15px"}>
+                            <Link
+                                to={`/details/${thread.id}`}
+                                key={thread.id}
+                                style={{ cursor: "pointer" }}
+                            >
+                                <Avatar
+                                    name="Other Profile Avatar"
+                                    src={
+                                        thread.user.profile.avatar || undefined
+                                    }
+                                    size={"sm"}
+                                />
+                            </Link>
+                            <VStack
+                                w={"100%"}
+                                spacing={1}
+                                alignItems={"start"}
+                                fontWeight={"normal"}
+                            >
+                                <Link
+                                    to={`/details/${thread.id}`}
+                                    key={thread.id}
+                                    style={{ cursor: "pointer" }}
+                                >
+                                    <HStack spacing={1} pb={"3px"}>
+                                        <Heading size={"sm"} fontSize={"14px"}>
+                                            {thread.user.profile.fullName ??
+                                                "Nama pengguna"}
+                                        </Heading>
+                                        <Text
+                                            color={fontColor}
+                                            fontSize={"14px"}
+                                        >
+                                            @{thread.user.username}
+                                        </Text>
+                                        <Text
+                                            color={fontColor}
+                                            fontSize={"14px"}
+                                            mt={"-2px"}
+                                        >
+                                            {" "}
+                                            •{" "}
+                                        </Text>
+                                        <Text
+                                            color={fontColor}
+                                            fontSize={"14px"}
+                                        >
+                                            {formatDate(thread.createdAt)}
+                                        </Text>
+                                    </HStack>
+                                    <Text
+                                        fontSize={"13px"}
+                                        p={"5px 0px"}
+                                        fontWeight={"normal"}
+                                    >
+                                        {thread.content}
+                                    </Text>
+                                </Link>
+
+                                {/* Preview post images */}
+                                {thread.media.length > 0 && (
+                                    <Flex
+                                        flexWrap="wrap"
+                                        gap={1}
+                                        sx={{
+                                            "& > div": {
+                                                flex: `1 1 ${
+                                                    thread.media.length === 1
+                                                        ? "100%"
+                                                        : thread.media
+                                                              .length === 2
+                                                        ? "45%"
+                                                        : thread.media.length >=
+                                                          3
+                                                        ? "30%"
+                                                        : "auto"
+                                                }`,
+                                            },
+                                        }}
+                                    >
+                                        {thread.media.map((media, index) => (
+                                            <Box
+                                                key={index}
+                                                position="relative"
+                                                _hover={{
+                                                    "&::before": {
+                                                        content: '""',
+                                                        position: "absolute",
+                                                        top: 0,
+                                                        left: 0,
+                                                        right: 0,
+                                                        bottom: 0,
+                                                        bg: "blackAlpha.600",
+                                                        zIndex: 1,
+                                                        borderRadius: "md",
+                                                    },
+                                                    ".view-text": {
+                                                        opacity: 1,
+                                                    },
+                                                }}
+                                                cursor="pointer"
+                                                onClick={() => {
+                                                    setSelectedImage(media.url);
+                                                    onImageOpen();
+                                                }}
+                                            >
+                                                <Image
+                                                    src={media.url}
+                                                    alt={`User post image ${
+                                                        index + 1
+                                                    }`}
+                                                    w="100%"
+                                                    h="200px"
+                                                    objectFit="cover"
+                                                />
+                                                <Text
+                                                    className="view-text"
+                                                    position="absolute"
+                                                    top="50%"
+                                                    left="50%"
+                                                    transform="translate(-50%, -50%)"
+                                                    color="white"
+                                                    fontSize="lg"
+                                                    fontWeight="bold"
+                                                    opacity={0}
+                                                    zIndex={2}
+                                                    transition="opacity 0.2s"
+                                                >
+                                                    View
+                                                </Text>
+                                            </Box>
+                                        ))}
+                                    </Flex>
+                                )}
+
+                                <HStack
+                                    spacing={5}
+                                    marginY={"5px"}
+                                    color={fontColor}
+                                    fontSize={"13px"}
+                                >
+                                    <HStack spacing={1}>
+                                        <Button
+                                            variant={"ghost"}
+                                            padding={"5px 5px"}
+                                            margin={"0px"}
+                                            h={"fit-content"}
+                                            onClick={() =>
+                                                handleLike(thread.user.id)
+                                            }
+                                            fontWeight={"normal"}
+                                            fontSize={"14px"}
+                                            color={fontColor}
+                                            gap={"5px"}
+                                        >
+                                            {!likedPosts[thread.user.id] ? (
+                                                <myIcons.HiOutlineHeart
+                                                    fontSize={"22px"}
+                                                    color={fontColor}
+                                                />
+                                            ) : (
+                                                <myIcons.HiHeart
+                                                    fontSize={"22px"}
+                                                    color={"#f87171"}
+                                                />
+                                            )}
+                                            <Text>{thread._count.like}</Text>
+                                        </Button>
+                                    </HStack>
+
+                                    <Link
+                                        to={`/details/${thread.id}`}
+                                        key={thread.id}
+                                        style={{ cursor: "pointer" }}
+                                    >
+                                        <HStack spacing={1}>
+                                            <myIcons.HiOutlineAnnotation
+                                                fontSize={"22px"}
+                                            />
+                                            <Text>
+                                                {Math.floor(
+                                                    Math.random() * 90
+                                                ) + 10}
+                                            </Text>
+                                            <Text>Replies</Text>
+                                        </HStack>
+                                    </Link>
+                                </HStack>
+                            </VStack>
+                        </Flex>
+                    </Box>
+                ))
+            )}
+
+            {/* Modal image preview */}
+            <Modal isOpen={isImageOpen} onClose={onImageClose} size="xl">
+                <ModalOverlay />
+                <ModalContent bg="transparent" boxShadow="none">
+                    <ModalCloseButton color="white" />
+                    <ModalBody p={0}>
+                        {selectedImage && (
+                            <Image
+                                src={selectedImage}
+                                alt="Preview"
+                                w="100%"
+                                objectFit="contain"
+                            />
+                        )}
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
+
+            {/* <Stack>
                 {filteredPost.map((post, index) => (
                     <Box
                         key={index}
@@ -500,7 +773,7 @@ export function Profile() {
                         </Flex>
                     </Box>
                 ))}
-            </Stack>
+            </Stack> */}
         </Box>
     );
 }

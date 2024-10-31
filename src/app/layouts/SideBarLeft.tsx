@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../../public/assets/logo/logo.svg";
 import myIcons from "../assets/icons/myIcons";
 import { CustomBtnPrimary, CustomBtnSideBar } from "../components/CustomBtn";
-// import { useAuthStore } from "../store/auth";
+import { useAuthStore } from "../store/auth";
 
 interface LeftBarMenu {
     solidIcon: ReactNode;
@@ -43,7 +43,7 @@ const leftBarMenu: LeftBarMenu[] = [
 export function SideBarLeft() {
     const location = useLocation();
     const navigate = useNavigate();
-    // const { clearUser } = useAuthStore();
+    const logout = useAuthStore((state) => state.logout);
 
     return (
         <Box
@@ -76,8 +76,8 @@ export function SideBarLeft() {
             </VStack>
             <CustomBtnSideBar
                 onClick={() => {
+                    logout();
                     navigate("/sign-in");
-                    // clearUser();
                 }}
                 mt={"auto"}
                 outlineIcon={

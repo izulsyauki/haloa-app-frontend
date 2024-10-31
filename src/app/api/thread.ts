@@ -22,3 +22,7 @@ export const createThread = async (data: CreateThreadRequest) => {
     });
     return response.data;
 };
+
+export const getUserThreads = async () => {
+    return await API.get<Thread[]>("/threads/user-threads").then((res) => res.data);
+}

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getThreads } from "../api/thread";
 
-export const useAllThreadsFeeds = () => {
+export const useGetThreadsFeeds = () => {
     const {data: threads, isLoading: isLoadingThreads } = useQuery({
         queryKey: ["threads"],
         queryFn: async () => {

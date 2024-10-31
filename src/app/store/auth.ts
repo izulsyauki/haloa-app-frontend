@@ -22,6 +22,7 @@ export const useAuthStore = create(
         Cookies.remove("token");
         Cookies.remove("user");
         set({ user: null, token: null });
+        localStorage.removeItem("auth-storage");
       },
     }),
     {
@@ -29,8 +30,3 @@ export const useAuthStore = create(
     }
   )
 );
-
-// // Saat login atau fetch profile
-// const setUserData = (userData: User) => {
-//     useAuthStore.getState().setUser(userData);
-// };

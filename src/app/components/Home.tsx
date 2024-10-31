@@ -26,55 +26,48 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { z } from "zod";
 import myIcons from "../assets/icons/myIcons";
 import { CustomBtnPrimary } from "../components/CustomBtn";
-import useCreateThread from "../hooks/useCreateThread";
+import { useCreateThread } from "../hooks/useCreateThread";
 import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
-import { useAllThreadsFeeds } from "../hooks/useThreadsFeeds";
+import { useGetThreadsFeeds } from "../hooks/useGetThreadsFeeds";
 import API from "../libs/axios";
 import { Thread } from "../types/thread";
 import { formatDate } from "../utils/fomatDate";
 
 export function Home() {
-    const { isOpen, onOpen, onClose } = useDisclosure();
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>(
         {}
     );
-    const { threads, isLoadingThreads } = useAllThreadsFeeds();
+    const { threads, isLoadingThreads } = useGetThreadsFeeds();
     const { userProfile } = useGetLoginUserProfile();
-    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-    const createThreadMutation = useCreateThread();
-    const fileInputRef = useRef<HTMLInputElement>(null);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const {
         isOpen: isImageOpen,
         onOpen: onImageOpen,
         onClose: onImageClose,
     } = useDisclosure();
+    const {
+        isOpen,
+        onOpen,
+        onClose,
+        form,
+        previewUrls,
+        setPreviewUrls,
+        selectedFiles,
+        setSelectedFiles,
+        fileInputRef,
+        handleOpenFileExplorer,
+        onSubmit,
+        createThreadMutation,
+    } = useCreateThread();
 
     const handleLike = async (threadId: number) => {
         const response = await API.post(`/like/${threadId}`);
         return response.data;
-    };
-
-    const postThreadSchema = z.object({
-        content: z.string(),
-        media: z.array(z.instanceof(File)).optional(),
-    });
-
-    const form = useForm<z.infer<typeof postThreadSchema>>({
-        resolver: zodResolver(postThreadSchema),
-    });
-
-    const handleOpenFileExplorer = () => {
-        fileInputRef.current?.click();
     };
 
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,22 +93,6 @@ export function Home() {
             });
         }
     };
-
-    const onSubmit = form.handleSubmit(async (data) => {
-        try {
-            await createThreadMutation.mutateAsync({
-                content: data.content,
-                media: selectedFiles,
-            });
-
-            form.reset();
-            setSelectedFiles([]);
-            setPreviewUrls([]);
-            onClose();
-        } catch (error) {
-            console.error("Error posting thread:", error);
-        }
-    });
 
     return (
         <>
@@ -277,24 +254,6 @@ export function Home() {
                     </ModalContent>
                 </Modal>
 
-                {/* Modal image preview */}
-                <Modal isOpen={isImageOpen} onClose={onImageClose} size="xl">
-                    <ModalOverlay />
-                    <ModalContent bg="transparent" boxShadow="none">
-                        <ModalCloseButton color="white" />
-                        <ModalBody p={0}>
-                            {selectedImage && (
-                                <Image
-                                    src={selectedImage}
-                                    alt="Preview"
-                                    w="100%"
-                                    objectFit="contain"
-                                />
-                            )}
-                        </ModalBody>
-                    </ModalContent>
-                </Modal>
-
                 {/* Content threads / feeds */}
                 {isLoadingThreads ? (
                     <Box
@@ -326,7 +285,7 @@ export function Home() {
                         >
                             <Flex padding="1rem" gap={"15px"}>
                                 <Link
-                                    to={`/post/${thread.id}`}
+                                    to={`/details/${thread.id}`}
                                     key={thread.id}
                                     style={{ cursor: "pointer" }}
                                 >
@@ -346,7 +305,7 @@ export function Home() {
                                     fontWeight={"normal"}
                                 >
                                     <Link
-                                        to={`/post/${thread.id}`}
+                                        to={`/details/${thread.id}`}
                                         key={thread.id}
                                         style={{ cursor: "pointer" }}
                                     >
@@ -471,51 +430,48 @@ export function Home() {
                                         </Flex>
                                     )}
 
-                                    <Link
-                                        to={`/post/${thread.id}`}
-                                        key={thread.id}
-                                        style={{ cursor: "pointer" }}
+                                    <HStack
+                                        spacing={5}
+                                        marginY={"5px"}
+                                        color={fontColor}
+                                        fontSize={"13px"}
                                     >
-                                        <HStack
-                                            spacing={5}
-                                            marginY={"5px"}
-                                            color={fontColor}
-                                            fontSize={"13px"}
+                                        <HStack spacing={1}>
+                                            <Button
+                                                variant={"ghost"}
+                                                padding={"5px 5px"}
+                                                margin={"0px"}
+                                                h={"fit-content"}
+                                                onClick={() =>
+                                                    handleLike(thread.user.id)
+                                                }
+                                                fontWeight={"normal"}
+                                                fontSize={"14px"}
+                                                color={fontColor}
+                                                gap={"5px"}
+                                            >
+                                                {!likedPosts[thread.user.id] ? (
+                                                    <myIcons.HiOutlineHeart
+                                                        fontSize={"22px"}
+                                                        color={fontColor}
+                                                    />
+                                                ) : (
+                                                    <myIcons.HiHeart
+                                                        fontSize={"22px"}
+                                                        color={"#f87171"}
+                                                    />
+                                                )}
+                                                <Text>
+                                                    {thread._count.like}
+                                                </Text>
+                                            </Button>
+                                        </HStack>
+
+                                        <Link
+                                            to={`/details/${thread.id}`}
+                                            key={thread.id}
+                                            style={{ cursor: "pointer" }}
                                         >
-                                            <HStack spacing={1}>
-                                                <Button
-                                                    variant={"ghost"}
-                                                    padding={"5px 5px"}
-                                                    margin={"0px"}
-                                                    h={"fit-content"}
-                                                    onClick={() =>
-                                                        handleLike(
-                                                            thread.user.id
-                                                        )
-                                                    }
-                                                    fontWeight={"normal"}
-                                                    fontSize={"14px"}
-                                                    color={fontColor}
-                                                    gap={"5px"}
-                                                >
-                                                    {!likedPosts[
-                                                        thread.user.id
-                                                    ] ? (
-                                                        <myIcons.HiOutlineHeart
-                                                            fontSize={"22px"}
-                                                            color={fontColor}
-                                                        />
-                                                    ) : (
-                                                        <myIcons.HiHeart
-                                                            fontSize={"22px"}
-                                                            color={"#f87171"}
-                                                        />
-                                                    )}
-                                                    <Text>
-                                                        {thread._count.like}
-                                                    </Text>
-                                                </Button>
-                                            </HStack>
                                             <HStack spacing={1}>
                                                 <myIcons.HiOutlineAnnotation
                                                     fontSize={"22px"}
@@ -527,13 +483,31 @@ export function Home() {
                                                 </Text>
                                                 <Text>Replies</Text>
                                             </HStack>
-                                        </HStack>
-                                    </Link>
+                                        </Link>
+                                    </HStack>
                                 </VStack>
                             </Flex>
                         </Box>
                     ))
                 )}
+
+                {/* Modal image preview */}
+                <Modal isOpen={isImageOpen} onClose={onImageClose} size="xl">
+                    <ModalOverlay />
+                    <ModalContent bg="transparent" boxShadow="none">
+                        <ModalCloseButton color="white" />
+                        <ModalBody p={0}>
+                            {selectedImage && (
+                                <Image
+                                    src={selectedImage}
+                                    alt="Preview"
+                                    w="100%"
+                                    objectFit="contain"
+                                />
+                            )}
+                        </ModalBody>
+                    </ModalContent>
+                </Modal>
             </Box>
         </>
     );

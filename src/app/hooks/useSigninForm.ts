@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/auth";
-import { SigninFormInputs, signinSchema } from "../utils/signin-schemas";
+import { SigninFormInputs, signinSchema } from "../utils/signinSchemas";
 import API from "../libs/axios";
 import { User } from "../types/user";
 import Cookies from "js-cookie";
@@ -38,9 +38,9 @@ export const useSigninForm = () => {
         setUser(user);
         setToken(token);
         
-        // Simpan token ke cookies expires 7 hari
-        Cookies.set("token", token, { expires: 7 });
-        Cookies.set("user", JSON.stringify(user), { expires: 7 });
+        // Simpan token ke cookies expires30 hari
+        Cookies.set("token", token, { expires: 30 });
+        Cookies.set("user", JSON.stringify(user), { expires: 30 });
         
         // Set token sebagai default header untuk request selanjutnya
         API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
