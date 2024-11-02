@@ -1,4 +1,3 @@
-import { useDisclosure } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
@@ -6,13 +5,15 @@ import { useForm } from "react-hook-form";
 import { createThread } from "../api/thread";
 import { CreateThreadRequest } from "../types/thread";
 import { PostThreadSchema, postThreadSchema } from "../utils/postThreadSchema";
-
+import { useDisclosure } from "@chakra-ui/react";
 export const useCreateThread = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const queryClient = useQueryClient();
+    // const onOpen = () => setIsOpen(true);
+    // const onClose = () => setIsOpen(false);
 
     const form = useForm<PostThreadSchema>({
         resolver: zodResolver(postThreadSchema),
@@ -24,9 +25,12 @@ export const useCreateThread = () => {
 
     const createThreadMutation = useMutation({
         mutationFn: async (data: CreateThreadRequest) => {
-            return await createThread(data);
+            // Pindahkan invalidateQueries ke sini saja
+            const response = await createThread(data);
+            return response;
         },
         onSuccess: () => {
+            // Hanya invalidate query setelah berhasil membuat thread
             queryClient.invalidateQueries({ queryKey: ["threads"] });
         },
     });
@@ -47,6 +51,30 @@ export const useCreateThread = () => {
         }
     });
 
+    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files) {
+            const newFiles = Array.from(files);
+            if (selectedFiles.length + newFiles.length > 4) {
+                alert("You can only upload up to 4 files");
+                return;
+            }
+
+            setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
+
+            newFiles.forEach((file) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPreviewUrls((prevImages) => [
+                        ...prevImages,
+                        reader.result as string,
+                    ]);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    };
+
     return {
         isOpen,
         onOpen,
@@ -60,6 +88,6 @@ export const useCreateThread = () => {
         handleOpenFileExplorer,
         onSubmit,
         createThreadMutation,
+        handleFileSelect
     };
 };
-

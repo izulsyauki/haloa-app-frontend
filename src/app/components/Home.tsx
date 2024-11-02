@@ -26,22 +26,19 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import myIcons from "../assets/icons/myIcons";
 import { CustomBtnPrimary } from "../components/CustomBtn";
 import { useCreateThread } from "../hooks/useCreateThread";
 import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
 import { useGetThreadsFeeds } from "../hooks/useGetThreadsFeeds";
-import API from "../libs/axios";
 import { Thread } from "../types/thread";
 import { formatDate } from "../utils/fomatDate";
+import { useHandleLike } from "../hooks/useHandleLike";
 
 export function Home() {
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
-    const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>(
-        {}
-    );
     const { threads, isLoadingThreads } = useGetThreadsFeeds();
     const { userProfile } = useGetLoginUserProfile();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -63,36 +60,22 @@ export function Home() {
         handleOpenFileExplorer,
         onSubmit,
         createThreadMutation,
+        handleFileSelect,
     } = useCreateThread();
+    const [repliesCounts, setRepliesCounts] = useState<Record<number, number>>(
+        {}
+    );
+    const { mutateAsyncLike } = useHandleLike();
 
-    const handleLike = async (threadId: number) => {
-        const response = await API.post(`/like/${threadId}`);
-        return response.data;
-    };
+    // // Generate random replies count sekali saja saat komponen mount
+    // useEffect(() => {
+    //     const counts: Record<number, number> = {};
+    //     threads?.forEach((thread) => {
+    //         counts[thread.id] = Math.floor(Math.random() * 90) + 10;
+    //     });
+    //     setRepliesCounts(counts);
+    // }, [threads]); // Hanya dijalankan ketika threads berubah
 
-    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files;
-        if (files) {
-            const newFiles = Array.from(files);
-            if (selectedFiles.length + newFiles.length > 4) {
-                alert("You can only upload up to 4 files");
-                return;
-            }
-
-            setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
-
-            newFiles.forEach((file) => {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setPreviewUrls((prevImages) => [
-                        ...prevImages,
-                        reader.result as string,
-                    ]);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    };
 
     return (
         <>
@@ -175,7 +158,6 @@ export function Home() {
                                                     src={url}
                                                     alt={`Preview ${index}`}
                                                     maxH={"100px"}
-                                                    borderRadius={"md"}
                                                 />
                                                 <IconButton
                                                     aria-label="Remove image"
@@ -385,8 +367,6 @@ export function Home() {
                                                                 bottom: 0,
                                                                 bg: "blackAlpha.600",
                                                                 zIndex: 1,
-                                                                borderRadius:
-                                                                    "md",
                                                             },
                                                             ".view-text": {
                                                                 opacity: 1,
@@ -431,7 +411,7 @@ export function Home() {
                                     )}
 
                                     <HStack
-                                        spacing={5}
+                                        spacing={1}
                                         marginY={"5px"}
                                         color={fontColor}
                                         fontSize={"13px"}
@@ -439,26 +419,28 @@ export function Home() {
                                         <HStack spacing={1}>
                                             <Button
                                                 variant={"ghost"}
-                                                padding={"5px 5px"}
+                                                padding={"5px 10px"}
                                                 margin={"0px"}
                                                 h={"fit-content"}
                                                 onClick={() =>
-                                                    handleLike(thread.user.id)
+                                                    mutateAsyncLike.mutate(
+                                                        thread.id
+                                                    )
                                                 }
                                                 fontWeight={"normal"}
                                                 fontSize={"14px"}
                                                 color={fontColor}
                                                 gap={"5px"}
                                             >
-                                                {!likedPosts[thread.user.id] ? (
-                                                    <myIcons.HiOutlineHeart
-                                                        fontSize={"22px"}
-                                                        color={fontColor}
-                                                    />
-                                                ) : (
+                                                {thread.isLiked ? (
                                                     <myIcons.HiHeart
                                                         fontSize={"22px"}
                                                         color={"#f87171"}
+                                                    />
+                                                ) : (
+                                                    <myIcons.HiOutlineHeart
+                                                        fontSize={"22px"}
+                                                        color={fontColor}
                                                     />
                                                 )}
                                                 <Text>
@@ -473,15 +455,33 @@ export function Home() {
                                             style={{ cursor: "pointer" }}
                                         >
                                             <HStack spacing={1}>
-                                                <myIcons.HiOutlineAnnotation
-                                                    fontSize={"22px"}
-                                                />
-                                                <Text>
-                                                    {Math.floor(
-                                                        Math.random() * 90
-                                                    ) + 10}
-                                                </Text>
-                                                <Text>Replies</Text>
+                                                <Button
+                                                    variant={"ghost"}
+                                                    padding={"5px 10px"}
+                                                    margin={"0px"}
+                                                    h={"fit-content"}
+                                                    onClick={() =>
+                                                        console.log(
+                                                            "ini adalah button reply"
+                                                        )
+                                                    }
+                                                    fontWeight={"normal"}
+                                                    fontSize={"14px"}
+                                                    color={fontColor}
+                                                    gap={"5px"}
+                                                >
+                                                    <myIcons.HiOutlineAnnotation
+                                                        fontSize={"22px"}
+                                                    />
+                                                    <Text>
+                                                        {/* {repliesCounts[
+                                                            thread.id
+                                                        ] || 0}{" "}
+                                                        Gunakan nilai dari state */}
+                                                        20
+                                                    </Text>
+                                                    <Text>Replies</Text>
+                                                </Button>
                                             </HStack>
                                         </Link>
                                     </HStack>
