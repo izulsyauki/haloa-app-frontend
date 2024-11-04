@@ -14,6 +14,7 @@ import {
     ModalCloseButton,
     ModalContent,
     ModalOverlay,
+    Spacer,
     Spinner,
     Text,
     useColorModeValue,
@@ -208,6 +209,11 @@ export function PostDetail() {
                                     {threadDetailQuery.data.user.username || ""}
                                 </Text>
                             </VStack>
+
+                            <Spacer />
+                            {threadDetailQuery.data.user.id === userProfile?.id && <Text>
+                                <myIcons.HiDotsHorizontal fontSize={"18px"} />
+                            </Text>}
                         </HStack>
                         <VStack
                             w={"100%"}
@@ -309,9 +315,11 @@ export function PostDetail() {
                                 color={fontColor}
                                 fontSize={"13px"}
                             >
-                                <Text>11:32 PM</Text>
-                                <Text>•</Text>
-                                <Text>August 16, 2024</Text>
+                                <Text>
+                                    {formatDate(
+                                        threadDetailQuery.data.createdAt
+                                    )}
+                                </Text>
                             </HStack>
                             <HStack
                                 spacing={1}

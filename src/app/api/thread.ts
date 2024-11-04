@@ -45,3 +45,14 @@ export const createReply = async ({ formData, threadId }: CreateReplyParams) => 
         }
     }).then((res) => res.data);
 }
+
+interface DeleteThreadResponse {
+    message: string;
+}
+
+export const deleteThread = async (threadId: number): Promise<DeleteThreadResponse> => {
+    if (!threadId || isNaN(threadId)) {
+        throw new Error("Invalid thread ID");
+    }
+    return await API.delete<DeleteThreadResponse>(`/threads/${threadId}`).then((res) => res.data);
+};

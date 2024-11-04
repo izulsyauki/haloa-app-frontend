@@ -26,22 +26,25 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import myIcons from "../assets/icons/myIcons";
-import { CustomBtnPrimary } from "../components/CustomBtn";
+import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
 import { useCreateThread } from "../hooks/useCreateThread";
 import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
 import { useGetThreadsFeeds } from "../hooks/useGetThreadsFeeds";
 import { useHandleLike } from "../hooks/useHandleLike";
 import { Thread } from "../types/thread";
 import { formatDate } from "../utils/fomatDate";
+import { useDeleteThread } from "../hooks/useDeleteThread";
 
 export function Home() {
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const { threads, isLoadingThreads } = useGetThreadsFeeds();
     const { userProfile } = useGetLoginUserProfile();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [openDeleteId, setOpenDeleteId] = useState<number | null>(null);
+    const deleteThreadMutation = useDeleteThread();
     const {
         isOpen: isImageOpen,
         onOpen: onImageOpen,
@@ -64,6 +67,25 @@ export function Home() {
         handleFileSelect,
     } = useCreateThread();
     const { mutateAsyncLike } = useHandleLike();
+
+    const handleToggleDelete = (e: React.MouseEvent, threadId: number) => {
+        e.stopPropagation();
+        setOpenDeleteId(openDeleteId === threadId ? null : threadId);
+    };
+
+
+    const handleDelete = async (threadId: number) => {
+        try {
+            console.log("Deleting thread with ID:", threadId, typeof threadId);
+            if (!threadId || isNaN(threadId)) {
+                throw new Error("Invalid thread ID");
+            }
+            await deleteThreadMutation.mutateAsync(threadId);
+            setOpenDeleteId(null);
+        } catch (error) {
+            console.error("Error deleting thread:", error);
+        }
+    };
 
     return (
         <>
@@ -279,12 +301,19 @@ export function Home() {
                                     alignItems={"start"}
                                     fontWeight={"normal"}
                                 >
-                                    <Link
-                                        to={`/detail/${thread.id}`}
-                                        key={thread.id}
-                                        style={{ cursor: "pointer" }}
-                                    >
-                                        <HStack spacing={1} pb={"3px"}>
+                                    <HStack spacing={1} pb={"3px"} w={"100%"}>
+                                        <Link
+                                            to={`/detail/${thread.id}`}
+                                            key={thread.id}
+                                            style={{
+                                                cursor: "pointer",
+                                                width: "100%",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "flex-start",
+                                                gap: "5px",
+                                            }}
+                                        >
                                             <Heading
                                                 size={"sm"}
                                                 fontSize={"14px"}
@@ -312,7 +341,50 @@ export function Home() {
                                             >
                                                 {formatDate(thread.createdAt)}
                                             </Text>
-                                        </HStack>
+                                        </Link>
+                                        <Spacer />
+                                        {thread.user.id === userProfile?.id && (
+                                            <Flex flexDirection={"column"} gap={1} position={"relative"}>
+                                                <Text>
+                                                    <myIcons.HiDotsHorizontal
+                                                        fontSize={"18px"}
+                                                        cursor={"pointer"}
+                                                        onClick={(e) => handleToggleDelete(e, thread.id)}
+                                                    />
+                                                </Text>
+                                                <CustomBtnSecondary
+                                                    label={deleteThreadMutation.isPending ? "Deleting..." : "Delete"}
+                                                    p={"10px 10px"}
+                                                    variant={"ghost"}
+                                                    h={"fit-content"}
+                                                    borderRadius={"none"}
+                                                    fontWeight={"normal"}
+                                                    colorScheme={"whiteAlpha"}
+                                                    backgroundColor={"blackAlpha.300"}
+                                                    color={"white"}
+                                                    _hover={{
+                                                        backgroundColor:
+                                                            "blackAlpha.500",
+                                                    }}
+                                                    zIndex={10}
+                                                    position={"absolute"}
+                                                    top={4}
+                                                    right={1}
+                                                    hidden={openDeleteId !== thread.id}
+                                                    onClick={() => handleDelete(Number(thread.id))}
+                                                    isLoading={deleteThreadMutation.isPending}
+                                                />
+                                            </Flex>
+                                        )}
+                                    </HStack>
+                                    <Link
+                                        to={`/detail/${thread.id}`}
+                                        key={thread.id}
+                                        style={{
+                                            cursor: "pointer",
+                                            width: "100%",
+                                        }}
+                                    >
                                         <Text
                                             fontSize={"13px"}
                                             p={"5px 0px"}
