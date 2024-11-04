@@ -26,16 +26,16 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import myIcons from "../assets/icons/myIcons";
 import { CustomBtnPrimary } from "../components/CustomBtn";
 import { useCreateThread } from "../hooks/useCreateThread";
 import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
 import { useGetThreadsFeeds } from "../hooks/useGetThreadsFeeds";
+import { useHandleLike } from "../hooks/useHandleLike";
 import { Thread } from "../types/thread";
 import { formatDate } from "../utils/fomatDate";
-import { useHandleLike } from "../hooks/useHandleLike";
 
 export function Home() {
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
@@ -47,6 +47,7 @@ export function Home() {
         onOpen: onImageOpen,
         onClose: onImageClose,
     } = useDisclosure();
+    const navigate = useNavigate();
     const {
         isOpen,
         onOpen,
@@ -62,20 +63,7 @@ export function Home() {
         createThreadMutation,
         handleFileSelect,
     } = useCreateThread();
-    const [repliesCounts, setRepliesCounts] = useState<Record<number, number>>(
-        {}
-    );
     const { mutateAsyncLike } = useHandleLike();
-
-    // // Generate random replies count sekali saja saat komponen mount
-    // useEffect(() => {
-    //     const counts: Record<number, number> = {};
-    //     threads?.forEach((thread) => {
-    //         counts[thread.id] = Math.floor(Math.random() * 90) + 10;
-    //     });
-    //     setRepliesCounts(counts);
-    // }, [threads]); // Hanya dijalankan ketika threads berubah
-
 
     return (
         <>
@@ -124,7 +112,6 @@ export function Home() {
                     <ModalContent padding={"10px 10px"}>
                         <form
                             onSubmit={(e) => {
-                                console.log("form submitted");
                                 onSubmit(e);
                             }}
                         >
@@ -166,7 +153,13 @@ export function Home() {
                                                     position={"absolute"}
                                                     top={1}
                                                     right={1}
-                                                    colorScheme="gray"
+                                                    colorScheme="whiteAlpha"
+                                                    backgroundColor="blackAlpha.600"
+                                                    color="white"
+                                                    _hover={{
+                                                        backgroundColor:
+                                                            "blackAlpha.700",
+                                                    }}
                                                     onClick={() => {
                                                         setPreviewUrls((prev) =>
                                                             prev.filter(
@@ -267,7 +260,7 @@ export function Home() {
                         >
                             <Flex padding="1rem" gap={"15px"}>
                                 <Link
-                                    to={`/details/${thread.id}`}
+                                    to={`/detail/${thread.id}`}
                                     key={thread.id}
                                     style={{ cursor: "pointer" }}
                                 >
@@ -287,7 +280,7 @@ export function Home() {
                                     fontWeight={"normal"}
                                 >
                                     <Link
-                                        to={`/details/${thread.id}`}
+                                        to={`/detail/${thread.id}`}
                                         key={thread.id}
                                         style={{ cursor: "pointer" }}
                                     >
@@ -449,41 +442,31 @@ export function Home() {
                                             </Button>
                                         </HStack>
 
-                                        <Link
-                                            to={`/details/${thread.id}`}
-                                            key={thread.id}
-                                            style={{ cursor: "pointer" }}
-                                        >
-                                            <HStack spacing={1}>
-                                                <Button
-                                                    variant={"ghost"}
-                                                    padding={"5px 10px"}
-                                                    margin={"0px"}
-                                                    h={"fit-content"}
-                                                    onClick={() =>
-                                                        console.log(
-                                                            "ini adalah button reply"
-                                                        )
-                                                    }
-                                                    fontWeight={"normal"}
-                                                    fontSize={"14px"}
-                                                    color={fontColor}
-                                                    gap={"5px"}
-                                                >
-                                                    <myIcons.HiOutlineAnnotation
-                                                        fontSize={"22px"}
-                                                    />
-                                                    <Text>
-                                                        {/* {repliesCounts[
-                                                            thread.id
-                                                        ] || 0}{" "}
-                                                        Gunakan nilai dari state */}
-                                                        20
-                                                    </Text>
-                                                    <Text>Replies</Text>
-                                                </Button>
-                                            </HStack>
-                                        </Link>
+                                        <HStack spacing={1}>
+                                            <Button
+                                                variant={"ghost"}
+                                                padding={"5px 10px"}
+                                                margin={"0px"}
+                                                h={"fit-content"}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/detail/${thread.id}`
+                                                    )
+                                                }
+                                                fontWeight={"normal"}
+                                                fontSize={"14px"}
+                                                color={fontColor}
+                                                gap={"5px"}
+                                            >
+                                                <myIcons.HiOutlineAnnotation
+                                                    fontSize={"22px"}
+                                                />
+                                                <Text>
+                                                    {thread._count.replies}
+                                                </Text>
+                                                <Text>Replies</Text>
+                                            </Button>
+                                        </HStack>
                                     </HStack>
                                 </VStack>
                             </Flex>

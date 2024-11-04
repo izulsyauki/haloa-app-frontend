@@ -15,7 +15,7 @@ export const router = createBrowserRouter([
                         errorElement: <myRoutes.ErrorPage />,
                     },
                     {
-                        path: "/post/:postId",
+                        path: "/detail/:postId",
                         element: <myRoutes.PostDetailRoute />,
                     },
                     {

@@ -117,12 +117,12 @@ export function SideBarLeft() {
                     <ModalContent padding={"10px 10px"}>
                         <form
                             onSubmit={(e) => {
-                                console.log("form submitted");
                                 onSubmit(e);
                             }}
                         >
                             <ModalHeader></ModalHeader>
-                            <ModalCloseButton onClick={() => {
+                            <ModalCloseButton
+                                onClick={() => {
                                     setPreviewUrls([]);
                                     setSelectedFiles([]);
                                 }}
@@ -163,8 +163,13 @@ export function SideBarLeft() {
                                                     position={"absolute"}
                                                     top={1}
                                                     right={1}
-                                                    variant={"solid"}
                                                     colorScheme="whiteAlpha"
+                                                    backgroundColor="blackAlpha.600"
+                                                    color="white"
+                                                    _hover={{
+                                                        backgroundColor:
+                                                            "blackAlpha.700",
+                                                    }}
                                                     onClick={() => {
                                                         setPreviewUrls((prev) =>
                                                             prev.filter(
