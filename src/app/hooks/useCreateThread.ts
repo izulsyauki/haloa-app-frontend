@@ -30,8 +30,9 @@ export const useCreateThread = () => {
             return response;
         },
         onSuccess: () => {
-            // Hanya invalidate query setelah berhasil membuat thread
+            // invalidate query setelah berhasil membuat thread
             queryClient.invalidateQueries({ queryKey: ["threads"] });
+            queryClient.invalidateQueries({ queryKey: ["userThreads"] });
         },
     });
 

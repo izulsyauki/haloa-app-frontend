@@ -560,7 +560,15 @@ export function Home() {
                 <Modal isOpen={isImageOpen} onClose={onImageClose} size="xl">
                     <ModalOverlay />
                     <ModalContent bg="transparent" boxShadow="none">
-                        <ModalCloseButton color="white" />
+                        <ModalCloseButton
+                            size={"sm"}
+                            colorScheme="whiteAlpha"
+                            backgroundColor="blackAlpha.600"
+                            color="white"
+                            _hover={{
+                                backgroundColor: "blackAlpha.700",
+                            }}
+                        />
                         <ModalBody p={0}>
                             {selectedImage && (
                                 <Image

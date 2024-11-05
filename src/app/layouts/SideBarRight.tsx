@@ -10,6 +10,7 @@ import {
     HStack,
     Image,
     Input,
+    InputGroup,
     Link,
     Modal,
     ModalBody,
@@ -36,7 +37,7 @@ import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
 import { useHandleEditProfile } from "../hooks/useHandleEditProfile";
 import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
 import { useAuthStore } from "../store/auth";
-import { useFollowStore } from '../store/follow';
+import { useFollowStore } from "../store/follow";
 import { User } from "../types/user";
 
 export function SideBarRight() {
@@ -61,14 +62,19 @@ export function SideBarRight() {
         following: 0,
     });
     const followingIds = useFollowStore((state) => state.followingIds);
-    const { userProfile, isLoadingProfile } = useGetLoginUserProfile();
+    const { userProfile, isLoadingProfile, refetchProfile } =
+        useGetLoginUserProfile();
 
     // handle untuk edit profile
     const {
         isEditProfileOpen,
+        avatarPreview,
+        bannerPreview,
+        isUpdatingProfile,
         handleEditProfileOpen,
         handleEditProfileClose,
         handleInputChange,
+        handleFileChange,
         handleSaveProfile,
     } = useHandleEditProfile();
 
@@ -93,12 +99,14 @@ export function SideBarRight() {
         try {
             const users = await getSuggestedUsers(3);
             // Tambahkan isFollowed berdasarkan followingIds dari store
-            const usersWithFollowStatus = (users as User[]).map(user => ({
+            const usersWithFollowStatus = (users as User[]).map((user) => ({
                 ...user,
-                isFollowed: followingIds.includes(user.id)
+                isFollowed: followingIds.includes(user.id),
             }));
             // Filter hanya user yang belum di-follow
-            const filteredUsers = usersWithFollowStatus.filter(user => !user.isFollowed);
+            const filteredUsers = usersWithFollowStatus.filter(
+                (user) => !user.isFollowed
+            );
             setSuggestedUser(filteredUsers);
         } catch (error) {
             console.error("Error fetching suggested users:", error);
@@ -114,17 +122,18 @@ export function SideBarRight() {
         fetchSuggestedUser();
     }, [fetchFollowCounts, fetchSuggestedUser]);
 
-
     useEffect(() => {
         const fetchCounts = async () => {
             try {
                 const counts = await getFollowCounts();
-                setFollowCounts(counts as { followers: number; following: number });
+                setFollowCounts(
+                    counts as { followers: number; following: number }
+                );
             } catch (error) {
                 console.error("Error fetching counts:", error);
             }
         };
-        
+
         fetchCounts();
     }, []);
 
@@ -155,7 +164,9 @@ export function SideBarRight() {
                         <Flex flexDir={"column"} justifyContent={"flex-end"}>
                             <Box position={"relative"}>
                                 <Image
-                                    src={userProfile?.profile?.banner || coverImg}
+                                    src={
+                                        userProfile?.profile?.banner || coverImg
+                                    }
                                     alt="Cover Image"
                                     h={"80px"}
                                     objectFit={"cover"}
@@ -164,7 +175,10 @@ export function SideBarRight() {
                                 />
                                 <Avatar
                                     name="Profile Avatar"
-                                    src={userProfile?.profile?.avatar ?? undefined}
+                                    src={
+                                        userProfile?.profile?.avatar ??
+                                        undefined
+                                    }
                                     position={"absolute"}
                                     left={"20px"}
                                     bottom={"-23px"}
@@ -182,7 +196,7 @@ export function SideBarRight() {
                                 marginY={"12px"}
                                 onClick={handleEditProfileOpen}
                             />
-                            
+
                             {/* Modal edit profile */}
                             <Modal
                                 isOpen={isEditProfileOpen}
@@ -210,20 +224,78 @@ export function SideBarRight() {
                                             position={"relative"}
                                             mb={"30px"}
                                         >
-                                            <Image
-                                                src={
-                                                    userProfile?.profile?.banner || coverImg
-                                                }
-                                                alt="Cover Image"
-                                                h={"100px"}
-                                                objectFit={"cover"}
-                                                borderRadius={"10px"}
-                                                w={"100%"}
-                                            />
+                                            <InputGroup position={"relative"}>
+                                                <Image
+                                                    src={
+                                                        bannerPreview ||
+                                                        userProfile?.profile
+                                                            ?.banner ||
+                                                        coverImg
+                                                    }
+                                                    alt="Cover Image"
+                                                    h={"100px"}
+                                                    objectFit={"cover"}
+                                                    borderRadius={"10px"}
+                                                    w={"100%"}
+                                                />
+                                                <Button
+                                                    position={"absolute"}
+                                                    left={"50%"}
+                                                    bottom={"50%"}
+                                                    transform={
+                                                        "translate(-50%, 50%)"
+                                                    }
+                                                    p={"0px"}
+                                                    m={"0px"}
+                                                    borderRadius={"100px"}
+                                                    w={"28px"}
+                                                    h={"28px"}
+                                                    minW={"28px"}
+                                                    bg={galleryButtonBg}
+                                                    _hover={{
+                                                        bg: galleryButtonBg,
+                                                    }}
+                                                    onClick={() =>
+                                                        document
+                                                            .getElementById(
+                                                                "banner-upload"
+                                                            )
+                                                            ?.click()
+                                                    }
+                                                >
+                                                    <Image
+                                                        src={myIcons.GalleryAdd}
+                                                        w={"18px"}
+                                                        h={"18px"}
+                                                        m={"0px"}
+                                                        p={"0px"}
+                                                    />
+                                                </Button>
+                                                <Input
+                                                    id="banner-upload"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) => {
+                                                        if (
+                                                            e.target.files?.[0]
+                                                        ) {
+                                                            handleFileChange(
+                                                                "banner",
+                                                                e.target
+                                                                    .files?.[0]
+                                                            );
+                                                        }
+                                                    }}
+                                                    display="none"
+                                                />
+                                            </InputGroup>
+
                                             <Avatar
                                                 name="Profile Avatar"
                                                 src={
-                                                    userProfile?.profile?.avatar ??
+                                                    avatarPreview ||
+                                                    userProfile?.profile
+                                                        ?.avatar ||
                                                     undefined
                                                 }
                                                 position={"absolute"}
@@ -247,6 +319,13 @@ export function SideBarRight() {
                                                 _hover={{
                                                     bg: galleryButtonBg,
                                                 }}
+                                                onClick={() =>
+                                                    document
+                                                        .getElementById(
+                                                            "avatar-upload"
+                                                        )
+                                                        ?.click()
+                                                }
                                             >
                                                 <Image
                                                     src={myIcons.GalleryAdd}
@@ -256,6 +335,20 @@ export function SideBarRight() {
                                                     p={"0px"}
                                                 />
                                             </Button>
+                                            <Input
+                                                id="avatar-upload"
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => {
+                                                    if (e.target.files?.[0]) {
+                                                        handleFileChange(
+                                                            "avatar",
+                                                            e.target.files?.[0]
+                                                        );
+                                                    }
+                                                }}
+                                                display="none"
+                                            />
                                         </Box>
                                         <VStack
                                             w={"100%"}
@@ -271,11 +364,12 @@ export function SideBarRight() {
                                             </Text>
                                             <Input
                                                 defaultValue={`${userProfile?.profile?.fullName}`}
-                                                onChange={(e) =>
-                                                    handleInputChange(
+                                                onChange={(e) => {
+                                                        handleInputChange(
                                                         "fullName",
                                                         e.target.value
-                                                    )
+                                                        );
+                                                    }
                                                 }
                                             />
                                         </VStack>
@@ -318,13 +412,14 @@ export function SideBarRight() {
                                             <Textarea
                                                 resize={"none"}
                                                 defaultValue={
-                                                    userProfile?.profile?.bio ?? ""
+                                                    userProfile?.profile?.bio || ""
                                                 }
-                                                onChange={(e) =>
-                                                    handleInputChange(
-                                                        "bio",
-                                                        e.target.value
-                                                    )
+                                                onChange={(e) => {
+                                                        handleInputChange(
+                                                            "bio",
+                                                            e.target.value
+                                                        );
+                                                    }
                                                 }
                                             />
                                         </VStack>
@@ -338,18 +433,21 @@ export function SideBarRight() {
                                         alignSelf={"flex-end"}
                                     >
                                         <CustomBtnPrimary
-                                            label="Save"
+                                            label={isUpdatingProfile ? "Updating..." : "Save"}
                                             m={"0px"}
                                             p={"10px 20px"}
                                             w={"fit-content"}
                                             h={"fit-content"}
                                             fontSize={"14px"}
-                                            onClick={handleSaveProfile}
+                                            onClick={async () => {
+                                                await handleSaveProfile();
+                                                refetchProfile();
+                                            }}
+                                            isLoading={isUpdatingProfile}
                                         />
                                     </ModalFooter>
                                 </ModalContent>
                             </Modal>
-
                         </Flex>
                         {isLoadingProfile ? (
                             <Text>Loading profile...</Text>
@@ -358,13 +456,19 @@ export function SideBarRight() {
                         ) : userProfile ? (
                             <>
                                 <Heading size="md">
-                                    ✨{userProfile?.profile?.fullName ?? "Nama pengguna"}✨
+                                    ✨
+                                    {userProfile?.profile?.fullName ??
+                                        "Nama pengguna"}
+                                    ✨
                                 </Heading>
                                 <Text fontSize={"14px"} color={fontColor}>
-                                    @{userProfile?.username ?? "Username belum ada"}
+                                    @
+                                    {userProfile?.username ??
+                                        "Username belum ada"}
                                 </Text>
                                 <Text fontSize={"14px"}>
-                                    {userProfile?.profile?.bio ?? "Bio belum ada"}
+                                    {userProfile?.profile?.bio ??
+                                        "Bio belum ada"}
                                 </Text>
                                 <HStack spacing={3}>
                                     <HStack spacing={1}>
@@ -433,8 +537,12 @@ export function SideBarRight() {
                                     w={"36px"}
                                 />
                                 <Box flex={5} gap={"10px"}>
-                                    <Text fontSize={"12px"} fontWeight={"medium"}>
-                                        {user.profile.fullName ?? "Nama pengguna"}
+                                    <Text
+                                        fontSize={"12px"}
+                                        fontWeight={"medium"}
+                                    >
+                                        {user.profile.fullName ??
+                                            "Nama pengguna"}
                                     </Text>
                                     <Text color={fontColor} fontSize={"12px"}>
                                         @{user.username ?? "Username belum ada"}
@@ -446,13 +554,15 @@ export function SideBarRight() {
                                     fontSize={"12px"}
                                     fontWeight={"medium"}
                                     isLoading={followLoading}
-                                    onClick={() => handleFollowClick(
-                                        user, 
-                                        suggestedUser, 
-                                        setSuggestedUser,
-                                        fetchSuggestedUser
-                                    )}
-                                    label="Follow"  // Karena suggested user hanya menampilkan yang belum di-follow
+                                    onClick={() =>
+                                        handleFollowClick(
+                                            user,
+                                            suggestedUser,
+                                            setSuggestedUser,
+                                            fetchSuggestedUser
+                                        )
+                                    }
+                                    label="Follow" // Karena suggested user hanya menampilkan yang belum di-follow
                                     bg={undefined}
                                     color={undefined}
                                 />
@@ -461,7 +571,7 @@ export function SideBarRight() {
                     </Stack>
                 </CardBody>
             </Card>
-            
+
             {/* Modal konfirmasi unfollow user */}
             {selectedUser && (
                 <>
@@ -488,11 +598,13 @@ export function SideBarRight() {
                             >
                                 <CustomBtnSecondary
                                     label="Unfollow"
-                                    onClick={() => handleUnfollow(
-                                        suggestedUser,
-                                        setSuggestedUser,
-                                        fetchSuggestedUser  // Pastikan ini dipassing
-                                    )}
+                                    onClick={() =>
+                                        handleUnfollow(
+                                            suggestedUser,
+                                            setSuggestedUser,
+                                            fetchSuggestedUser // Pastikan ini dipassing
+                                        )
+                                    }
                                     m={"0px"}
                                     w={"fit-content"}
                                     h={"fit-content"}

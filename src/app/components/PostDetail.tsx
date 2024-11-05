@@ -833,9 +833,9 @@ export function PostDetail() {
                             </Box>
                         ))
                     ) : (
-                        <Text>No replies yet.</Text>
-                    )}
-                </Box>
+                        <Text align={"center"} justifySelf={"center"} w={"100%"} h={"100%"}>No replies yet.</Text>
+                        )}
+                    </Box>
             </Box>
         </>
     );

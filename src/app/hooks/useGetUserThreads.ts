@@ -37,8 +37,5 @@ export const useGetUserThreads = () => {
         },
         refetchOnMount: true,
         refetchOnWindowFocus: true,
-        staleTime: 1000 * 60,
-        // Pastikan data userThreads selalu sinkron dengan threads
-        enabled: !!queryClient.getQueryData(["threads"])
     });
 };

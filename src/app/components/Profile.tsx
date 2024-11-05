@@ -8,6 +8,7 @@ import {
     HStack,
     Image,
     Input,
+    InputGroup,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -38,7 +39,8 @@ import { Thread } from "../types/thread";
 import { formatDate } from "../utils/fomatDate";
 
 export function Profile() {
-    const { userProfile } = useGetLoginUserProfile();
+    const { userProfile, isLoadingProfile, refetchProfile } =
+        useGetLoginUserProfile();
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const galleryButtonBg = useColorModeValue("white", "#2d3748");
     const [view, setView] = useState<"all" | "media">("all");
@@ -62,9 +64,13 @@ export function Profile() {
     // handle untuk edit profile
     const {
         isEditProfileOpen,
+        avatarPreview,
+        bannerPreview,
+        isUpdatingProfile,
         handleEditProfileOpen,
         handleEditProfileClose,
         handleInputChange,
+        handleFileChange,
         handleSaveProfile,
     } = useHandleEditProfile();
 
@@ -99,7 +105,11 @@ export function Profile() {
                         <Avatar
                             name="Profile Avatar"
                             size={"lg"}
-                            src={userProfile?.profile?.avatar ?? undefined}
+                            src={
+                                avatarPreview ||
+                                userProfile?.profile?.avatar ||
+                                undefined
+                            }
                             position={"absolute"}
                             left={"25px"}
                             bottom={"-35px"}
@@ -142,17 +152,66 @@ export function Profile() {
                                     position={"relative"}
                                     mb={"30px"}
                                 >
-                                    <Image
-                                        src={
-                                            userProfile?.profile?.banner ||
-                                            coverImg
-                                        }
-                                        alt="Cover Image"
-                                        h={"100px"}
-                                        objectFit={"cover"}
-                                        borderRadius={"10px"}
-                                        w={"100%"}
-                                    />
+                                    <InputGroup position={"relative"}>
+                                        <Image
+                                            src={
+                                                bannerPreview ||
+                                                userProfile?.profile?.banner ||
+                                                coverImg
+                                            }
+                                            alt="Cover Image"
+                                            h={"100px"}
+                                            objectFit={"cover"}
+                                            borderRadius={"10px"}
+                                            w={"100%"}
+                                        />
+                                        <Input
+                                            id="banner-upload"
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => {
+                                                if (e.target.files?.[0]) {
+                                                    handleFileChange(
+                                                        "banner",
+                                                        e.target.files[0]
+                                                    );
+                                                }
+                                            }}
+                                            display="none" // Sembunyikan input asli
+                                        />
+                                        <Button
+                                            position={"absolute"}
+                                            left={"50%"}
+                                            bottom={"50%"}
+                                            transform={"translate(-50%, 50%)"}
+                                            p={"0px"}
+                                            m={"0px"}
+                                            borderRadius={"100px"}
+                                            w={"28px"}
+                                            h={"28px"}
+                                            minW={"28px"}
+                                            bg={galleryButtonBg}
+                                            _hover={{
+                                                bg: galleryButtonBg,
+                                            }}
+                                            onClick={() =>
+                                                document
+                                                    .getElementById(
+                                                        "banner-upload"
+                                                    )
+                                                    ?.click()
+                                            }
+                                        >
+                                            <Image
+                                                src={myIcons.GalleryAdd}
+                                                w={"18px"}
+                                                h={"18px"}
+                                                m={"0px"}
+                                                p={"0px"}
+                                            />
+                                        </Button>
+                                    </InputGroup>
+
                                     <Avatar
                                         name="Profile Avatar"
                                         src={
@@ -165,6 +224,20 @@ export function Profile() {
                                         size={"lg"}
                                         outline={"3px solid"}
                                         outlineColor={outlineColor}
+                                    />
+                                    <Input
+                                        id="avatar-upload"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            if (e.target.files?.[0]) {
+                                                handleFileChange(
+                                                    "avatar",
+                                                    e.target.files?.[0]
+                                                );
+                                            }
+                                        }}
+                                        display="none" // Sembunyikan input asli
                                     />
                                     <Button
                                         position={"absolute"}
@@ -180,6 +253,11 @@ export function Profile() {
                                         _hover={{
                                             bg: galleryButtonBg,
                                         }}
+                                        onClick={() =>
+                                            document
+                                                .getElementById("avatar-upload")
+                                                ?.click()
+                                        }
                                     >
                                         <Image
                                             src={myIcons.GalleryAdd}
@@ -269,13 +347,21 @@ export function Profile() {
                                 alignSelf={"flex-end"}
                             >
                                 <CustomBtnPrimary
-                                    label="Save"
+                                    label={
+                                        isUpdatingProfile
+                                            ? "Updating..."
+                                            : "Save"
+                                    }
                                     m={"0px"}
                                     p={"10px 20px"}
                                     w={"fit-content"}
                                     h={"fit-content"}
                                     fontSize={"14px"}
-                                    onClick={handleSaveProfile}
+                                    onClick={async () => {
+                                        await handleSaveProfile();
+                                        refetchProfile();
+                                    }}
+                                    isLoading={isUpdatingProfile}
                                 />
                             </ModalFooter>
                         </ModalContent>
@@ -545,7 +631,6 @@ export function Profile() {
                                                         bottom: 0,
                                                         bg: "blackAlpha.600",
                                                         zIndex: 1,
-                                                        borderRadius: "md",
                                                     },
                                                     ".view-text": {
                                                         opacity: 1,
@@ -655,7 +740,15 @@ export function Profile() {
             <Modal isOpen={isImageOpen} onClose={onImageClose} size="xl">
                 <ModalOverlay />
                 <ModalContent bg="transparent" boxShadow="none">
-                    <ModalCloseButton color="white" />
+                    <ModalCloseButton
+                        size={"sm"}
+                        colorScheme="whiteAlpha"
+                        backgroundColor="blackAlpha.600"
+                        color="white"
+                        _hover={{
+                            backgroundColor: "blackAlpha.700",
+                        }}
+                    />
                     <ModalBody p={0}>
                         {selectedImage && (
                             <Image
