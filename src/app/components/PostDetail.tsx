@@ -32,9 +32,7 @@ import { useHandleLike } from "../hooks/useHandleLike";
 import { formatDate } from "../utils/fomatDate";
 import { CustomBtnPrimary } from "./CustomBtn";
 import { CloseIcon } from "@chakra-ui/icons";
-
-// const findPostById = (postId: string | undefined) =>
-//     User.find((user) => user.id === Number(postId));
+import { useDeleteThread } from "../hooks/useDeleteThread";
 
 export function PostDetail() {
     const { postId } = useParams();
@@ -49,6 +47,12 @@ export function PostDetail() {
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const {
+        handleToggleDelete,
+        handleDelete,
+        openDeleteId,
+        deleteThreadMutation,
+    } = useDeleteThread();
     const {
         isOpen: isImageOpen,
         onOpen: onImageOpen,
@@ -153,11 +157,23 @@ export function PostDetail() {
     };
 
     if (threadDetailQuery.isLoading) {
-        return <Spinner />;
+        return (
+            <Box w={"100%"} h={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}>
+            <Spinner />
+            </Box>
+        );
     }
 
     if (!threadDetailQuery.data) {
-        return <Text>Post not found</Text>;
+        return (
+            <Text alignSelf={"center"} justifySelf={"center"} w={"100%"} h={"100%"}>
+                Post not found
+            </Text>
+        );
+    }
+
+    if (deleteThreadMutation.isSuccess) {
+        navigate(-1);
     }
 
     return (
@@ -211,9 +227,55 @@ export function PostDetail() {
                             </VStack>
 
                             <Spacer />
-                            {threadDetailQuery.data.user.id === userProfile?.id && <Text>
-                                <myIcons.HiDotsHorizontal fontSize={"18px"} />
-                            </Text>}
+                            {threadDetailQuery.data.user.id === userProfile?.id && (
+                                <Flex
+                                    flexDirection={"column"}
+                                    gap={1}
+                                    position={"relative"}
+                                >
+                                    <Box onClick={(e) => e.stopPropagation()}>
+                                        <myIcons.HiDotsHorizontal
+                                            fontSize={"18px"}
+                                            cursor={"pointer"}
+                                            onClick={(e) =>
+                                                handleToggleDelete(
+                                                    e,
+                                                    threadDetailQuery.data.id
+                                                )
+                                            }
+                                        />
+                                    </Box>
+                                    {openDeleteId ===
+                                        threadDetailQuery.data.id && (
+                                        <Box
+                                            position="absolute"
+                                            top={4}
+                                            right={1}
+                                            zIndex={10}
+                                        >
+                                            <Button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDelete(
+                                                        threadDetailQuery.data
+                                                            .id
+                                                    );
+                                                }}
+                                                isLoading={
+                                                    deleteThreadMutation.isPending
+                                                }
+                                                size="sm"
+                                                colorScheme="red"
+                                                variant="ghost"
+                                                borderRadius={"none"}
+                                                fontWeight={"normal"}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </Box>
+                                    )}
+                                </Flex>
+                            )}
                         </HStack>
                         <VStack
                             w={"100%"}

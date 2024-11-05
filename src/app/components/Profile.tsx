@@ -15,6 +15,7 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
+    Spacer,
     Spinner,
     Stack,
     Text,
@@ -23,110 +24,40 @@ import {
     useDisclosure,
     VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import myIcons from "../assets/icons/myIcons";
 import coverImg from "../assets/images/cover.png";
 import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
-import { useAuthStore } from "../store/auth";
-import { getFollowCounts } from "../api/follow";
-import { useHandleEditProfile } from "../hooks/useHandleEditProfile";
+import { useDeleteThread } from "../hooks/useDeleteThread";
 import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
 import { useGetUserThreads } from "../hooks/useGetUserThreads";
+import { useHandleEditProfile } from "../hooks/useHandleEditProfile";
+import { useHandleLike } from "../hooks/useHandleLike";
 import { Thread } from "../types/thread";
 import { formatDate } from "../utils/fomatDate";
-import API from "../libs/axios";
-
-interface dummyPost {
-    post: string;
-    imageUrl?: string;
-}
-
-const dummyPost: dummyPost[] = [
-    {
-        post: "Hari ini super capek, tapi happy banget! Long drive ke tempat yang nggak pernah dikunjungin sebelumnya. Adventure time!",
-    },
-    {
-        post: "Kadang hidup tuh nggak harus ribet, nikmatin aja apa yang ada. Udah syukur aja!",
-    },
-    {
-        post: "Siapa yang bisa relate? Punya list film banyak, tapi pas mau nonton malah scroll TikTok mulu 😂",
-    },
-    {
-        post: "Traveling itu bukan soal tempatnya aja, tapi soal pengalaman dan orang-orang yang kamu temui di jalan.",
-        imageUrl:
-            "https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    },
-    {
-        post: "Curhat dikit: Kadang hidup tuh lucu, yang kita rencanain belum tentu sesuai. Tapi, mungkin itu cara semesta ngajarin kita bersyukur.",
-    },
-    {
-        post: "Perjalanan ke puncak bareng teman-teman emang nggak ada tandingannya. Terasa banget persahabatannya!",
-        imageUrl:
-            "https://images.pexels.com/photos/906531/pexels-photo-906531.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    },
-    {
-        post: "Gila sih, sunset di pantai tadi sore keren banget! Fix healing ke sini lagi kapan-kapan.",
-        imageUrl:
-            "https://images.pexels.com/photos/2486168/pexels-photo-2486168.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    },
-    {
-        post: "Lagi pengen aja nge-gas ke gunung, fresh banget sih hawa dinginnya!",
-        imageUrl:
-            "https://images.pexels.com/photos/572897/pexels-photo-572897.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    },
-    {
-        post: "Sudah lama gw nggak ngoding lagi, first time ngoding lagi ges!",
-        imageUrl:
-            "https://images.pexels.com/photos/169573/pexels-photo-169573.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    },
-    {
-        post: "Hidup itu kayak jalanan, kadang lurus, kadang belok-belok. Yang penting jangan lupa nikmatin pemandangan.",
-    },
-    {
-        post: "Nggak perlu jauh-jauh ke luar negeri, explore alam di negeri sendiri aja udah cukup buat healing.",
-    },
-    {
-        post: "Baru aja baca buku tentang mindfulness. Ternyata kadang kita lupa nikmatin hal-hal kecil dalam hidup.",
-    },
-    {
-        post: "Kalo udah di alam bebas gini, baru deh ngerasa kecil banget sebagai manusia.",
-    },
-    {
-        post: "Random thought: Kenapa ya langit di pagi hari tuh rasanya selalu lebih tenang?",
-    },
-    {
-        post: "Jalan-jalan ke hutan emang beda sih, ketenangan dan suara alam bener-bener bikin pikiran fresh.",
-        imageUrl:
-            "https://images.pexels.com/photos/38136/pexels-photo-38136.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    },
-    {
-        post: "Banyak yang bilang, ‘Jangan sering-sering overthinking.’ Tapi gimana ya, kadang pikiran tuh nggak bisa di-stop gitu aja 😂",
-    },
-];
 
 export function Profile() {
-    const { token } = useAuthStore();
-    const [error, setError] = useState<string | null>(null);
     const { userProfile } = useGetLoginUserProfile();
-    const [followCounts, setFollowCounts] = useState({
-        followers: 0,
-        following: 0,
-    });
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const galleryButtonBg = useColorModeValue("white", "#2d3748");
     const [view, setView] = useState<"all" | "media">("all");
     const outlineColor = useColorModeValue("white", "#2d3748");
-    const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>(
-        {}
-    );
     const userThreads = useGetUserThreads();
+    const navigate = useNavigate();
+    const {
+        handleToggleDelete,
+        handleDelete,
+        openDeleteId,
+        deleteThreadMutation,
+    } = useDeleteThread();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const {
         isOpen: isImageOpen,
         onOpen: onImageOpen,
         onClose: onImageClose,
     } = useDisclosure();
+    const { mutateAsyncLike } = useHandleLike();
 
     // handle untuk edit profile
     const {
@@ -137,11 +68,6 @@ export function Profile() {
         handleSaveProfile,
     } = useHandleEditProfile();
 
-    const handleLike = async (threadId: number) => {
-        const response = await API.post(`/like/${threadId}`);
-        return response.data;
-    };
-
     //filter user berdasarkan view
     const filteredThreads = userThreads.data?.filter((thread) => {
         if (view === "all") {
@@ -151,24 +77,6 @@ export function Profile() {
         }
         return false;
     });
-
-    // hook fetch follow counts
-    useEffect(() => {
-        const fetchFollowCounts = async () => {
-            if (token) {
-                try {
-                    const counts = await getFollowCounts();
-                    setFollowCounts(
-                        counts as { followers: number; following: number }
-                    );
-                } catch (error) {
-                    console.error("Error fetching follow counts:", error);
-                    setError("Gagal mengambil data follow counts");
-                }
-            }
-        };
-        fetchFollowCounts();
-    }, [token]);
 
     return (
         <Box w={"100%"}>
@@ -384,7 +292,7 @@ export function Profile() {
                     <HStack spacing={2}>
                         <HStack spacing={1}>
                             <Text fontWeight={"bold"} fontSize={"14px"}>
-                                {followCounts.following}
+                                {userProfile?._count?.following}
                             </Text>
                             <Text fontSize={"14px"} color={"whiteAlpha.500"}>
                                 Following
@@ -392,7 +300,7 @@ export function Profile() {
                         </HStack>
                         <HStack spacing={1}>
                             <Text fontWeight={"bold"} fontSize={"14px"}>
-                                {followCounts.followers}
+                                {userProfile?._count?.follower}
                             </Text>
                             <Text fontSize={"14px"} color={"whiteAlpha.500"}>
                                 Followers
@@ -473,7 +381,7 @@ export function Profile() {
                     >
                         <Flex padding="1rem" gap={"15px"}>
                             <Link
-                                to={`/details/${thread.id}`}
+                                to={`/detail/${thread.id}`}
                                 key={thread.id}
                                 style={{ cursor: "pointer" }}
                             >
@@ -491,12 +399,19 @@ export function Profile() {
                                 alignItems={"start"}
                                 fontWeight={"normal"}
                             >
-                                <Link
-                                    to={`/details/${thread.id}`}
-                                    key={thread.id}
-                                    style={{ cursor: "pointer" }}
-                                >
-                                    <HStack spacing={1} pb={"3px"}>
+                                <HStack spacing={1} pb={"3px"} w={"100%"}>
+                                    <Link
+                                        to={`/detail/${thread.id}`}
+                                        key={thread.id}
+                                        style={{
+                                            cursor: "pointer",
+                                            width: "100%",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "flex-start",
+                                            gap: "5px",
+                                        }}
+                                    >
                                         <Heading size={"sm"} fontSize={"14px"}>
                                             {thread.user.profile.fullName ??
                                                 "Nama pengguna"}
@@ -521,7 +436,71 @@ export function Profile() {
                                         >
                                             {formatDate(thread.createdAt)}
                                         </Text>
-                                    </HStack>
+                                    </Link>
+                                    <Spacer />
+
+                                    {/* toggle delete thread */}
+                                    {thread.user.id === userProfile?.id && (
+                                        <Flex
+                                            flexDirection={"column"}
+                                            gap={1}
+                                            position={"relative"}
+                                        >
+                                            <Box
+                                                onClick={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                            >
+                                                <myIcons.HiDotsHorizontal
+                                                    fontSize={"18px"}
+                                                    cursor={"pointer"}
+                                                    onClick={(e) =>
+                                                        handleToggleDelete(
+                                                            e,
+                                                            thread.id
+                                                        )
+                                                    }
+                                                />
+                                            </Box>
+                                            {openDeleteId === thread.id && (
+                                                <Box
+                                                    position="absolute"
+                                                    top={4}
+                                                    right={1}
+                                                    zIndex={10}
+                                                >
+                                                    <Button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDelete(
+                                                                thread.id
+                                                            );
+                                                        }}
+                                                        isLoading={
+                                                            deleteThreadMutation.isPending
+                                                        }
+                                                        size="sm"
+                                                        colorScheme="red"
+                                                        variant="ghost"
+                                                        borderRadius={"none"}
+                                                        fontWeight={"normal"}
+                                                    >
+                                                        Delete
+                                                    </Button>
+                                                </Box>
+                                            )}
+                                        </Flex>
+                                    )}
+                                </HStack>
+
+                                <Link
+                                    to={`/detail/${thread.id}`}
+                                    key={thread.id}
+                                    style={{
+                                        cursor: "pointer",
+                                        width: "100%",
+                                    }}
+                                >
                                     <Text
                                         fontSize={"13px"}
                                         p={"5px 0px"}
@@ -608,7 +587,7 @@ export function Profile() {
                                 )}
 
                                 <HStack
-                                    spacing={5}
+                                    spacing={1}
                                     marginY={"5px"}
                                     color={fontColor}
                                     fontSize={"13px"}
@@ -616,49 +595,55 @@ export function Profile() {
                                     <HStack spacing={1}>
                                         <Button
                                             variant={"ghost"}
-                                            padding={"5px 5px"}
+                                            padding={"5px 10px"}
                                             margin={"0px"}
                                             h={"fit-content"}
                                             onClick={() =>
-                                                handleLike(thread.user.id)
+                                                mutateAsyncLike.mutate(
+                                                    thread.id
+                                                )
                                             }
                                             fontWeight={"normal"}
                                             fontSize={"14px"}
                                             color={fontColor}
                                             gap={"5px"}
                                         >
-                                            {!likedPosts[thread.user.id] ? (
-                                                <myIcons.HiOutlineHeart
-                                                    fontSize={"22px"}
-                                                    color={fontColor}
-                                                />
-                                            ) : (
+                                            {thread.isLiked ? (
                                                 <myIcons.HiHeart
                                                     fontSize={"22px"}
                                                     color={"#f87171"}
+                                                />
+                                            ) : (
+                                                <myIcons.HiOutlineHeart
+                                                    fontSize={"22px"}
+                                                    color={fontColor}
                                                 />
                                             )}
                                             <Text>{thread._count.like}</Text>
                                         </Button>
                                     </HStack>
 
-                                    <Link
-                                        to={`/details/${thread.id}`}
-                                        key={thread.id}
-                                        style={{ cursor: "pointer" }}
-                                    >
-                                        <HStack spacing={1}>
+                                    <HStack spacing={1}>
+                                        <Button
+                                            variant={"ghost"}
+                                            padding={"5px 10px"}
+                                            margin={"0px"}
+                                            h={"fit-content"}
+                                            onClick={() =>
+                                                navigate(`/detail/${thread.id}`)
+                                            }
+                                            fontWeight={"normal"}
+                                            fontSize={"14px"}
+                                            color={fontColor}
+                                            gap={"5px"}
+                                        >
                                             <myIcons.HiOutlineAnnotation
                                                 fontSize={"22px"}
                                             />
-                                            <Text>
-                                                {Math.floor(
-                                                    Math.random() * 90
-                                                ) + 10}
-                                            </Text>
+                                            <Text>{thread._count.replies}</Text>
                                             <Text>Replies</Text>
-                                        </HStack>
-                                    </Link>
+                                        </Button>
+                                    </HStack>
                                 </HStack>
                             </VStack>
                         </Flex>

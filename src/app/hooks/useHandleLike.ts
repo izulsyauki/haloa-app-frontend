@@ -11,12 +11,14 @@ export const useHandleLike = () => {
             // Batalkan queries yang sedang berjalan
             await Promise.all([
                 queryClient.cancelQueries({ queryKey: ["threads"] }),
-                queryClient.cancelQueries({ queryKey: ["thread"] })
+                queryClient.cancelQueries({ queryKey: ["thread", threadId.toString()] }),
+                queryClient.cancelQueries({ queryKey: ["userThreads"] })
             ]);
 
             // Simpan state sebelumnya
             const previousThreads = queryClient.getQueryData<Thread[]>(["threads"]);
             const previousThread = queryClient.getQueryData<ThreadDetail>(["thread", threadId.toString()]);
+            const previousUserThreads = queryClient.getQueryData<Thread[]>(["userThreads"]);
 
             // Fungsi helper untuk update like status
             const updateLikeStatus = <T extends Thread | ThreadDetail>(item: T): T => ({
@@ -29,55 +31,59 @@ export const useHandleLike = () => {
                 },
             });
 
-            // Update cache untuk threads list
-            queryClient.setQueriesData({ queryKey: ["threads"] }, (old: Thread[] | undefined) => {
-                if (!old) return [];
-                return old.map((thread) => 
-                    thread.id === threadId ? updateLikeStatus(thread) : thread
+            // Update semua cache dengan status yang sama
+            const updatedStatus = previousThreads?.find(t => t.id === threadId)?.isLiked;
+            
+            if (previousThreads) {
+                queryClient.setQueryData(["threads"], 
+                    previousThreads.map(thread => 
+                        thread.id === threadId ? updateLikeStatus(thread) : thread
+                    )
                 );
-            });
+            }
 
-            // Update cache untuk thread detail
-            queryClient.setQueriesData({ queryKey: ["thread"] }, (old: ThreadDetail | undefined) => {
-                if (!old) return undefined;
+            if (previousUserThreads) {
+                queryClient.setQueryData(["userThreads"], 
+                    previousUserThreads.map(thread => 
+                        thread.id === threadId ? {
+                            ...updateLikeStatus(thread),
+                            isLiked: !updatedStatus // Pastikan status like konsisten
+                        } : thread
+                    )
+                );
+            }
 
-                // Jika ini thread utama
-                if (old.id === threadId) {
-                    return updateLikeStatus(old);
-                }
+            if (previousThread?.id === threadId) {
+                queryClient.setQueryData(
+                    ["thread", threadId.toString()],
+                    updateLikeStatus(previousThread)
+                );
+            }
 
-                // Jika ini thread dengan replies
-                return {
-                    ...old,
-                    replies: old.replies?.map((reply) =>
-                        reply.id === threadId ? updateLikeStatus(reply) : reply
-                    ),
-                };
-            });
-
-            return { previousThreads, previousThread };
+            return { previousThreads, previousThread, previousUserThreads };
         },
 
         onError: (err, threadId, context) => {
-            // Rollback jika error
             if (context?.previousThreads) {
                 queryClient.setQueryData(["threads"], context.previousThreads);
             }
             if (context?.previousThread) {
                 queryClient.setQueryData(["thread", threadId.toString()], context.previousThread);
             }
+            if (context?.previousUserThreads) {
+                queryClient.setQueryData(["userThreads"], context.previousUserThreads);
+            }
         },
 
-        onSettled: (_data, error) => {
-            // Invalidate dan refetch hanya jika ada error
-            if (error) {
+        onSettled: (_data, _error, threadId) => {
+            // Refetch data setelah mutasi selesai (baik sukses maupun error)
+            setTimeout(() => {
                 queryClient.invalidateQueries({ queryKey: ["threads"] });
-                queryClient.invalidateQueries({ queryKey: ["thread"] });
-            }
+                queryClient.invalidateQueries({ queryKey: ["thread", threadId.toString()] });
+                queryClient.invalidateQueries({ queryKey: ["userThreads"] });
+            }, 100);
         }
     });
 
-    return {
-        mutateAsyncLike,
-    };
+    return { mutateAsyncLike };
 };

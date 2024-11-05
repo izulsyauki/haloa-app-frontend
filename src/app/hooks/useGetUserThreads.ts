@@ -1,17 +1,44 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUserThreads } from "../api/thread";
+import { Thread } from "../types/thread";
 
 export const useGetUserThreads = () => {
-    const userThreads = useQuery({
-            queryKey: ["user-threads"],
-            queryFn: async () => {
-                try {
-                    return await getUserThreads();
-                } catch (error) {
-                    console.error("Error fetching threads:", error);
+    const queryClient = useQueryClient();
+
+    return useQuery({
+        queryKey: ["userThreads"],
+        queryFn: async () => {
+            try {
+                const userThreads = await getUserThreads();
+                
+                // Sinkronkan dengan data threads yang ada
+                const existingThreads = queryClient.getQueryData<Thread[]>(["threads"]);
+                
+                if (existingThreads && userThreads) {
+                    // Update status like dari cache threads yang ada
+                    return userThreads.map(userThread => {
+                        const existingThread = existingThreads.find(t => t.id === userThread.id);
+                        if (existingThread) {
+                            return {
+                                ...userThread,
+                                isLiked: existingThread.isLiked,
+                                _count: existingThread._count
+                            };
+                        }
+                        return userThread;
+                    });
                 }
-            },
-        }); 
-    
-        return userThreads;
-    };
+                
+                return userThreads;
+            } catch (error) {
+                console.error("Error fetching user threads:", error);
+                throw error;
+            }
+        },
+        refetchOnMount: true,
+        refetchOnWindowFocus: true,
+        staleTime: 1000 * 60,
+        // Pastikan data userThreads selalu sinkron dengan threads
+        enabled: !!queryClient.getQueryData(["threads"])
+    });
+};
