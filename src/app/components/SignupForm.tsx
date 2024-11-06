@@ -16,14 +16,14 @@ import { useSignupForm } from "../hooks/useSignupForm";
 
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const { register, handleSubmit, onSubmit, errors, isSubmitting } = useSignupForm();
+  const { register, onSubmit, errors, isSubmitting } = useSignupForm();
 
   return (
     <Flex flexDirection={"column"} w="368px" h="412px" gap="20px">
       <Image src={Logo} width={"108px"} />
       <Text>Create account Haloa!</Text>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         <VStack spacing="3">
           <FormControl>
             <Input
@@ -106,7 +106,11 @@ export function SignupForm() {
             Show Password
           </Checkbox>
 
-          <CustomBtnPrimary isLoading={isSubmitting} label="Create" />
+          <CustomBtnPrimary 
+            isLoading={isSubmitting} 
+            label="Create" 
+            type="submit"
+          />
         </VStack>
       </form>
 
