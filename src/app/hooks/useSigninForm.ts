@@ -1,72 +1,85 @@
+import { useToast } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import Cookies from "js-cookie";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { signIn } from "../api/auth";
+import API from "../libs/axios";
 import { useAuthStore } from "../store/auth";
 import { SigninFormInputs, signinSchema } from "../utils/signinSchemas";
-import API from "../libs/axios";
-import { User } from "../types/user";
-import Cookies from "js-cookie";
-
-interface SignInResponse {
-  user: User;
-  token: string;
-}
 
 export const useSigninForm = () => {
-  const [showAlert, setShowAlert] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const toast = useToast();
+  const { setUser, setToken } = useAuthStore();
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SigninFormInputs>({
     mode: "onSubmit",
     resolver: zodResolver(signinSchema),
   });
 
-  const { setUser, setToken } = useAuthStore();
-  const navigate = useNavigate();
-
-  const onSubmit = useCallback(
-    async (data: SigninFormInputs) => {
-      try {
-        const response = await API.post<SignInResponse>("/auth/sign-in", data);
-        const { user, token } = response.data;
-        
-        setUser(user);
-        setToken(token);
-        
-        // Simpan token ke cookies expires30 hari
-        Cookies.set("token", token, { expires: 30 });
-        Cookies.set("user", JSON.stringify(user), { expires: 30 });
-        
-        // Set token sebagai default header untuk request selanjutnya
-        API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        
-        navigate("/");
-      } catch (error) {
-        console.error("Login error:", error);
-        setShowAlert(true);
-        setErrorMessage("Email/username atau password salah. Silakan coba lagi.");
-        
-        setTimeout(() => {
-          setShowAlert(false);
-          setErrorMessage("");
-        }, 3000);
-      }
+  const mutation = useMutation({
+    mutationFn: async (data: SigninFormInputs) => {
+      return await signIn(data);
     },
-    [navigate, setUser, setToken]
-  );
+    onSuccess: (data) => {
+      const { user, token } = data;
+      
+      setUser(user);
+      setToken(token);
+      
+      Cookies.set("token", token, { expires: 30 });
+      Cookies.set("user", JSON.stringify(user), { expires: 30 });
+      
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      
+      toast({
+        title: "Welcome back!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+
+      navigate("/");
+    },
+    onError: () => {
+      toast({
+        title: "Login failed",
+        description: "Check your email/username or password and try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+    },
+    onMutate: () => {
+      toast({
+        title: "Loading...",
+        status: "info", 
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+    },
+  });
+
+  const onSubmit = handleSubmit((data) => {
+    mutation.mutate(data);
+  });
 
   return {
     register,
     onSubmit,
     handleSubmit,
     errors,
-    isSubmitting,
-    showAlert,
-    errorMessage,
+    isSubmitting: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
   };
 };

@@ -11,26 +11,20 @@ import {
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useSigninForm } from "../hooks/useSigninForm";
-import { ChakraAlert } from "./ChakraAlert";
 import { CustomBtnPrimary } from "./CustomBtn";
 import Logo from "/assets/logo/logo.svg";
 
 export function SigninForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const { register, onSubmit, handleSubmit, errors, isSubmitting, showAlert, errorMessage } = useSigninForm();
+  const { register, onSubmit, errors, isSubmitting } = useSigninForm();
 
   return (
     <>
-    {
-      showAlert && (
-        <ChakraAlert status="error" title="Login Error" desc={errorMessage}/>
-      )
-    }
     <Flex flexDirection={"column"} w="368px" h="412px" gap="20px">
       <Image src={Logo} width={"108px"} />
       <Text>Hi, welcome to Haloa!</Text>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         <VStack spacing="3">
           <FormControl>
             <Input
