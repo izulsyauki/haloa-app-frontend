@@ -28,14 +28,14 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getFollowCounts } from "../api/follow";
-import { getSuggestedUsers } from "../api/user";
 import myIcons from "../assets/icons/myIcons";
 import coverImg from "../assets/images/cover.png";
 import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
 import { ToggleColorMode } from "../components/ToggleColorMode";
-import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
+import { useGetLoginUserProfile } from "../hooks/auth/useGetLoginUserProfile";
 import { useHandleEditProfile } from "../hooks/useHandleEditProfile";
 import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
+import { useSuggestedUsers } from "../hooks/user/useSuggestedUsers";
 import { useAuthStore } from "../store/auth";
 import { useFollowStore } from "../store/follow";
 import { User } from "../types/user";
@@ -47,15 +47,6 @@ export function SideBarRight() {
     const [error, setError] = useState<string | null>(null);
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const outlineColor = useColorModeValue("white", "#2d3748");
-    const [suggestedUser, setSuggestedUser] = useState<User[]>([]);
-    const {
-        isOpen,
-        onClose,
-        selectedUser,
-        handleFollowClick,
-        handleUnfollow,
-        isLoading: followLoading,
-    } = useHandleFollowUser();
     const galleryButtonBg = useColorModeValue("white", "#2d3748");
     const [followCounts, setFollowCounts] = useState({
         followers: 0,
@@ -94,34 +85,44 @@ export function SideBarRight() {
         }
     }, [token]);
 
-    const fetchSuggestedUser = useCallback(async () => {
-        if (!token) return;
-        setIsLoading(true);
-        try {
-            const users = await getSuggestedUsers(3);
-            // Tambahkan isFollowed berdasarkan followingIds dari store
-            const usersWithFollowStatus = (users as User[]).map((user) => ({
+    const { data: suggestedUsers, isLoading: isSuggestedLoading } = useSuggestedUsers(3);
+    const {
+        isOpen,
+        onClose,
+        selectedUser,
+        handleFollowClick,
+        handleUnfollow,
+        isLoading: followLoading
+    } = useHandleFollowUser();
+
+    // State lokal untuk menyimpan status following
+    const [localSuggestedUsers, setLocalSuggestedUsers] = useState(suggestedUsers);
+
+    // Update local state ketika suggestedUsers berubah
+    useEffect(() => {
+        if (suggestedUsers) {
+            const updatedUsers = suggestedUsers.map(user => ({
                 ...user,
-                isFollowed: followingIds.includes(user.id),
+                isFollowed: followingIds.includes(user.id)
             }));
-            // Filter hanya user yang belum di-follow
-            const filteredUsers = usersWithFollowStatus.filter(
-                (user) => !user.isFollowed
-            );
-            setSuggestedUser(filteredUsers);
-        } catch (error) {
-            console.error("Error fetching suggested users:", error);
-            setError("Gagal mengambil data pengguna yang direkomendasikan");
-        } finally {
-            setIsLoading(false);
+            setLocalSuggestedUsers(updatedUsers);
         }
-    }, [token, followingIds]);
+    }, [suggestedUsers, followingIds]);
+
+    const handleLocalFollowClick = async (user: User) => {
+        // Update status lokal terlebih dahulu
+        setLocalSuggestedUsers(prev => 
+            prev?.map(u => u.id === user.id ? { ...u, isFollowed: !u.isFollowed } : u)
+        );
+        
+        // Panggil handler asli
+        await handleFollowClick(user);
+    };
 
     // hook fetch
     useEffect(() => {
         fetchFollowCounts();
-        fetchSuggestedUser();
-    }, [fetchFollowCounts, fetchSuggestedUser]);
+    }, [fetchFollowCounts]);
 
     useEffect(() => {
         const fetchCounts = async () => {
@@ -509,7 +510,7 @@ export function SideBarRight() {
                         )}
                     </Flex>
                     <Stack spacing="2">
-                        {suggestedUser.map((user) => (
+                        {localSuggestedUsers?.map((user) => (
                             <Flex
                                 key={user.id}
                                 gap={"15px"}
@@ -541,17 +542,8 @@ export function SideBarRight() {
                                     fontSize={"12px"}
                                     fontWeight={"medium"}
                                     isLoading={followLoading}
-                                    onClick={() =>
-                                        handleFollowClick(
-                                            user,
-                                            suggestedUser,
-                                            setSuggestedUser,
-                                            fetchSuggestedUser
-                                        )
-                                    }
-                                    label="Follow" // Karena suggested user hanya menampilkan yang belum di-follow
-                                    bg={undefined}
-                                    color={undefined}
+                                    onClick={() => handleLocalFollowClick(user)}
+                                    label={user.isFollowed ? "Following" : "Follow"}
                                 />
                             </Flex>
                         ))}
@@ -585,13 +577,7 @@ export function SideBarRight() {
                             >
                                 <CustomBtnSecondary
                                     label="Unfollow"
-                                    onClick={() =>
-                                        handleUnfollow(
-                                            suggestedUser,
-                                            setSuggestedUser,
-                                            fetchSuggestedUser // Pastikan ini dipassing
-                                        )
-                                    }
+                                    onClick={() => handleUnfollow()}
                                     m={"0px"}
                                     w={"fit-content"}
                                     h={"fit-content"}

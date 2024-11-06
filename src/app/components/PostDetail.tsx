@@ -26,13 +26,13 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getThreadDetail } from "../api/thread";
 import myIcons from "../assets/icons/myIcons";
-import { useCreateReply } from "../hooks/useCreateReply";
-import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
-import { useHandleLike } from "../hooks/useHandleLike";
+import { useCreateReply } from "../hooks/threads/useCreateReply";
+import { useGetLoginUserProfile } from "../hooks/auth/useGetLoginUserProfile";
+import { useHandleLike } from "../hooks/threads/useHandleLike";
 import { formatDate } from "../utils/fomatDate";
 import { CustomBtnPrimary } from "./CustomBtn";
 import { CloseIcon } from "@chakra-ui/icons";
-import { useDeleteThread } from "../hooks/useDeleteThread";
+import { useDeleteThread } from "../hooks/threads/useDeleteThread";
 
 export function PostDetail() {
     const { postId } = useParams();

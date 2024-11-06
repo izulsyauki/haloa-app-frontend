@@ -24,8 +24,8 @@ import myIcons from "../assets/icons/myIcons";
 import { CustomBtnPrimary, CustomBtnSideBar } from "../components/CustomBtn";
 import { useAuthStore } from "../store/auth";
 import { CloseIcon } from "@chakra-ui/icons";
-import { useCreateThread } from "../hooks/useCreateThread";
-import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
+import { useCreateThread } from "../hooks/threads/useCreateThread";
+import { useGetLoginUserProfile } from "../hooks/auth/useGetLoginUserProfile";
 
 interface LeftBarMenu {
     solidIcon: ReactNode;

@@ -14,14 +14,12 @@ import {
     Text,
     useColorModeValue,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
-import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
-import fakeUsers from "../datas/user.json";
-import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
-import { useAuthStore } from "../store/auth";
-import { User, Follow } from "../types/user";
+import { useEffect, useState } from "react";
 import { getFollowers, getFollowing } from "../api/follow";
+import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
+import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
 import { useFollowStore } from '../store/follow';
+import { User } from "../types/user";
 
 export function Follows() {
     // const { user: loggedInUser } = useAuthStore();

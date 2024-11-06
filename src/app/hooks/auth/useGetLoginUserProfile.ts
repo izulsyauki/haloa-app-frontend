@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { getProfileData } from "../api/profile";
-import { useAuthStore } from "../store/auth";
+import { getProfileData } from "../../api/profile";
+import { useAuthStore } from "../../store/auth";
 
 export const useGetLoginUserProfile = () => {
     const navigate = useNavigate();

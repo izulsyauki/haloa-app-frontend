@@ -6,13 +6,15 @@ interface CustomBtnProps extends ButtonProps {
   outlineIcon?: ReactNode;
   label?: string;
   isActive?: boolean;
+  isLoading?: boolean;
+  type?: "submit" | "button";
 }
 
-export function CustomBtnPrimary({ label, ...props }: CustomBtnProps) {
+export function CustomBtnPrimary({ label, isLoading, type = "submit", ...props }: CustomBtnProps) {
   return (
     <Button
       marginTop={"3"}
-      type="submit"
+      type={type}
       bg="blue.500"
       color="white"
       _hover={{ bg: "blue.600" }}
@@ -20,6 +22,7 @@ export function CustomBtnPrimary({ label, ...props }: CustomBtnProps) {
       width="full"
       borderRadius={"full"}
       fontSize={"16px"}
+      isLoading={isLoading}
       {...props}
     >
       {label}

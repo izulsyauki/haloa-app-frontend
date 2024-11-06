@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createReply } from "../api/thread";
-import { ThreadDetail } from "../types/thread";
+import { createReply } from "../../api/thread";
+import { ThreadDetail } from "../../types/thread";
 
 interface CreateReplyParams {
     formData: FormData;

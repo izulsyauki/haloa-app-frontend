@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteThread } from "../api/thread";
+import { deleteThread } from "../../api/thread";
 import { useToast } from "@chakra-ui/react";
 import { useState } from "react";
 

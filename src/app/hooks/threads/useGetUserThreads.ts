@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getUserThreads } from "../api/thread";
-import { Thread } from "../types/thread";
+import { getUserThreads } from "../../api/thread";
+import { Thread } from "../../types/thread";
 
 export const useGetUserThreads = () => {
     const queryClient = useQueryClient();

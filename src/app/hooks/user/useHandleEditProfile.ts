@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateProfileData } from "../api/profile";
+import { updateProfileData } from "../../api/profile";
 import { useToast } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UpdateProfileFormInputs, updateProfileSchema } from "../utils/updateProfileSchema";
-import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
+import { UpdateProfileFormInputs, updateProfileSchema } from "../../utils/updateProfileSchema";
+import { useGetLoginUserProfile } from "../auth/useGetLoginUserProfile";
 
 export const useHandleEditProfile = () => {
     const { userProfile } = useGetLoginUserProfile();

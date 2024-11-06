@@ -2,9 +2,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { createThread } from "../api/thread";
-import { CreateThreadRequest } from "../types/thread";
-import { PostThreadSchema, postThreadSchema } from "../utils/postThreadSchema";
+import { createThread } from "../../api/thread";
+import { CreateThreadRequest } from "../../types/thread";
+import { PostThreadSchema, postThreadSchema } from "../../utils/postThreadSchema";
 import { useDisclosure } from "@chakra-ui/react";
 export const useCreateThread = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();

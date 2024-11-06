@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
-import { User } from "../types/user";
+import { User } from "../../types/user";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useEffect, useState } from "react";
-import API from "../libs/axios";
+import API from "../../libs/axios";
 
 export const useSearchUser = () => {
     const { register, watch } = useForm({

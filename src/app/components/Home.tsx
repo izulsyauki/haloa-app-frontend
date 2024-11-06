@@ -30,11 +30,11 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import myIcons from "../assets/icons/myIcons";
 import { CustomBtnPrimary } from "../components/CustomBtn";
-import { useCreateThread } from "../hooks/useCreateThread";
-import { useDeleteThread } from "../hooks/useDeleteThread";
-import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
-import { useGetThreadsFeeds } from "../hooks/useGetThreadsFeeds";
-import { useHandleLike } from "../hooks/useHandleLike";
+import { useCreateThread } from "../hooks/threads/useCreateThread";
+import { useDeleteThread } from "../hooks/threads/useDeleteThread";
+import { useGetLoginUserProfile } from "../hooks/auth/useGetLoginUserProfile";
+import { useGetThreadsFeeds } from "../hooks/threads/useGetThreadsFeeds";
+import { useHandleLike } from "../hooks/threads/useHandleLike";
 import { Thread } from "../types/thread";
 import { formatDate } from "../utils/fomatDate";
 

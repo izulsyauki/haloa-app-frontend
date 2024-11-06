@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createLike } from "../api/like";
-import { Thread, ThreadDetail } from "../types/thread";
+import { createLike } from "../../api/like";
+import { Thread, ThreadDetail } from "../../types/thread";
 
 export const useHandleLike = () => {
     const queryClient = useQueryClient();

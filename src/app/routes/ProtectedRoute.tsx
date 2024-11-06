@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "../store/auth";
 import Cookies from "js-cookie";
-import { useGetLoginUserProfile } from "../hooks/useGetLoginUserProfile";
+import { useGetLoginUserProfile } from "../hooks/auth/useGetLoginUserProfile";
 
 export function ProtectedRoute() {
     const { user, token } = useAuthStore();

@@ -3,8 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { signUp } from "../api/auth";
-import { SignupFormInputs, signupSchema } from "../utils/signupSchemas";
+import { signUp } from "../../api/auth";
+import { SignupFormInputs, signupSchema } from "../../utils/signupSchemas";
 
 export const useSignupForm = () => {
   const toast = useToast();

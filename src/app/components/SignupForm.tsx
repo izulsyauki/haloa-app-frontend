@@ -12,7 +12,7 @@ import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { CustomBtnPrimary } from "./CustomBtn";
 import Logo from "/assets/logo/logo.svg";
-import { useSignupForm } from "../hooks/useSignupForm";
+import { useSignupForm } from "../hooks/auth/useSignupForm";
 
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);

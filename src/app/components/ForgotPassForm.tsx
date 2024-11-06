@@ -5,32 +5,29 @@ import {
   Input,
   Link,
   Text,
-  VStack
+  VStack,
 } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink } from "react-router-dom";
-import { z } from "zod";
 import { CustomBtnPrimary } from "./CustomBtn";
 import Logo from "/assets/logo/logo.svg";
-
-const signupSchema = z.object({
-  email: z.string().email("Invalid email address"),
-});
-
-type ForgotPassInputs = z.infer<typeof signupSchema>;
+import { useForgotPasswordMutation } from "../hooks/auth/mutations";
+import { forgotPassSchema, ForgotPassInputs } from "../utils/forgotPassSchema";
 
 export function ForgotPassForm() {
+  const forgotPasswordMutation = useForgotPasswordMutation();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<ForgotPassInputs>({
-    resolver: zodResolver(signupSchema),
+    resolver: zodResolver(forgotPassSchema),
   });
 
-  const onSubmit = (data: ForgotPassInputs) => {
-    console.log(data);
+  const onSubmit = async (data: ForgotPassInputs) => {
+    forgotPasswordMutation.mutate(data.email);
   };
 
   return (
@@ -48,6 +45,7 @@ export function ForgotPassForm() {
               border="1px solid #545454"
               paddingTop={"4px"}
               paddingBottom={"4px"}
+              isDisabled={forgotPasswordMutation.isPending}
             />
             {errors.email && (
               <Text color={"red.500"} fontSize={"xs"} marginTop={"2"} fontWeight={"medium"}>
@@ -56,7 +54,11 @@ export function ForgotPassForm() {
             )}
           </FormControl>
 
-          <CustomBtnPrimary label="Send Instruction" />
+          <CustomBtnPrimary 
+            type="submit"
+            label={forgotPasswordMutation.isPending ? "Sending..." : "Send Instruction"} 
+            isLoading={forgotPasswordMutation.isPending}
+          />
         </VStack>
       </form>
 

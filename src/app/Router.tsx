@@ -50,7 +50,7 @@ export const router = createBrowserRouter([
                 element: <myRoutes.ForgotPassRoute />,
             },
             {
-                path: "/reset-password",
+                path: "/reset-password/:token",
                 element: <myRoutes.ResetPassRoute />,
             },
         ],

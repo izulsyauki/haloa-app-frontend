@@ -18,8 +18,8 @@ import {
     Spinner,
 } from "@chakra-ui/react";
 import myIcons from "../assets/icons/myIcons";
-import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
-import { useSearchUser } from "../hooks/useSearchUser";
+import { useHandleFollowUser } from "../hooks/follows/useHandleFollowUser";
+import { useSearchUser } from "../hooks/user/useSearchUser";
 import { CustomBtnPrimary, CustomBtnSecondary } from "./CustomBtn";
 
 export function SearchUser() {
@@ -113,7 +113,7 @@ export function SearchUser() {
                                             h={"fit-content"}
                                             fontSize={"12px"}
                                             fontWeight={"medium"}
-                                            onClick={() => handleFollowClick(user, users, setUsers)}
+                                            onClick={() => handleFollowClick(user)}
                                             label={user.isFollowed ? "Following" : "Follow"}
                                         />
                                     </Flex>
@@ -150,12 +150,9 @@ export function SearchUser() {
                         >
                             <CustomBtnSecondary
                                 label="Unfollow"
-                                onClick={() =>
-                                    handleUnfollow(
-                                        users,
-                                        setUsers
-                                    )
-                                }
+                                // onClick={() =>
+                                //     handleUnfollow(selectedUser)
+                                // }
                                 m={"0px"}
                                 w={"fit-content"}
                                 h={"fit-content"}
