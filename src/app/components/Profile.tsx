@@ -39,7 +39,7 @@ import { Thread } from "../types/thread";
 import { formatDate } from "../utils/fomatDate";
 
 export function Profile() {
-    const { userProfile, isLoadingProfile, refetchProfile } =
+    const { userProfile } =
         useGetLoginUserProfile();
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const galleryButtonBg = useColorModeValue("white", "#2d3748");
@@ -69,9 +69,10 @@ export function Profile() {
         isUpdatingProfile,
         handleEditProfileOpen,
         handleEditProfileClose,
-        handleInputChange,
         handleFileChange,
-        handleSaveProfile,
+        register,
+        errors,
+        onSubmit,
     } = useHandleEditProfile();
 
     //filter user berdasarkan view
@@ -139,6 +140,7 @@ export function Profile() {
                                 Edit Profile
                             </ModalHeader>
                             <ModalCloseButton />
+                            <form onSubmit={onSubmit}>
                             <ModalBody
                                 as={Flex}
                                 flexDir={"column"}
@@ -281,14 +283,13 @@ export function Profile() {
                                         Full Name
                                     </Text>
                                     <Input
-                                        defaultValue={`${userProfile?.profile?.fullName}`}
-                                        onChange={(e) =>
-                                            handleInputChange(
-                                                "fullName",
-                                                e.target.value
-                                            )
-                                        }
+                                         {...register("fullName")}
                                     />
+                                    {errors.fullName && (
+                                        <Text color="red.500" fontSize="xs">
+                                            {errors.fullName.message}
+                                        </Text>
+                                     )}
                                 </VStack>
                                 <VStack
                                     w={"100%"}
@@ -303,14 +304,13 @@ export function Profile() {
                                         Username
                                     </Text>
                                     <Input
-                                        defaultValue={userProfile?.username}
-                                        onChange={(e) =>
-                                            handleInputChange(
-                                                "username",
-                                                e.target.value
-                                            )
-                                        }
+                                        {...register("username")}
                                     />
+                                    {errors.username && (
+                                        <Text color="red.500" fontSize="xs">
+                                            {errors.username.message}
+                                        </Text>
+                                    )}
                                 </VStack>
                                 <VStack
                                     w={"100%"}
@@ -325,17 +325,14 @@ export function Profile() {
                                         Bio
                                     </Text>
                                     <Textarea
-                                        resize={"none"}
-                                        defaultValue={
-                                            userProfile?.profile?.bio ?? ""
-                                        }
-                                        onChange={(e) =>
-                                            handleInputChange(
-                                                "bio",
-                                                e.target.value
-                                            )
-                                        }
+                                         resize={"none"}
+                                        {...register("bio")}
                                     />
+                                    {errors.bio && (
+                                        <Text color="red.500" fontSize="xs">
+                                            {errors.bio.message}
+                                        </Text>
+                                    )}
                                 </VStack>
                             </ModalBody>
 
@@ -343,27 +340,20 @@ export function Profile() {
                                 alignItems={"center"}
                                 justifyContent={"flex-end"}
                                 gap={"10px"}
-                                w={"300px"}
-                                alignSelf={"flex-end"}
+                                w={"100%"}
                             >
                                 <CustomBtnPrimary
-                                    label={
-                                        isUpdatingProfile
-                                            ? "Updating..."
-                                            : "Save"
-                                    }
+                                    label={isUpdatingProfile ? "Updating..." : "Save"}
+                                    type="submit"
                                     m={"0px"}
                                     p={"10px 20px"}
                                     w={"fit-content"}
                                     h={"fit-content"}
                                     fontSize={"14px"}
-                                    onClick={async () => {
-                                        await handleSaveProfile();
-                                        refetchProfile();
-                                    }}
                                     isLoading={isUpdatingProfile}
                                 />
                             </ModalFooter>
+                            </form>
                         </ModalContent>
                     </Modal>
                 </Flex>

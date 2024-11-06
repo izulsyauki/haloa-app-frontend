@@ -62,7 +62,7 @@ export function SideBarRight() {
         following: 0,
     });
     const followingIds = useFollowStore((state) => state.followingIds);
-    const { userProfile, isLoadingProfile, refetchProfile } =
+    const { userProfile, isLoadingProfile } =
         useGetLoginUserProfile();
 
     // handle untuk edit profile
@@ -73,9 +73,10 @@ export function SideBarRight() {
         isUpdatingProfile,
         handleEditProfileOpen,
         handleEditProfileClose,
-        handleInputChange,
         handleFileChange,
-        handleSaveProfile,
+        register,
+        errors,
+        onSubmit,
     } = useHandleEditProfile();
 
     // fetch follow counts
@@ -211,40 +212,105 @@ export function SideBarRight() {
                                         Edit Profile
                                     </ModalHeader>
                                     <ModalCloseButton />
-                                    <ModalBody
-                                        as={Flex}
-                                        flexDir={"column"}
-                                        pt={"0px"}
-                                        p={"0px 15px"}
-                                        gap={"10px"}
-                                        alignItems={"flex-start"}
-                                    >
-                                        <Box
-                                            w={"100%"}
-                                            position={"relative"}
-                                            mb={"30px"}
+                                    <form onSubmit={onSubmit}>
+                                        <ModalBody
+                                            as={Flex}
+                                            flexDir={"column"}
+                                            pt={"0px"}
+                                            p={"0px 15px"}
+                                            gap={"10px"}
+                                            alignItems={"flex-start"}
                                         >
-                                            <InputGroup position={"relative"}>
-                                                <Image
+                                            <Box
+                                                w={"100%"}
+                                                position={"relative"}
+                                                mb={"30px"}
+                                            >
+                                                <InputGroup position={"relative"}>
+                                                    <Image
+                                                        src={
+                                                            bannerPreview ||
+                                                            userProfile?.profile
+                                                                ?.banner ||
+                                                            coverImg
+                                                        }
+                                                        alt="Cover Image"
+                                                        h={"100px"}
+                                                        objectFit={"cover"}
+                                                        borderRadius={"10px"}
+                                                        w={"100%"}
+                                                    />
+                                                    <Button
+                                                        position={"absolute"}
+                                                        left={"50%"}
+                                                        bottom={"50%"}
+                                                        transform={
+                                                            "translate(-50%, 50%)"
+                                                        }
+                                                        p={"0px"}
+                                                        m={"0px"}
+                                                        borderRadius={"100px"}
+                                                        w={"28px"}
+                                                        h={"28px"}
+                                                        minW={"28px"}
+                                                        bg={galleryButtonBg}
+                                                        _hover={{
+                                                            bg: galleryButtonBg,
+                                                        }}
+                                                        onClick={() =>
+                                                            document
+                                                                .getElementById(
+                                                                    "banner-upload"
+                                                                )
+                                                                ?.click()
+                                                        }
+                                                    >
+                                                        <Image
+                                                            src={myIcons.GalleryAdd}
+                                                            w={"18px"}
+                                                            h={"18px"}
+                                                            m={"0px"}
+                                                            p={"0px"}
+                                                        />
+                                                    </Button>
+                                                    <Input
+                                                        id="banner-upload"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={(e) => {
+                                                            if (
+                                                                e.target.files?.[0]
+                                                            ) {
+                                                                handleFileChange(
+                                                                    "banner",
+                                                                    e.target
+                                                                        .files?.[0]
+                                                                );
+                                                            }
+                                                        }}
+                                                        display="none"
+                                                    />
+                                                </InputGroup>
+
+                                                <Avatar
+                                                    name="Profile Avatar"
                                                     src={
-                                                        bannerPreview ||
+                                                        avatarPreview ||
                                                         userProfile?.profile
-                                                            ?.banner ||
-                                                        coverImg
+                                                            ?.avatar ||
+                                                        undefined
                                                     }
-                                                    alt="Cover Image"
-                                                    h={"100px"}
-                                                    objectFit={"cover"}
-                                                    borderRadius={"10px"}
-                                                    w={"100%"}
+                                                    position={"absolute"}
+                                                    left={"30px"}
+                                                    bottom={"-30px"}
+                                                    size={"lg"}
+                                                    outline={"3px solid"}
+                                                    outlineColor={outlineColor}
                                                 />
                                                 <Button
                                                     position={"absolute"}
-                                                    left={"50%"}
-                                                    bottom={"50%"}
-                                                    transform={
-                                                        "translate(-50%, 50%)"
-                                                    }
+                                                    left={"48px"}
+                                                    bottom={"-13px"}
                                                     p={"0px"}
                                                     m={"0px"}
                                                     borderRadius={"100px"}
@@ -258,7 +324,7 @@ export function SideBarRight() {
                                                     onClick={() =>
                                                         document
                                                             .getElementById(
-                                                                "banner-upload"
+                                                                "avatar-upload"
                                                             )
                                                             ?.click()
                                                     }
@@ -272,180 +338,104 @@ export function SideBarRight() {
                                                     />
                                                 </Button>
                                                 <Input
-                                                    id="banner-upload"
+                                                    id="avatar-upload"
                                                     type="file"
                                                     accept="image/*"
                                                     onChange={(e) => {
-                                                        if (
-                                                            e.target.files?.[0]
-                                                        ) {
+                                                        if (e.target.files?.[0]) {
                                                             handleFileChange(
-                                                                "banner",
-                                                                e.target
-                                                                    .files?.[0]
+                                                                "avatar",
+                                                                e.target.files?.[0]
                                                             );
                                                         }
                                                     }}
                                                     display="none"
                                                 />
-                                            </InputGroup>
-
-                                            <Avatar
-                                                name="Profile Avatar"
-                                                src={
-                                                    avatarPreview ||
-                                                    userProfile?.profile
-                                                        ?.avatar ||
-                                                    undefined
-                                                }
-                                                position={"absolute"}
-                                                left={"30px"}
-                                                bottom={"-30px"}
-                                                size={"lg"}
-                                                outline={"3px solid"}
-                                                outlineColor={outlineColor}
-                                            />
-                                            <Button
-                                                position={"absolute"}
-                                                left={"48px"}
-                                                bottom={"-13px"}
-                                                p={"0px"}
-                                                m={"0px"}
-                                                borderRadius={"100px"}
-                                                w={"28px"}
-                                                h={"28px"}
-                                                minW={"28px"}
-                                                bg={galleryButtonBg}
-                                                _hover={{
-                                                    bg: galleryButtonBg,
-                                                }}
-                                                onClick={() =>
-                                                    document
-                                                        .getElementById(
-                                                            "avatar-upload"
-                                                        )
-                                                        ?.click()
-                                                }
+                                            </Box>
+                                            <VStack
+                                                w={"100%"}
+                                                alignItems={"flex-start"}
+                                                gap={"5px"}
                                             >
-                                                <Image
-                                                    src={myIcons.GalleryAdd}
-                                                    w={"18px"}
-                                                    h={"18px"}
-                                                    m={"0px"}
-                                                    p={"0px"}
+                                                <Text
+                                                    fontSize={"14px"}
+                                                    fontWeight={"medium"}
+                                                    textAlign={"start"}
+                                                >
+                                                    Full Name
+                                                </Text>
+                                                <Input
+                                                    {...register("fullName")}
                                                 />
-                                            </Button>
-                                            <Input
-                                                id="avatar-upload"
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) => {
-                                                    if (e.target.files?.[0]) {
-                                                        handleFileChange(
-                                                            "avatar",
-                                                            e.target.files?.[0]
-                                                        );
-                                                    }
-                                                }}
-                                                display="none"
-                                            />
-                                        </Box>
-                                        <VStack
-                                            w={"100%"}
-                                            alignItems={"flex-start"}
-                                            gap={"5px"}
-                                        >
-                                            <Text
-                                                fontSize={"14px"}
-                                                fontWeight={"medium"}
-                                                textAlign={"start"}
+                                                {errors.fullName && (
+                                                    <Text color="red.500" fontSize="xs">
+                                                        {errors.fullName.message}
+                                                    </Text>
+                                                )}
+                                            </VStack>
+                                            <VStack
+                                                w={"100%"}
+                                                alignItems={"flex-start"}
+                                                gap={"5px"}
                                             >
-                                                Full Name
-                                            </Text>
-                                            <Input
-                                                defaultValue={`${userProfile?.profile?.fullName}`}
-                                                onChange={(e) => {
-                                                        handleInputChange(
-                                                        "fullName",
-                                                        e.target.value
-                                                        );
-                                                    }
-                                                }
-                                            />
-                                        </VStack>
-                                        <VStack
-                                            w={"100%"}
-                                            alignItems={"flex-start"}
-                                            gap={"5px"}
-                                        >
-                                            <Text
-                                                fontSize={"14px"}
-                                                fontWeight={"medium"}
-                                                textAlign={"start"}
+                                                <Text
+                                                    fontSize={"14px"}
+                                                    fontWeight={"medium"}
+                                                    textAlign={"start"}
+                                                >
+                                                    Username
+                                                </Text>
+                                                <Input
+                                                    {...register("username")}
+                                                />
+                                                {errors.username && (
+                                                    <Text color="red.500" fontSize="xs">
+                                                        {errors.username.message}
+                                                    </Text>
+                                                )}
+                                            </VStack>
+                                            <VStack
+                                                w={"100%"}
+                                                alignItems={"flex-start"}
+                                                gap={"5px"}
                                             >
-                                                Username
-                                            </Text>
-                                            <Input
-                                                defaultValue={
-                                                    userProfile?.username
-                                                }
-                                                onChange={(e) =>
-                                                    handleInputChange(
-                                                        "username",
-                                                        e.target.value
-                                                    )
-                                                }
-                                            />
-                                        </VStack>
-                                        <VStack
-                                            w={"100%"}
-                                            alignItems={"flex-start"}
-                                            gap={"5px"}
-                                        >
-                                            <Text
-                                                fontSize={"14px"}
-                                                fontWeight={"medium"}
-                                                textAlign={"start"}
-                                            >
-                                                Bio
-                                            </Text>
-                                            <Textarea
-                                                resize={"none"}
-                                                defaultValue={
-                                                    userProfile?.profile?.bio || ""
-                                                }
-                                                onChange={(e) => {
-                                                        handleInputChange(
-                                                            "bio",
-                                                            e.target.value
-                                                        );
-                                                    }
-                                                }
-                                            />
-                                        </VStack>
-                                    </ModalBody>
+                                                <Text
+                                                    fontSize={"14px"}
+                                                    fontWeight={"medium"}
+                                                    textAlign={"start"}
+                                                >
+                                                    Bio
+                                                </Text>
+                                                <Textarea
+                                                    resize={"none"}
+                                                    {...register("bio")}
+                                                />
+                                                {errors.bio && (
+                                                    <Text color="red.500" fontSize="xs">
+                                                        {errors.bio.message}
+                                                    </Text>
+                                                )}
+                                            </VStack>
+                                        </ModalBody>
 
-                                    <ModalFooter
-                                        alignItems={"center"}
-                                        justifyContent={"flex-end"}
-                                        gap={"10px"}
-                                        w={"300px"}
-                                        alignSelf={"flex-end"}
-                                    >
-                                        <CustomBtnPrimary
-                                            label={isUpdatingProfile ? "Updating..." : "Save"}
-                                            m={"0px"}
-                                            p={"10px 20px"}
-                                            w={"fit-content"}
-                                            h={"fit-content"}
-                                            fontSize={"14px"}
-                                            onClick={async () => {
-                                                await handleSaveProfile();
-                                                refetchProfile();
-                                            }}
-                                            isLoading={isUpdatingProfile}
-                                        />
-                                    </ModalFooter>
+                                        <ModalFooter
+                                            alignItems={"center"}
+                                            justifyContent={"flex-end"}
+                                            gap={"10px"}
+                                            w={"100%"}
+                                        >
+                                            <CustomBtnPrimary
+                                                label={isUpdatingProfile ? "Updating..." : "Save"}
+                                                type="submit"
+                                                m={"0px"}
+                                                p={"10px 20px"}
+                                                w={"fit-content"}
+                                                h={"fit-content"}
+                                                fontSize={"14px"}
+                                                isLoading={isUpdatingProfile}
+                                            />
+                                        </ModalFooter>
+                                    </form>
                                 </ModalContent>
                             </Modal>
                         </Flex>
@@ -457,18 +447,15 @@ export function SideBarRight() {
                             <>
                                 <Heading size="md">
                                     ✨
-                                    {userProfile?.profile?.fullName ??
-                                        "Nama pengguna"}
+                                    {userProfile?.profile?.fullName}
                                     ✨
                                 </Heading>
                                 <Text fontSize={"14px"} color={fontColor}>
                                     @
-                                    {userProfile?.username ??
-                                        "Username belum ada"}
+                                    {userProfile?.username}
                                 </Text>
                                 <Text fontSize={"14px"}>
-                                    {userProfile?.profile?.bio ??
-                                        "Bio belum ada"}
+                                    {userProfile?.profile?.bio}
                                 </Text>
                                 <HStack spacing={3}>
                                     <HStack spacing={1}>
