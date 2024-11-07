@@ -21,12 +21,14 @@ import myIcons from "../assets/icons/myIcons";
 import { useHandleFollowUser } from "../hooks/follows/useHandleFollowUser";
 import { useSearchUser } from "../hooks/user/useSearchUser";
 import { CustomBtnPrimary, CustomBtnSecondary } from "./CustomBtn";
+import { FollowUser } from "../types/user";
+import { useFollowStore } from "../store/follow";
 
 export function SearchUser() {
     const { register, watch, users, isLoading } = useSearchUser();
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
-    const { isOpen, onClose, selectedUser, handleFollowClick } =
-        useHandleFollowUser();
+    const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } = useHandleFollowUser();
+    const followingIds = useFollowStore((state) => state.followingIds);
 
     return (
         <Box p={"0px 1rem"}>
@@ -96,8 +98,8 @@ export function SearchUser() {
                                             h={"fit-content"}
                                             fontSize={"12px"}
                                             fontWeight={"medium"}
-                                            onClick={() => handleFollowClick(user)}
-                                            label={user.isFollowed ? "Following" : "Follow"}
+                                            onClick={() => handleFollowClick(user as FollowUser)}
+                                            label={followingIds.includes(user.id) ? "Following" : "Follow"}
                                         />
                                     </Flex>
                                     <Text fontSize={"12px"} ml={"52px"}>
@@ -137,7 +139,7 @@ export function SearchUser() {
                         <ModalBody>
                             <Text>
                                 Are you sure want to unfollow{" "}
-                                {selectedUser.profile.fullName}?
+                                {selectedUser.profile?.fullName}
                             </Text>
                         </ModalBody>
 
@@ -150,9 +152,7 @@ export function SearchUser() {
                         >
                             <CustomBtnSecondary
                                 label="Unfollow"
-                                // onClick={() =>
-                                //     handleUnfollow(selectedUser)
-                                // }
+                                onClick={handleUnfollow}
                                 m={"0px"}
                                 w={"fit-content"}
                                 h={"fit-content"}

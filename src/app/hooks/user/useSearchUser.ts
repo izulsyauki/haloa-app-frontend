@@ -1,8 +1,9 @@
-import { useForm } from "react-hook-form";
-import { User } from "../../types/user";
-import { useDebounce } from "@uidotdev/usehooks";
 import { useQuery } from "@tanstack/react-query";
+import { useDebounce } from "@uidotdev/usehooks";
+import { useForm } from "react-hook-form";
 import API from "../../libs/axios";
+import { useFollowStore } from "../../store/follow";
+import { User } from "../../types/user";
 
 const fetchUsers = async (search: string): Promise<User[]> => {
     if (!search) return [];
@@ -16,6 +17,7 @@ export const useSearchUser = () => {
             search: "",
         },
     });
+    const followingIds = useFollowStore((state) => state.followingIds);
 
     const searchTerm = watch("search");
     const debouncedSearch = useDebounce(searchTerm, 500);
@@ -24,6 +26,10 @@ export const useSearchUser = () => {
         queryKey: ["users", debouncedSearch],
         queryFn: () => fetchUsers(debouncedSearch),
         enabled: Boolean(debouncedSearch),
+        select: (data) => data.filter((user) => ({
+            ...user,
+            isFollowed: followingIds.includes(user.id)
+        }))
     });
 
     return {

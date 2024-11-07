@@ -30,8 +30,7 @@ interface FollowsProps {
 export function Follows() {
     const [view, setView] = useState<"followers" | "following">("followers");
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
-    const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } =
-        useHandleFollowUser();
+    const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } = useHandleFollowUser();
     const { followers = [], following = [] } = useGetFollows() as unknown as FollowsProps;
     const followingIds = useFollowStore((state) => state.followingIds);
 

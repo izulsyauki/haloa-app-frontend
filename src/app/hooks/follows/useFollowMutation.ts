@@ -32,7 +32,8 @@ export const useFollowMutation = () => {
           ...oldData,
           _count: {
             ...oldData._count,
-            following: (oldData._count?.following || 0) + 1
+            following: (oldData._count?.following || 0) + 1,
+            follower: oldData._count?.follower || 0
           }
         };
       });
@@ -57,7 +58,8 @@ export const useFollowMutation = () => {
           ...oldData,
           _count: {
             ...oldData._count,
-            following: Math.max((oldData._count?.following || 0) - 1, 0)
+            following: Math.max((oldData._count?.following || 0) - 1, 0),
+            follower: oldData._count?.follower || 0
           }
         };
       });
