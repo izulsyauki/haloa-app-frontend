@@ -38,13 +38,15 @@ export const useSigninForm = () => {
       
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       
-      toast({
-        title: "Welcome back!",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
-      });
+      setTimeout(() => {
+        toast({
+          title: "Welcome back!",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          position: "top",
+        });
+      }, 3000);
 
       navigate("/");
     },
@@ -61,8 +63,9 @@ export const useSigninForm = () => {
     onMutate: () => {
       toast({
         title: "Loading...",
+        description: "Were working on it...",
         status: "info", 
-        duration: 3000,
+        duration: 2000,
         isClosable: true,
         position: "top",
       });

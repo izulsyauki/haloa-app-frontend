@@ -65,7 +65,7 @@ export const useHandleEditProfile = () => {
         onError: (error: Error) => {
             toast({
                 title: "Error updating profile",
-                description: error.message,
+                description: error.message || "An error occurred, please try again",
                 status: "error",
                 duration: 3000,
                 isClosable: true,

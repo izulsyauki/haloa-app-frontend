@@ -39,8 +39,7 @@ import { Thread } from "../types/thread";
 import { formatDate } from "../utils/fomatDate";
 
 export function Profile() {
-    const { userProfile } =
-        useGetLoginUserProfile();
+    const { userProfile } = useGetLoginUserProfile();
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const galleryButtonBg = useColorModeValue("white", "#2d3748");
     const [view, setView] = useState<"all" | "media">("all");
@@ -141,41 +140,104 @@ export function Profile() {
                             </ModalHeader>
                             <ModalCloseButton />
                             <form onSubmit={onSubmit}>
-                            <ModalBody
-                                as={Flex}
-                                flexDir={"column"}
-                                pt={"0px"}
-                                p={"0px 15px"}
-                                gap={"10px"}
-                                alignItems={"flex-start"}
-                            >
-                                <Box
-                                    w={"100%"}
-                                    position={"relative"}
-                                    mb={"30px"}
+                                <ModalBody
+                                    as={Flex}
+                                    flexDir={"column"}
+                                    pt={"0px"}
+                                    p={"0px 15px"}
+                                    gap={"10px"}
+                                    alignItems={"flex-start"}
                                 >
-                                    <InputGroup position={"relative"}>
-                                        <Image
+                                    <Box
+                                        w={"100%"}
+                                        position={"relative"}
+                                        mb={"30px"}
+                                    >
+                                        <InputGroup position={"relative"}>
+                                            <Image
+                                                src={
+                                                    bannerPreview ||
+                                                    userProfile?.profile
+                                                        ?.banner ||
+                                                    coverImg
+                                                }
+                                                alt="Cover Image"
+                                                h={"100px"}
+                                                objectFit={"cover"}
+                                                borderRadius={"10px"}
+                                                w={"100%"}
+                                            />
+                                            <Input
+                                                id="banner-upload"
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => {
+                                                    if (e.target.files?.[0]) {
+                                                        handleFileChange(
+                                                            "banner",
+                                                            e.target.files[0]
+                                                        );
+                                                    }
+                                                }}
+                                                display="none" // Sembunyikan input asli
+                                            />
+                                            <Button
+                                                position={"absolute"}
+                                                left={"50%"}
+                                                bottom={"50%"}
+                                                transform={
+                                                    "translate(-50%, 50%)"
+                                                }
+                                                p={"0px"}
+                                                m={"0px"}
+                                                borderRadius={"100px"}
+                                                w={"28px"}
+                                                h={"28px"}
+                                                minW={"28px"}
+                                                bg={galleryButtonBg}
+                                                _hover={{
+                                                    bg: galleryButtonBg,
+                                                }}
+                                                onClick={() =>
+                                                    document
+                                                        .getElementById(
+                                                            "banner-upload"
+                                                        )
+                                                        ?.click()
+                                                }
+                                            >
+                                                <Image
+                                                    src={myIcons.GalleryAdd}
+                                                    w={"18px"}
+                                                    h={"18px"}
+                                                    m={"0px"}
+                                                    p={"0px"}
+                                                />
+                                            </Button>
+                                        </InputGroup>
+
+                                        <Avatar
+                                            name="Profile Avatar"
                                             src={
-                                                bannerPreview ||
-                                                userProfile?.profile?.banner ||
-                                                coverImg
+                                                userProfile?.profile?.avatar ??
+                                                undefined
                                             }
-                                            alt="Cover Image"
-                                            h={"100px"}
-                                            objectFit={"cover"}
-                                            borderRadius={"10px"}
-                                            w={"100%"}
+                                            position={"absolute"}
+                                            left={"30px"}
+                                            bottom={"-30px"}
+                                            size={"lg"}
+                                            outline={"3px solid"}
+                                            outlineColor={outlineColor}
                                         />
                                         <Input
-                                            id="banner-upload"
+                                            id="avatar-upload"
                                             type="file"
                                             accept="image/*"
                                             onChange={(e) => {
                                                 if (e.target.files?.[0]) {
                                                     handleFileChange(
-                                                        "banner",
-                                                        e.target.files[0]
+                                                        "avatar",
+                                                        e.target.files?.[0]
                                                     );
                                                 }
                                             }}
@@ -183,9 +245,8 @@ export function Profile() {
                                         />
                                         <Button
                                             position={"absolute"}
-                                            left={"50%"}
-                                            bottom={"50%"}
-                                            transform={"translate(-50%, 50%)"}
+                                            left={"48px"}
+                                            bottom={"-13px"}
                                             p={"0px"}
                                             m={"0px"}
                                             borderRadius={"100px"}
@@ -199,7 +260,7 @@ export function Profile() {
                                             onClick={() =>
                                                 document
                                                     .getElementById(
-                                                        "banner-upload"
+                                                        "avatar-upload"
                                                     )
                                                     ?.click()
                                             }
@@ -212,147 +273,90 @@ export function Profile() {
                                                 p={"0px"}
                                             />
                                         </Button>
-                                    </InputGroup>
-
-                                    <Avatar
-                                        name="Profile Avatar"
-                                        src={
-                                            userProfile?.profile?.avatar ??
-                                            undefined
-                                        }
-                                        position={"absolute"}
-                                        left={"30px"}
-                                        bottom={"-30px"}
-                                        size={"lg"}
-                                        outline={"3px solid"}
-                                        outlineColor={outlineColor}
-                                    />
-                                    <Input
-                                        id="avatar-upload"
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => {
-                                            if (e.target.files?.[0]) {
-                                                handleFileChange(
-                                                    "avatar",
-                                                    e.target.files?.[0]
-                                                );
-                                            }
-                                        }}
-                                        display="none" // Sembunyikan input asli
-                                    />
-                                    <Button
-                                        position={"absolute"}
-                                        left={"48px"}
-                                        bottom={"-13px"}
-                                        p={"0px"}
-                                        m={"0px"}
-                                        borderRadius={"100px"}
-                                        w={"28px"}
-                                        h={"28px"}
-                                        minW={"28px"}
-                                        bg={galleryButtonBg}
-                                        _hover={{
-                                            bg: galleryButtonBg,
-                                        }}
-                                        onClick={() =>
-                                            document
-                                                .getElementById("avatar-upload")
-                                                ?.click()
-                                        }
+                                    </Box>
+                                    <VStack
+                                        w={"100%"}
+                                        alignItems={"flex-start"}
+                                        gap={"5px"}
                                     >
-                                        <Image
-                                            src={myIcons.GalleryAdd}
-                                            w={"18px"}
-                                            h={"18px"}
-                                            m={"0px"}
-                                            p={"0px"}
+                                        <Text
+                                            fontSize={"14px"}
+                                            fontWeight={"medium"}
+                                            textAlign={"start"}
+                                        >
+                                            Full Name
+                                        </Text>
+                                        <Input {...register("fullName")} />
+                                        {errors.fullName && (
+                                            <Text color="red.500" fontSize="xs">
+                                                {errors.fullName.message}
+                                            </Text>
+                                        )}
+                                    </VStack>
+                                    <VStack
+                                        w={"100%"}
+                                        alignItems={"flex-start"}
+                                        gap={"5px"}
+                                    >
+                                        <Text
+                                            fontSize={"14px"}
+                                            fontWeight={"medium"}
+                                            textAlign={"start"}
+                                        >
+                                            Username
+                                        </Text>
+                                        <Input {...register("username")} />
+                                        {errors.username && (
+                                            <Text color="red.500" fontSize="xs">
+                                                {errors.username.message}
+                                            </Text>
+                                        )}
+                                    </VStack>
+                                    <VStack
+                                        w={"100%"}
+                                        alignItems={"flex-start"}
+                                        gap={"5px"}
+                                    >
+                                        <Text
+                                            fontSize={"14px"}
+                                            fontWeight={"medium"}
+                                            textAlign={"start"}
+                                        >
+                                            Bio
+                                        </Text>
+                                        <Textarea
+                                            resize={"none"}
+                                            {...register("bio")}
                                         />
-                                    </Button>
-                                </Box>
-                                <VStack
-                                    w={"100%"}
-                                    alignItems={"flex-start"}
-                                    gap={"5px"}
-                                >
-                                    <Text
-                                        fontSize={"14px"}
-                                        fontWeight={"medium"}
-                                        textAlign={"start"}
-                                    >
-                                        Full Name
-                                    </Text>
-                                    <Input
-                                         {...register("fullName")}
-                                    />
-                                    {errors.fullName && (
-                                        <Text color="red.500" fontSize="xs">
-                                            {errors.fullName.message}
-                                        </Text>
-                                     )}
-                                </VStack>
-                                <VStack
-                                    w={"100%"}
-                                    alignItems={"flex-start"}
-                                    gap={"5px"}
-                                >
-                                    <Text
-                                        fontSize={"14px"}
-                                        fontWeight={"medium"}
-                                        textAlign={"start"}
-                                    >
-                                        Username
-                                    </Text>
-                                    <Input
-                                        {...register("username")}
-                                    />
-                                    {errors.username && (
-                                        <Text color="red.500" fontSize="xs">
-                                            {errors.username.message}
-                                        </Text>
-                                    )}
-                                </VStack>
-                                <VStack
-                                    w={"100%"}
-                                    alignItems={"flex-start"}
-                                    gap={"5px"}
-                                >
-                                    <Text
-                                        fontSize={"14px"}
-                                        fontWeight={"medium"}
-                                        textAlign={"start"}
-                                    >
-                                        Bio
-                                    </Text>
-                                    <Textarea
-                                         resize={"none"}
-                                        {...register("bio")}
-                                    />
-                                    {errors.bio && (
-                                        <Text color="red.500" fontSize="xs">
-                                            {errors.bio.message}
-                                        </Text>
-                                    )}
-                                </VStack>
-                            </ModalBody>
+                                        {errors.bio && (
+                                            <Text color="red.500" fontSize="xs">
+                                                {errors.bio.message}
+                                            </Text>
+                                        )}
+                                    </VStack>
+                                </ModalBody>
 
-                            <ModalFooter
-                                alignItems={"center"}
-                                justifyContent={"flex-end"}
-                                gap={"10px"}
-                                w={"100%"}
-                            >
-                                <CustomBtnPrimary
-                                    label={isUpdatingProfile ? "Updating..." : "Save"}
-                                    type="submit"
-                                    m={"0px"}
-                                    p={"10px 20px"}
-                                    w={"fit-content"}
-                                    h={"fit-content"}
-                                    fontSize={"14px"}
-                                    isLoading={isUpdatingProfile}
-                                />
-                            </ModalFooter>
+                                <ModalFooter
+                                    alignItems={"center"}
+                                    justifyContent={"flex-end"}
+                                    gap={"10px"}
+                                    w={"100%"}
+                                >
+                                    <CustomBtnPrimary
+                                        label={
+                                            isUpdatingProfile
+                                                ? "Updating..."
+                                                : "Save"
+                                        }
+                                        type="submit"
+                                        m={"0px"}
+                                        p={"10px 20px"}
+                                        w={"fit-content"}
+                                        h={"fit-content"}
+                                        fontSize={"14px"}
+                                        isLoading={isUpdatingProfile}
+                                    />
+                                </ModalFooter>
                             </form>
                         </ModalContent>
                     </Modal>
@@ -368,7 +372,7 @@ export function Profile() {
                     <HStack spacing={2}>
                         <HStack spacing={1}>
                             <Text fontWeight={"bold"} fontSize={"14px"}>
-                                {userProfile?._count?.following}
+                                {userProfile?._count?.follower}
                             </Text>
                             <Text fontSize={"14px"} color={"whiteAlpha.500"}>
                                 Following
@@ -376,7 +380,7 @@ export function Profile() {
                         </HStack>
                         <HStack spacing={1}>
                             <Text fontWeight={"bold"} fontSize={"14px"}>
-                                {userProfile?._count?.follower}
+                                {userProfile?._count?.following}
                             </Text>
                             <Text fontSize={"14px"} color={"whiteAlpha.500"}>
                                 Followers

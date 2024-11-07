@@ -7,7 +7,6 @@ const API = axios.create({
 
 API.interceptors.request.use(
     (config) => {
-        console.log("Request Config:", config);
         const token = Cookies.get('token');
         if (token && config.headers) {
             config.headers['Authorization'] = `Bearer ${token}`;
@@ -22,7 +21,6 @@ API.interceptors.request.use(
 
 API.interceptors.response.use(
     (response) => {
-        console.log("Response Data:", response.data);
         return response;
     },
     (error) => {

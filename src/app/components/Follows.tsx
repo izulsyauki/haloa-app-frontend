@@ -17,7 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import { getFollowers, getFollowing } from "../api/follow";
 import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
-import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
+import { useHandleFollowUser } from "../hooks/follows/useHandleFollowUser";
 import { useFollowStore } from '../store/follow';
 import { User } from "../types/user";
 

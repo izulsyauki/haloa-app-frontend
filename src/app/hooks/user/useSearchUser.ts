@@ -1,8 +1,14 @@
 import { useForm } from "react-hook-form";
 import { User } from "../../types/user";
 import { useDebounce } from "@uidotdev/usehooks";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import API from "../../libs/axios";
+
+const fetchUsers = async (search: string): Promise<User[]> => {
+    if (!search) return [];
+    const response = await API.get<User[]>(`/user/search?contains=${search}`);
+    return response.data;
+};
 
 export const useSearchUser = () => {
     const { register, watch } = useForm({
@@ -11,30 +17,14 @@ export const useSearchUser = () => {
         },
     });
 
-    const [users, setUsers] = useState<User[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const debouncedSearch = useDebounce(watch("search"), 500);
+    const searchTerm = watch("search");
+    const debouncedSearch = useDebounce(searchTerm, 500);
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            if (debouncedSearch) {
-                setIsLoading(true);
-                try {
-                    const response = await API.get<User[]>(`/user/search?contains=${debouncedSearch}`);
-                    setUsers(response.data);
-                } catch (error) {
-                    console.error("Error fetching users:", error);
-                    setUsers([]);
-                } finally {
-                    setIsLoading(false);
-                }
-            } else {
-                setUsers([]);
-            }
-        };
-
-        fetchUsers();
-    }, [debouncedSearch]);
+    const { data: users = [], isLoading } = useQuery({
+        queryKey: ["users", debouncedSearch],
+        queryFn: () => fetchUsers(debouncedSearch),
+        enabled: Boolean(debouncedSearch),
+    });
 
     return {
         register,

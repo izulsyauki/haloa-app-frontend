@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useDisclosure } from "@chakra-ui/react";
 import { useState } from "react";
-import { User } from "../types/user";
+import { User } from "../../types/user";
 import { useFollowMutation } from "./useFollowMutation";
-import { useFollowStore } from "../store/follow";
+import { useFollowStore } from "../../store/follow";
 
 export const useHandleFollowUser = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

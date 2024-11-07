@@ -25,7 +25,7 @@ import { CustomBtnPrimary, CustomBtnSecondary } from "./CustomBtn";
 export function SearchUser() {
     const { register, watch, users, isLoading } = useSearchUser();
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
-    const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } =
+    const { isOpen, onClose, selectedUser, handleFollowClick } =
         useHandleFollowUser();
 
     return (
@@ -69,24 +69,7 @@ export function SearchUser() {
                 </Flex>
             ) : (
                 <>
-                    {!users.length ? (
-                        <Flex
-                            w={"100%"}
-                            h={"500px"}
-                            justifyContent={"center"}
-                            alignItems={"center"}
-                        >
-                            <Box textAlign={"center"} w={"400px"}>
-                                <Heading size={"md"}>
-                                    No results for "{watch("search")}"
-                                </Heading>
-                                <Text>
-                                    Try searching for something else or check
-                                    the spelling of what you typed.
-                                </Text>
-                            </Box>
-                        </Flex>
-                    ) : (
+                    {users.length > 0 ? (
                         <>
                             {users.map((user) => (
                                 <Box key={user.id} padding={"10px 0px"}>
@@ -123,6 +106,23 @@ export function SearchUser() {
                                 </Box>
                             ))}
                         </>
+                    ) : !isLoading &&  (
+                        <Flex
+                            w={"100%"}
+                            h={"500px"}
+                            justifyContent={"center"}
+                            alignItems={"center"}
+                        >
+                            <Box textAlign={"center"} w={"400px"}>
+                                <Heading size={"md"}>
+                                    No results for "{watch("search")}"
+                                </Heading>
+                                <Text>
+                                    Try searching for something else or check
+                                    the spelling of what you typed.
+                                </Text>
+                            </Box>
+                        </Flex>
                     )}
                 </>
             )}

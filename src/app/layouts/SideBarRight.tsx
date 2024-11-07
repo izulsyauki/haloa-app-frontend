@@ -33,8 +33,8 @@ import coverImg from "../assets/images/cover.png";
 import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
 import { ToggleColorMode } from "../components/ToggleColorMode";
 import { useGetLoginUserProfile } from "../hooks/auth/useGetLoginUserProfile";
-import { useHandleEditProfile } from "../hooks/useHandleEditProfile";
-import { useHandleFollowUser } from "../hooks/useHandleFollowUser";
+import { useHandleEditProfile } from "../hooks/user/useHandleEditProfile";
+import { useHandleFollowUser } from "../hooks/follows/useHandleFollowUser";
 import { useSuggestedUsers } from "../hooks/user/useSuggestedUsers";
 import { useAuthStore } from "../store/auth";
 import { useFollowStore } from "../store/follow";
@@ -119,25 +119,6 @@ export function SideBarRight() {
         await handleFollowClick(user);
     };
 
-    // hook fetch
-    useEffect(() => {
-        fetchFollowCounts();
-    }, [fetchFollowCounts]);
-
-    useEffect(() => {
-        const fetchCounts = async () => {
-            try {
-                const counts = await getFollowCounts();
-                setFollowCounts(
-                    counts as { followers: number; following: number }
-                );
-            } catch (error) {
-                console.error("Error fetching counts:", error);
-            }
-        };
-
-        fetchCounts();
-    }, []);
 
     return (
         <Stack
@@ -439,6 +420,7 @@ export function SideBarRight() {
                                     </form>
                                 </ModalContent>
                             </Modal>
+
                         </Flex>
                         {isLoadingProfile ? (
                             <Text>Loading profile...</Text>
@@ -464,7 +446,7 @@ export function SideBarRight() {
                                             fontWeight={"bold"}
                                             fontSize={"14px"}
                                         >
-                                            {followCounts.following}
+                                            {userProfile?._count?.follower}
                                         </Text>
                                         <Text
                                             fontSize={"14px"}
@@ -478,7 +460,7 @@ export function SideBarRight() {
                                             fontWeight={"bold"}
                                             fontSize={"14px"}
                                         >
-                                            {followCounts.followers}
+                                            {userProfile?._count?.following}
                                         </Text>
                                         <Text
                                             fontSize={"14px"}

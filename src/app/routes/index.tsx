@@ -10,7 +10,7 @@ import { ProfileRoute } from "./ProfileRoute";
 import { PostDetailRoute } from "./PostDetailRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { PublicRoute } from "./PublicRoute";
-
+import { PreLoadPageRoute } from "./PreLoadPageRoute";
 export const myRoutes = {
   SignupRoute,
   ErrorPage,
@@ -23,5 +23,6 @@ export const myRoutes = {
   ProfileRoute,
   ProtectedRoute,
   PostDetailRoute,
-  PublicRoute
+  PublicRoute,
+  PreLoadPageRoute
 };

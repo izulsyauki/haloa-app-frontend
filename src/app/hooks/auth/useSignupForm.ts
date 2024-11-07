@@ -46,7 +46,8 @@ export const useSignupForm = () => {
     },
     onMutate: () => {
       toast({
-        title: "Creating account...",
+        title: "Loading...",
+        description: "Were working on it...",
         status: "info",
         duration: 3000,
         isClosable: true,
