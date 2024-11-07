@@ -25,33 +25,27 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { getFollowCounts } from "../api/follow";
 import myIcons from "../assets/icons/myIcons";
 import coverImg from "../assets/images/cover.png";
 import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
 import { ToggleColorMode } from "../components/ToggleColorMode";
 import { useGetLoginUserProfile } from "../hooks/auth/useGetLoginUserProfile";
-import { useHandleEditProfile } from "../hooks/user/useHandleEditProfile";
 import { useHandleFollowUser } from "../hooks/follows/useHandleFollowUser";
+import { useHandleEditProfile } from "../hooks/user/useHandleEditProfile";
 import { useSuggestedUsers } from "../hooks/user/useSuggestedUsers";
 import { useAuthStore } from "../store/auth";
 import { useFollowStore } from "../store/follow";
-import { User } from "../types/user";
+import { FollowUser } from "../types/user";
 
 export function SideBarRight() {
     const location = useLocation();
     const { token } = useAuthStore();
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const outlineColor = useColorModeValue("white", "#2d3748");
     const galleryButtonBg = useColorModeValue("white", "#2d3748");
-    const [followCounts, setFollowCounts] = useState({
-        followers: 0,
-        following: 0,
-    });
     const followingIds = useFollowStore((state) => state.followingIds);
     const { userProfile, isLoadingProfile } =
         useGetLoginUserProfile();
@@ -69,55 +63,16 @@ export function SideBarRight() {
         errors,
         onSubmit,
     } = useHandleEditProfile();
-
-    // fetch follow counts
-    const fetchFollowCounts = useCallback(async () => {
-        if (token) {
-            try {
-                const counts = await getFollowCounts();
-                setFollowCounts(
-                    counts as { followers: number; following: number }
-                );
-            } catch (error) {
-                console.error("Error fetching follow counts:", error);
-                setError("Gagal mengambil data follow counts");
-            }
-        }
-    }, [token]);
-
-    const { data: suggestedUsers, isLoading: isSuggestedLoading } = useSuggestedUsers(3);
+    const { suggestedUsers, isLoading: isSuggestedLoading, refetchData } = useSuggestedUsers(3);
     const {
         isOpen,
         onClose,
         selectedUser,
         handleFollowClick,
         handleUnfollow,
-        isLoading: followLoading
+        isLoading,
+        error: followError,
     } = useHandleFollowUser();
-
-    // State lokal untuk menyimpan status following
-    const [localSuggestedUsers, setLocalSuggestedUsers] = useState(suggestedUsers);
-
-    // Update local state ketika suggestedUsers berubah
-    useEffect(() => {
-        if (suggestedUsers) {
-            const updatedUsers = suggestedUsers.map(user => ({
-                ...user,
-                isFollowed: followingIds.includes(user.id)
-            }));
-            setLocalSuggestedUsers(updatedUsers);
-        }
-    }, [suggestedUsers, followingIds]);
-
-    const handleLocalFollowClick = async (user: User) => {
-        // Update status lokal terlebih dahulu
-        setLocalSuggestedUsers(prev => 
-            prev?.map(u => u.id === user.id ? { ...u, isFollowed: !u.isFollowed } : u)
-        );
-        
-        // Panggil handler asli
-        await handleFollowClick(user);
-    };
 
 
     return (
@@ -492,7 +447,7 @@ export function SideBarRight() {
                         )}
                     </Flex>
                     <Stack spacing="2">
-                        {localSuggestedUsers?.map((user) => (
+                        {suggestedUsers?.map((user) => (
                             <Flex
                                 key={user.id}
                                 gap={"15px"}
@@ -523,8 +478,11 @@ export function SideBarRight() {
                                     h={"fit-content"}
                                     fontSize={"12px"}
                                     fontWeight={"medium"}
-                                    isLoading={followLoading}
-                                    onClick={() => handleLocalFollowClick(user)}
+                                    isLoading={isLoading || isSuggestedLoading}
+                                    onClick={() => {
+                                        handleFollowClick(user as FollowUser);
+                                        refetchData();
+                                    }}
                                     label={user.isFollowed ? "Following" : "Follow"}
                                 />
                             </Flex>
@@ -546,7 +504,7 @@ export function SideBarRight() {
                             <ModalBody>
                                 <Text>
                                     Are you sure want to unfollow{" "}
-                                    {selectedUser.profile.fullName}?
+                                    {selectedUser?.profile?.fullName}
                                 </Text>
                             </ModalBody>
 

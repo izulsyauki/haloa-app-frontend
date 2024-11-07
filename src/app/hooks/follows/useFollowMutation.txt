@@ -1,0 +1,91 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { followUser, unfollowUser } from "../../api/follow";
+import { useFollowStore } from "../../store/follow";
+import { UserProfile } from "../../types/user";
+
+interface UserProfileWithCount extends UserProfile {
+  _count: {
+    following: number;
+    follower: number;
+  };
+}
+
+export const useFollowMutation = () => {  
+  const queryClient = useQueryClient();
+  const { addFollowing, removeFollowingId } = useFollowStore();
+
+  const followMutation = useMutation({
+    mutationFn: followUser,
+    onMutate: async (followingId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["userProfile"] });
+
+      // Snapshot the previous value
+      const previousProfile = queryClient.getQueryData<UserProfileWithCount>(["userProfile"]);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData<UserProfileWithCount>(["userProfile"], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          _count: {
+            ...old._count,
+            following: (old._count?.following || 0) + 1
+          }
+        };
+      });
+
+      // Return a context object with the snapshotted value
+      return { previousProfile };
+    },
+    onError: (err, newTodo, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousProfile) {
+        queryClient.setQueryData<UserProfileWithCount>(["userProfile"], context.previousProfile);
+      }
+    },
+    onSuccess: (_, followingId) => {
+      addFollowing(followingId);
+      queryClient.invalidateQueries({ queryKey: ["followers"] });
+      queryClient.invalidateQueries({ queryKey: ["following"] });
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+    }
+  });
+
+  const unfollowMutation = useMutation({
+    mutationFn: unfollowUser,
+    onMutate: async (followingId) => {
+      await queryClient.cancelQueries({ queryKey: ["userProfile"] });
+      const previousProfile = queryClient.getQueryData<UserProfileWithCount>(["userProfile"]);
+
+      queryClient.setQueryData<UserProfileWithCount>(["userProfile"], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          _count: {
+            ...old._count,
+            following: Math.max((old._count?.following || 0) - 1, 0)
+          }
+        };
+      });
+
+      return { previousProfile };
+    },
+    onError: (err, newTodo, context) => {
+      if (context?.previousProfile) {
+        queryClient.setQueryData<UserProfileWithCount>(["userProfile"], context.previousProfile);
+      }
+    },
+    onSuccess: (_, followingId) => {
+      removeFollowingId(followingId);
+      queryClient.invalidateQueries({ queryKey: ["followers"] });
+      queryClient.invalidateQueries({ queryKey: ["following"] });
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+    }
+  });
+
+  return {
+    followMutation,
+    unfollowMutation
+  };
+}; 

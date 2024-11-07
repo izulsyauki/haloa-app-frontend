@@ -16,6 +16,26 @@ export const useFollowMutation = () => {
 
   const followMutation = useMutation({
     mutationFn: followUser,
+    // onMutate: async () => {
+    //   // cancel refetch yang berjalan
+    //   await queryClient.cancelQueries({ queryKey: ["userProfile"] });
+
+    //   // ambil data sebelum mutasi
+    //   const previousProfile = queryClient.getQueryData<UserProfileWithCount>(["userProfile"]);
+
+    //   queryClient.setQueryData(["userProfile"], (old: UserProfileWithCount) => {
+    //     if (!old) return old;
+    //     return {
+    //       ...old,
+    //       _count: {
+    //         ...old._count,
+    //         following: (old._count?.following || 0) + 1
+    //       }
+    //     }
+    //   });
+
+    //   return { previousProfile };
+    // },
     onSuccess: (_, followingId) => {
       // Update following store
       addFollowing(followingId);
@@ -24,6 +44,7 @@ export const useFollowMutation = () => {
       queryClient.invalidateQueries({ queryKey: ["followers"] });
       queryClient.invalidateQueries({ queryKey: ["following"] });
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      queryClient.invalidateQueries({ queryKey: ["suggestedUsers"] });
       
       // Update count secara optimistic
       queryClient.setQueryData<UserProfileWithCount>(["userProfile"], (oldData) => {
@@ -32,8 +53,8 @@ export const useFollowMutation = () => {
           ...oldData,
           _count: {
             ...oldData._count,
-            following: (oldData._count?.following || 0) + 1,
-            follower: oldData._count?.follower || 0
+            following: (oldData._count?.following || 0),
+            follower: (oldData._count?.follower || 0 ) + 1
           }
         };
       });
@@ -50,6 +71,7 @@ export const useFollowMutation = () => {
       queryClient.invalidateQueries({ queryKey: ["followers"] });
       queryClient.invalidateQueries({ queryKey: ["following"] });
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      queryClient.invalidateQueries({ queryKey: ["suggestedUsers"] });
       
       // Update count secara optimistic
       queryClient.setQueryData<UserProfileWithCount>(["userProfile"], (oldData) => {
@@ -58,8 +80,8 @@ export const useFollowMutation = () => {
           ...oldData,
           _count: {
             ...oldData._count,
-            following: Math.max((oldData._count?.following || 0) - 1, 0),
-            follower: oldData._count?.follower || 0
+            following: (oldData._count?.following || 0),
+            follower: Math.max((oldData._count?.following || 0) - 1, 0)
           }
         };
       });
