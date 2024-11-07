@@ -1,15 +1,15 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/auth";
-import Cookies from "js-cookie";
 
 export function PublicRoute() {
-    const user = useAuthStore((state) => state.user)
-    const cookieToken = Cookies.get("token");
-    const cookieUser = Cookies.get("user");
+    const { token } = useAuthStore();
+    const location = useLocation();
+    const isResetPassword = location.pathname.includes("/reset-password");
 
-    if (user || cookieToken || cookieUser){
-        return <Navigate to="/" replace/>
+    // Jika ada token dan bukan halaman reset password, redirect ke home
+    if (token && !isResetPassword) {
+        return <Navigate to="/" />;
     }
 
-    return <Outlet />
+    return <Outlet />;
 }

@@ -38,20 +38,20 @@ export const router = createBrowserRouter([
     {
         element: <myRoutes.PublicRoute />,
         children: [
-                {
-                    path: "/sign-in",
-                    element: <myRoutes.SigninRoute />,
-                },
-                {
-                    path: "/sign-up",
-                    element: <myRoutes.SignupRoute />,
-                },
-                {
-                    path: "/forgot-password",
-                    element: <myRoutes.ForgotPassRoute />,
-                },
-                {
-                    path: "/reset-password/:token",
+            {
+                path: "/sign-in",
+                element: <myRoutes.SigninRoute />,
+            },
+            {
+                path: "/sign-up",
+                element: <myRoutes.SignupRoute />,
+            },
+            {
+                path: "/forgot-password",
+                element: <myRoutes.ForgotPassRoute />,
+            },
+            {
+                path: "/reset-password/:token",
                 element: <myRoutes.ResetPassRoute />,
             },
         ],

@@ -1,11 +1,11 @@
 import Cookies from "js-cookie";
 import { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
+import { PreLoadPage } from "./components/preLoadPage";
 import { Providers } from "./providers";
 import { router } from "./Router";
 import { useAuthStore } from "./store/auth";
 import { useLoadingStore } from "./store/loading";
-import { PreLoadPage } from "./components/preLoadPage";
 import { User } from "./types/user";
 
 function App() {
@@ -17,7 +17,8 @@ function App() {
             try {
                 const token = Cookies.get("token");
                 const user = Cookies.get("user");
-        
+                
+                // Cek token dan user
                 if (token && user) {
                     setToken(token);
                     setUser(JSON.parse(user) as User);
@@ -30,7 +31,6 @@ function App() {
                 setToken("");
                 setUser({} as User);
             } finally {
-                // Tunggu sebentar sebelum menghilangkan loading
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 setIsLoading(false);
             }
@@ -39,7 +39,6 @@ function App() {
         initializeApp();
     }, [setUser, setToken, setIsLoading]);
 
-    // Tampilkan PreLoadPage selama loading
     if (isLoading) {
         return (
             <Providers>
@@ -48,7 +47,6 @@ function App() {
         );
     }
 
-    // Render router setelah loading selesai
     return (
         <Providers>
             <RouterProvider router={router} />

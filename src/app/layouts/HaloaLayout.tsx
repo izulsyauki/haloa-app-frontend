@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Flex } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { myRoutes } from "../routes";
 import { useAuthStore } from "../store/auth";
 import { useLoadingStore } from "../store/loading";
@@ -12,12 +12,15 @@ export function HaloaLayout() {
     const { token, user } = useAuthStore();
     const { isLoading, setIsLoading } = useLoadingStore();
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const checkAuth = async () => {
             try {
                 if (!token || !user) {
-                    navigate("/sign-in");
+                    if (location.pathname !== "/reset-password") {
+                        navigate("/sign-in");
+                    }
                 }
 
                 await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -29,7 +32,7 @@ export function HaloaLayout() {
         };
 
         checkAuth();
-    }, [navigate, setIsLoading, token, user]);
+    }, [navigate, setIsLoading, token, user, location.pathname]);
 
     return (
         <>
