@@ -1,12 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { getProfileData } from "../../api/profile";
 import { useAuthStore } from "../../store/auth";
+import { UserProfile } from "../../types/user";
+
+interface UserProfileWithCount extends UserProfile {
+  _count: {
+    following: number;
+    follower: number;
+  };
+}
 
 export const useGetLoginUserProfile = () => {
     const navigate = useNavigate();
     const logout = useAuthStore((state) => state.logout);
+    const queryClient = useQueryClient();
 
     const { 
         data: userProfile, 
@@ -19,7 +28,8 @@ export const useGetLoginUserProfile = () => {
         queryKey: ["userProfile"],
         queryFn: async () => {
             try {
-                return await getProfileData();
+                const data = await getProfileData();
+                return data;
             } catch (error: unknown) {
                 // Handle 401 unauthorized
                 if ((error as { response?: { status: number } })?.response?.status === 401) {
@@ -45,12 +55,27 @@ export const useGetLoginUserProfile = () => {
         retryDelay: 1000
     });
 
+    const updateFollowCount = (type: 'increment' | 'decrement') => {
+        queryClient.setQueryData<UserProfileWithCount>(["userProfile"], (oldData) => {
+            if (!oldData) return oldData;
+            const count = type === 'increment' ? 1 : -1;
+            return {
+                ...oldData,
+                _count: {
+                    ...oldData._count,
+                    following: Math.max((oldData._count?.following || 0) + count, 0)
+                }
+            };
+        });
+    };
+
     return { 
         userProfile, 
         isLoadingProfile, 
         isErrorProfile, 
         isFetchedProfile, 
         isFetchingProfile, 
-        refetchProfile 
+        refetchProfile,
+        updateFollowCount 
     };
 }; 

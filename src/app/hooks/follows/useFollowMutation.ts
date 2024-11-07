@@ -1,23 +1,66 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { followUser, unfollowUser } from "../../api/follow";
 import { useFollowStore } from "../../store/follow";
+import { UserProfile } from "../../types/user";
 
-export const useFollowMutation = () => {
+interface UserProfileWithCount extends UserProfile {
+  _count: {
+    following: number;
+    follower: number;
+  };
+}
+
+export const useFollowMutation = () => {  
+  const queryClient = useQueryClient();
   const { addFollowing, removeFollowingId } = useFollowStore();
 
   const followMutation = useMutation({
-    mutationFn: (userId: number) => followUser(userId),
-    onSuccess: (_, userId) => {
+    mutationFn: followUser,
+    onSuccess: (_, followingId) => {
       // Update following store
-      addFollowing(userId);
+      addFollowing(followingId);
+      
+      // Invalidate queries
+      queryClient.invalidateQueries({ queryKey: ["followers"] });
+      queryClient.invalidateQueries({ queryKey: ["following"] });
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      
+      // Update count secara optimistic
+      queryClient.setQueryData<UserProfileWithCount>(["userProfile"], (oldData) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          _count: {
+            ...oldData._count,
+            following: (oldData._count?.following || 0) + 1
+          }
+        };
+      });
     }
   });
 
   const unfollowMutation = useMutation({
-    mutationFn: (userId: number) => unfollowUser(userId),
-    onSuccess: (_, userId) => {
+    mutationFn: unfollowUser,
+    onSuccess: (_, followingId) => {
       // Update following store
-      removeFollowingId(userId);
+      removeFollowingId(followingId);
+      
+      // Invalidate queries
+      queryClient.invalidateQueries({ queryKey: ["followers"] });
+      queryClient.invalidateQueries({ queryKey: ["following"] });
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      
+      // Update count secara optimistic
+      queryClient.setQueryData<UserProfileWithCount>(["userProfile"], (oldData) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          _count: {
+            ...oldData._count,
+            following: Math.max((oldData._count?.following || 0) - 1, 0)
+          }
+        };
+      });
     }
   });
 

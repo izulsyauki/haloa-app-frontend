@@ -1,18 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useDisclosure } from "@chakra-ui/react";
 import { useState } from "react";
-import { User } from "../../types/user";
+import { FollowUser } from "../../types/user";
 import { useFollowMutation } from "./useFollowMutation";
 import { useFollowStore } from "../../store/follow";
 
 export const useHandleFollowUser = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<FollowUser | null>(null);
   const { followMutation, unfollowMutation } = useFollowMutation();
   const { followingIds, addFollowing, removeFollowingId } = useFollowStore();
 
-  const handleFollowClick = async (user: User) => {
-    const isCurrentlyFollowing = followingIds.includes(user.id);
+  const handleFollowClick = async (user: FollowUser) => {
+    if (!user.id || user.id === 0) {
+      console.error("Invalid user ID:", user);
+      return;
+    }
+
+    const isCurrentlyFollowing = followingIds.includes(user.id) || user.isFollowed;
 
     if (isCurrentlyFollowing) {
       setSelectedUser(user);
@@ -23,7 +28,6 @@ export const useHandleFollowUser = () => {
     try {
       await followMutation.mutateAsync(user.id);
       addFollowing(user.id);
-      user.isFollowed = true;
     } catch (error) {
       console.error("Error following user:", error);
     }
@@ -35,7 +39,6 @@ export const useHandleFollowUser = () => {
     try {
       await unfollowMutation.mutateAsync(selectedUser.id);
       removeFollowingId(selectedUser.id);
-      selectedUser.isFollowed = false;
       onClose();
     } catch (error) {
       console.error("Error unfollowing user:", error);

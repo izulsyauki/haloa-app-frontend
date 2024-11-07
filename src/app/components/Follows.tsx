@@ -14,63 +14,44 @@ import {
     Text,
     useColorModeValue,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { getFollowers, getFollowing } from "../api/follow";
+import { useState } from "react";
 import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
+import { useGetFollows } from "../hooks/follows/useGetFollows";
 import { useHandleFollowUser } from "../hooks/follows/useHandleFollowUser";
 import { useFollowStore } from '../store/follow';
-import { User } from "../types/user";
+import { Follow, FollowUser } from "../types/user";
+
+interface FollowsProps {
+    followers: Follow[];
+    following: Follow[];
+    isLoading: boolean;
+}
 
 export function Follows() {
-    // const { user: loggedInUser } = useAuthStore();
-    // const [suggestedUser, setSuggestedUser] = useState<User[]>(fakeUsers as User[]);
     const [view, setView] = useState<"followers" | "following">("followers");
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } =
         useHandleFollowUser();
-    const [followers, setFollowers] = useState<User[]>([]);
-    const [following, setFollowing] = useState<User[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const { followers = [], following = [] } = useGetFollows() as unknown as FollowsProps;
     const followingIds = useFollowStore((state) => state.followingIds);
-    const setFollowingIds = useFollowStore((state) => state.setFollowingIds);
 
-    useEffect(() => {
-        const fetchFollowData = async () => {
-            try {
-                setIsLoading(true);
-                const [followersData, followingData] = await Promise.all([
-                    getFollowers(),
-                    getFollowing()
-                ]);
-                
-                // Update followingIds di store
-                const followingIds = followingData.map((user: User) => user.id);
-                setFollowingIds(followingIds);
-                
-                // Update data dengan status isFollowed yang benar
-                const followersWithStatus = followersData.map((user: User) => ({
-                    ...user,
-                    isFollowed: followingIds.includes(user.id)
-                }));
-                
-                const followingWithStatus = followingData.map((user: User) => ({
-                    ...user,
-                    isFollowed: true // Following selalu true
-                }));
-
-                setFollowers(followersWithStatus);
-                setFollowing(followingWithStatus);
-            } catch (error) {
-                console.error("Error fetching follow data:", error);
-            } finally {
-                setIsLoading(false);
-            }
+    const followersWithStatus = followers.map((follow) => {
+        return {
+            id: follow.follower?.id || 0,
+            username: follow.follower?.username || '',
+            profile: follow.follower?.profile,
+            isFollowed: followingIds.includes(follow.follower?.id || 0)
         };
+    }).filter(user => user.id !== 0) as FollowUser[];
 
-        fetchFollowData();
-    }, [setFollowingIds]);
+    const followingWithStatus = following.map((follow) => ({
+        id: follow.following?.id || 0,
+        username: follow.following?.username || '',
+        profile: follow.following?.profile,
+        isFollowed: true
+    })).filter(user => user.id !== 0) as FollowUser[];
 
-    const filteredUsers = view === "followers" ? followers : following;
+    const filteredUsers = view === "followers" ? followersWithStatus : followingWithStatus;
 
     return (
         <Box w={"100%"}>
@@ -128,18 +109,16 @@ export function Follows() {
                             alignItems={"center"}
                         >
                             <Avatar
-                                src={view === "followers" ? user.follower?.profile.avatar : user.following?.profile.avatar || ""}
+                                src={user.profile?.avatar || ""}
                                 h={"36px"}
                                 w={"36px"}
                             />
                             <Box flex={5} gap={"10px"}>
                                 <Text fontWeight={"medium"}>
-                                    {view === "followers"
-                                        ? user.follower?.profile.fullName
-                                        : user.following?.profile.fullName}
+                                    {user.profile?.fullName}
                                 </Text>
                                 <Text color={fontColor}>
-                                    @{view === "followers" ? user.follower?.username : user.following?.username}
+                                    @{user.username}
                                 </Text>
                             </Box>
                             <CustomBtnSecondary
@@ -152,9 +131,7 @@ export function Follows() {
                             />
                         </Flex>
                         <Text fontSize={"12px"} ml={"52px"}>
-                            {view === "followers"
-                                ? user.follower?.profile.bio
-                                : user.following?.profile.bio || ""}
+                            {user.profile?.bio || ""}
                         </Text>
                     </Box>
                 ))}
@@ -186,7 +163,7 @@ export function Follows() {
                             >
                                 <CustomBtnSecondary
                                     label="Unfollow"
-                                    onClick={() => handleUnfollow(selectedUser.id)}
+                                    onClick={handleUnfollow}
                                     m={"0px"}
                                     w={"fit-content"}
                                     h={"fit-content"}

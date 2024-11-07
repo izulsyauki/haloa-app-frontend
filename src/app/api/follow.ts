@@ -1,3 +1,4 @@
+// import { AxiosRequestConfig } from "axios";
 import API from "../libs/axios";
 
 export const getFollowCounts = async () => {
@@ -14,8 +15,16 @@ export const followUser = async (userId: number): Promise<void> => {
     }
 };
 
+// interface UnfollowRequest {
+//    data: { followingId: number };
+// }
+
 export const unfollowUser = async (userId: number): Promise<void> => {
     try {
+        // const config: AxiosRequestConfig<UnfollowRequest> = {
+        //     data: { followingId: userId }
+        // }
+
         await API.delete(`/follow/${userId}`);
     } catch (error) {
         console.error('Error unfollowing user:', error);

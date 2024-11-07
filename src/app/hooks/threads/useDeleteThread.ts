@@ -11,7 +11,6 @@ export const useDeleteThread = () => {
     const deleteThreadMutation = useMutation({
         mutationFn: async (threadId: number) => {
             const response = await deleteThread(threadId);
-            console.log("Delete response:", response);
             return response;
         },
         onSuccess: () => {

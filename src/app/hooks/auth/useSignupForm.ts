@@ -29,7 +29,6 @@ export const useSignupForm = () => {
         status: "success",
         duration: 3000,
         isClosable: true,
-        position: "top",
       });
 
       navigate("/sign-in");
@@ -41,7 +40,6 @@ export const useSignupForm = () => {
         status: "error",
         duration: 3000,
         isClosable: true,
-        position: "top",
       });
     },
     onMutate: () => {
@@ -51,7 +49,6 @@ export const useSignupForm = () => {
         status: "info",
         duration: 3000,
         isClosable: true,
-        position: "top",
       });
     },
   });

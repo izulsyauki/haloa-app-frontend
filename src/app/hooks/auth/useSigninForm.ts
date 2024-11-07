@@ -44,7 +44,6 @@ export const useSigninForm = () => {
           status: "success",
           duration: 3000,
           isClosable: true,
-          position: "top",
         });
       }, 3000);
 
@@ -57,7 +56,6 @@ export const useSigninForm = () => {
         status: "error",
         duration: 3000,
         isClosable: true,
-        position: "top",
       });
     },
     onMutate: () => {
@@ -67,7 +65,6 @@ export const useSigninForm = () => {
         status: "info", 
         duration: 2000,
         isClosable: true,
-        position: "top",
       });
     },
   });

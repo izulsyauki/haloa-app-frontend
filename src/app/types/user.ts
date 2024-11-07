@@ -31,17 +31,36 @@ export interface Profile {
 }
 
 export interface Follow {
+    id: number;
+    followerId: number;
+    followingId: number;
     follower?: {
         id: number;
         username: string;
-        profile: Profile;
+        profile: {
+            fullName: string;
+            bio: string;
+            avatar: string;
+        };
     };
     following?: {
         id: number;
         username: string;
-        profile: Profile;
+        profile: {
+            fullName: string;
+            bio: string;
+            avatar: string;
+        };
     };
-    followerId: number;
-    followingId: number;
 }
 
+export interface FollowUser {
+    id: number;
+    username: string;
+    profile?: {
+        fullName: string;
+        bio: string;
+        avatar: string;
+    };
+    isFollowed: boolean;
+}

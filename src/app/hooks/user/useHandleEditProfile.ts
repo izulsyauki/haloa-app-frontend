@@ -59,7 +59,6 @@ export const useHandleEditProfile = () => {
                 status: "success",
                 duration: 3000,
                 isClosable: true,
-                position: "top",
             });
         },
         onError: (error: Error) => {
@@ -69,7 +68,6 @@ export const useHandleEditProfile = () => {
                 status: "error",
                 duration: 3000,
                 isClosable: true,
-                position: "top",
             });
         }
     });
