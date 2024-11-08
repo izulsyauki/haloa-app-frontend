@@ -45,7 +45,7 @@ export const useSigninForm = () => {
           duration: 3000,
           isClosable: true,
         });
-      }, 3000);
+      }, 2000);
 
       navigate("/");
     },

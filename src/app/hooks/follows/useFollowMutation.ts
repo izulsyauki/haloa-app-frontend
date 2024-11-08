@@ -81,7 +81,7 @@ export const useFollowMutation = () => {
           _count: {
             ...oldData._count,
             following: (oldData._count?.following || 0),
-            follower: Math.max((oldData._count?.following || 0) - 1, 0)
+            follower: Math.max((oldData._count?.follower || 0) - 1, 0)
           }
         };
       });

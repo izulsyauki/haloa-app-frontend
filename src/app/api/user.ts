@@ -28,3 +28,12 @@ export const unfollowUser = async (userId: number): Promise<void> => {
         throw error;
     }
 };
+
+export const getDetailUser = async (id: number): Promise<void> => {
+    try {
+        await API.get(`/user/detail/${id}`).then((res) => res.data);
+    } catch (error) {
+        console.error('Error fetching detail user:', error);
+        throw error;
+    }
+}

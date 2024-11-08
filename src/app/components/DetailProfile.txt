@@ -29,17 +29,14 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import myIcons from "../assets/icons/myIcons";
 import coverImg from "../assets/images/cover.png";
-import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
 import { useDeleteThread } from "../hooks/threads/useDeleteThread";
-import { useGetLoginUserProfile } from "../hooks/auth/useGetLoginUserProfile";
 import { useGetUserThreads } from "../hooks/threads/useGetUserThreads";
-import { useHandleEditProfile } from "../hooks/user/useHandleEditProfile";
 import { useHandleLike } from "../hooks/threads/useHandleLike";
 import { Thread } from "../types/thread";
 import { formatDate } from "../utils/fomatDate";
+import { CustomBtnPrimary, CustomBtnSecondary } from "./CustomBtn";
 
 export function Profile() {
-    const { userProfile } = useGetLoginUserProfile();
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const galleryButtonBg = useColorModeValue("white", "#2d3748");
     const [view, setView] = useState<"all" | "media">("all");
@@ -60,19 +57,6 @@ export function Profile() {
     } = useDisclosure();
     const { mutateAsyncLike } = useHandleLike();
 
-    // handle untuk edit profile
-    const {
-        isEditProfileOpen,
-        avatarPreview,
-        bannerPreview,
-        isUpdatingProfile,
-        handleEditProfileOpen,
-        handleEditProfileClose,
-        handleFileChange,
-        register,
-        errors,
-        onSubmit,
-    } = useHandleEditProfile();
 
     //filter user berdasarkan view
     const filteredThreads = userThreads.data?.filter((thread) => {
@@ -95,7 +79,7 @@ export function Profile() {
                 <Flex flexDir={"column"} justifyContent={"flex-end"}>
                     <Box position={"relative"}>
                         <Image
-                            src={ bannerPreview || userProfile?.profile?.banner || coverImg}
+                            src={userProfile?.profile?.banner ?? coverImg}
                             alt="Cover Image"
                             h={"120px"}
                             w={"100%"}
@@ -106,7 +90,8 @@ export function Profile() {
                             name="Profile Avatar"
                             size={"lg"}
                             src={
-                                avatarPreview || userProfile?.profile?.avatar ||
+                                avatarPreview ||
+                                userProfile?.profile?.avatar ||
                                 undefined
                             }
                             position={"absolute"}
@@ -155,6 +140,7 @@ export function Profile() {
                                         <InputGroup position={"relative"}>
                                             <Image
                                                 src={
+                                                    bannerPreview ||
                                                     userProfile?.profile
                                                         ?.banner ||
                                                     coverImg
