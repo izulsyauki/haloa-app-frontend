@@ -1,4 +1,4 @@
-import { PreLoadPage } from "../components/preLoadPage";
+import { PreLoadPage } from "../components/PreLoadPage";
 
 export function PreLoadPageRoute() {
 

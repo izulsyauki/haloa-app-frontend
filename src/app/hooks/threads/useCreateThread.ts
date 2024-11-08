@@ -6,14 +6,15 @@ import { createThread } from "../../api/thread";
 import { CreateThreadRequest } from "../../types/thread";
 import { PostThreadSchema, postThreadSchema } from "../../utils/postThreadSchema";
 import { useDisclosure } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
+
 export const useCreateThread = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const queryClient = useQueryClient();
-    // const onOpen = () => setIsOpen(true);
-    // const onClose = () => setIsOpen(false);
+    const toast = useToast();
 
     const form = useForm<PostThreadSchema>({
         resolver: zodResolver(postThreadSchema),
@@ -33,6 +34,21 @@ export const useCreateThread = () => {
             // invalidate query setelah berhasil membuat thread
             queryClient.invalidateQueries({ queryKey: ["threads"] });
             queryClient.invalidateQueries({ queryKey: ["userThreads"] });
+
+            toast({
+                title: "Thread created",
+                status: "success",
+                duration: 2000,
+                isClosable: true,
+            });
+        },
+        onError: () => {
+            toast({
+                title: "Failed to create thread",
+                status: "error",
+                duration: 2000,
+                isClosable: true,
+            });
         },
     });
 

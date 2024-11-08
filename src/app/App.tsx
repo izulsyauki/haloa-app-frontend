@@ -1,9 +1,9 @@
 import Cookies from "js-cookie";
 import { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
-import { PreLoadPage } from "./components/preLoadPage";
 import { Providers } from "./providers";
 import { router } from "./Router";
+import { PreLoadPageRoute } from "./routes/PreLoadPageRoute";
 import { useAuthStore } from "./store/auth";
 import { useLoadingStore } from "./store/loading";
 import { User } from "./types/user";
@@ -15,6 +15,7 @@ function App() {
     useEffect(() => {
         const initializeApp = async () => {
             try {
+
                 const token = Cookies.get("token");
                 const user = Cookies.get("user");
                 
@@ -42,7 +43,7 @@ function App() {
     if (isLoading) {
         return (
             <Providers>
-                <PreLoadPage />
+                <PreLoadPageRoute />
             </Providers>
         );
     }

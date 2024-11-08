@@ -5,6 +5,7 @@ import { myRoutes } from "./routes/index";
 export const router = createBrowserRouter([
     {   
         element: <HaloaLayout />,
+        errorElement: <myRoutes.ErrorPageRoute />,
         children: [
             {
                 element: <myRoutes.ProtectedRoute />,
@@ -12,12 +13,12 @@ export const router = createBrowserRouter([
                     {
                         path: "/",
                         element: <myRoutes.HomeRoute />,
-                        errorElement: <myRoutes.ErrorPage />,
+                        errorElement: <myRoutes.ErrorPageRoute />,
                     },
                     {
                         path: "/detail/:postId",
                         element: <myRoutes.PostDetailRoute />,
-                        errorElement: <myRoutes.ErrorPage />,
+                        errorElement: <myRoutes.ErrorPageRoute />,
                     },
                     {
                         path: "/search",
@@ -37,6 +38,7 @@ export const router = createBrowserRouter([
     },
     {
         element: <myRoutes.PublicRoute />,
+        errorElement: <myRoutes.ErrorPageRoute />,
         children: [
             {
                 path: "/sign-in",
@@ -55,5 +57,9 @@ export const router = createBrowserRouter([
                 element: <myRoutes.ResetPassRoute />,
             },
         ],
+    },
+    {
+        path: "*",
+        element: <myRoutes.ErrorPageRoute />,
     },
 ]);

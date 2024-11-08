@@ -1,5 +1,5 @@
 import { SignupRoute } from "./SignupRoute";
-import { ErrorPage } from "./ErrorPage";
+import { ErrorPageRoute } from "./ErrorPageRoute";
 import { HomeRoute } from "./HomeRoutes";
 import { SigninRoute } from "./SigninRoute";
 import { ForgotPassRoute } from "./ForgotPassRoute";
@@ -11,9 +11,10 @@ import { PostDetailRoute } from "./PostDetailRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { PublicRoute } from "./PublicRoute";
 import { PreLoadPageRoute } from "./PreLoadPageRoute";
+
 export const myRoutes = {
   SignupRoute,
-  ErrorPage,
+  ErrorPageRoute,
   HomeRoute,
   SigninRoute,
   ForgotPassRoute,

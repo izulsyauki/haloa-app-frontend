@@ -12,6 +12,9 @@ export const useGetThreadsFeeds = () => {
                 throw error;
             }
         },
+        staleTime: 1000 * 30,
+        gcTime: 1000 * 60,
+        refetchOnWindowFocus: false,
     });
 
     return { threads, isLoadingThreads };
