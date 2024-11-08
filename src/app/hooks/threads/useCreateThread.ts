@@ -34,6 +34,7 @@ export const useCreateThread = () => {
             // invalidate query setelah berhasil membuat thread
             queryClient.invalidateQueries({ queryKey: ["threads"] });
             queryClient.invalidateQueries({ queryKey: ["userThreads"] });
+            queryClient.invalidateQueries({ queryKey: ["thread"] });
 
             toast({
                 title: "Thread created",

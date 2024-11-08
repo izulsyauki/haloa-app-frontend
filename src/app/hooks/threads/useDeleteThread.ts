@@ -15,7 +15,8 @@ export const useDeleteThread = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["threads"] });
-            queryClient.invalidateQueries({ queryKey: ["user-threads"] });
+            queryClient.invalidateQueries({ queryKey: ["userThreads"] });
+            queryClient.invalidateQueries({ queryKey: ["thread"]})
             toast({
                 title: "Thread deleted",
                 status: "success",

@@ -7,7 +7,7 @@ export const useSuggestedUsers = (limit = 3) => {
   const followingIds = useFollowStore((state) => state.followingIds);
 
    const suggestedUsersQuery = useQuery({
-    queryKey: ["suggestedUsers"],
+    queryKey: ["suggestedUsers", followingIds],
     queryFn: () => getSuggestedUsers(limit),
     staleTime: 1000 * 60,
   });

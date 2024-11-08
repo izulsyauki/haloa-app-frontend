@@ -95,7 +95,7 @@ export function Profile() {
                 <Flex flexDir={"column"} justifyContent={"flex-end"}>
                     <Box position={"relative"}>
                         <Image
-                            src={ bannerPreview || userProfile?.profile?.banner || coverImg}
+                            src={ userProfile?.profile?.banner || coverImg}
                             alt="Cover Image"
                             h={"120px"}
                             w={"100%"}
@@ -105,10 +105,7 @@ export function Profile() {
                         <Avatar
                             name="Profile Avatar"
                             size={"lg"}
-                            src={
-                                avatarPreview || userProfile?.profile?.avatar ||
-                                undefined
-                            }
+                            src={userProfile?.profile?.avatar || undefined}
                             position={"absolute"}
                             left={"25px"}
                             bottom={"-35px"}
@@ -155,7 +152,7 @@ export function Profile() {
                                         <InputGroup position={"relative"}>
                                             <Image
                                                 src={
-                                                    userProfile?.profile
+                                                   bannerPreview || userProfile?.profile
                                                         ?.banner ||
                                                     coverImg
                                                 }
@@ -217,7 +214,7 @@ export function Profile() {
                                         <Avatar
                                             name="Profile Avatar"
                                             src={
-                                                userProfile?.profile?.avatar ??
+                                               avatarPreview || userProfile?.profile?.avatar ||
                                                 undefined
                                             }
                                             position={"absolute"}

@@ -35,20 +35,16 @@ import { useGetLoginUserProfile } from "../hooks/auth/useGetLoginUserProfile";
 import { useHandleFollowUser } from "../hooks/follows/useHandleFollowUser";
 import { useHandleEditProfile } from "../hooks/user/useHandleEditProfile";
 import { useSuggestedUsers } from "../hooks/user/useSuggestedUsers";
-import { useAuthStore } from "../store/auth";
-import { useFollowStore } from "../store/follow";
 import { FollowUser } from "../types/user";
 
 export function SideBarRight() {
     const location = useLocation();
-    const { token } = useAuthStore();
-    const [error, setError] = useState<string | null>(null);
+    const [ error ] = useState<string | null>(null);
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const outlineColor = useColorModeValue("white", "#2d3748");
     const galleryButtonBg = useColorModeValue("white", "#2d3748");
-    const followingIds = useFollowStore((state) => state.followingIds);
-    const { userProfile, isLoadingProfile } =
-        useGetLoginUserProfile();
+    const { userProfile, isLoadingProfile } = useGetLoginUserProfile();
+    const [loadingUserId, setLoadingUserId] = useState<number | null>(null);
 
     // handle untuk edit profile
     const {
@@ -63,17 +59,18 @@ export function SideBarRight() {
         errors,
         onSubmit,
     } = useHandleEditProfile();
-    const { suggestedUsers, isLoading: isSuggestedLoading, refetchData } = useSuggestedUsers(3);
+    const {
+        suggestedUsers,
+        isLoading: isSuggestedLoading,
+        refetchData,
+    } = useSuggestedUsers(3);
     const {
         isOpen,
         onClose,
         selectedUser,
         handleFollowClick,
         handleUnfollow,
-        isLoading,
-        error: followError,
     } = useHandleFollowUser();
-
 
     return (
         <Stack
@@ -163,7 +160,9 @@ export function SideBarRight() {
                                                 position={"relative"}
                                                 mb={"30px"}
                                             >
-                                                <InputGroup position={"relative"}>
+                                                <InputGroup
+                                                    position={"relative"}
+                                                >
                                                     <Image
                                                         src={
                                                             bannerPreview ||
@@ -203,7 +202,9 @@ export function SideBarRight() {
                                                         }
                                                     >
                                                         <Image
-                                                            src={myIcons.GalleryAdd}
+                                                            src={
+                                                                myIcons.GalleryAdd
+                                                            }
                                                             w={"18px"}
                                                             h={"18px"}
                                                             m={"0px"}
@@ -216,7 +217,8 @@ export function SideBarRight() {
                                                         accept="image/*"
                                                         onChange={(e) => {
                                                             if (
-                                                                e.target.files?.[0]
+                                                                e.target
+                                                                    .files?.[0]
                                                             ) {
                                                                 handleFileChange(
                                                                     "banner",
@@ -279,10 +281,13 @@ export function SideBarRight() {
                                                     type="file"
                                                     accept="image/*"
                                                     onChange={(e) => {
-                                                        if (e.target.files?.[0]) {
+                                                        if (
+                                                            e.target.files?.[0]
+                                                        ) {
                                                             handleFileChange(
                                                                 "avatar",
-                                                                e.target.files?.[0]
+                                                                e.target
+                                                                    .files?.[0]
                                                             );
                                                         }
                                                     }}
@@ -305,8 +310,14 @@ export function SideBarRight() {
                                                     {...register("fullName")}
                                                 />
                                                 {errors.fullName && (
-                                                    <Text color="red.500" fontSize="xs">
-                                                        {errors.fullName.message}
+                                                    <Text
+                                                        color="red.500"
+                                                        fontSize="xs"
+                                                    >
+                                                        {
+                                                            errors.fullName
+                                                                .message
+                                                        }
                                                     </Text>
                                                 )}
                                             </VStack>
@@ -326,8 +337,14 @@ export function SideBarRight() {
                                                     {...register("username")}
                                                 />
                                                 {errors.username && (
-                                                    <Text color="red.500" fontSize="xs">
-                                                        {errors.username.message}
+                                                    <Text
+                                                        color="red.500"
+                                                        fontSize="xs"
+                                                    >
+                                                        {
+                                                            errors.username
+                                                                .message
+                                                        }
                                                     </Text>
                                                 )}
                                             </VStack>
@@ -348,7 +365,10 @@ export function SideBarRight() {
                                                     {...register("bio")}
                                                 />
                                                 {errors.bio && (
-                                                    <Text color="red.500" fontSize="xs">
+                                                    <Text
+                                                        color="red.500"
+                                                        fontSize="xs"
+                                                    >
                                                         {errors.bio.message}
                                                     </Text>
                                                 )}
@@ -362,7 +382,11 @@ export function SideBarRight() {
                                             w={"100%"}
                                         >
                                             <CustomBtnPrimary
-                                                label={isUpdatingProfile ? "Updating..." : "Save"}
+                                                label={
+                                                    isUpdatingProfile
+                                                        ? "Updating..."
+                                                        : "Save"
+                                                }
                                                 type="submit"
                                                 m={"0px"}
                                                 p={"10px 20px"}
@@ -375,7 +399,6 @@ export function SideBarRight() {
                                     </form>
                                 </ModalContent>
                             </Modal>
-
                         </Flex>
                         {isLoadingProfile ? (
                             <Text>Loading profile...</Text>
@@ -384,13 +407,10 @@ export function SideBarRight() {
                         ) : userProfile ? (
                             <>
                                 <Heading size="md">
-                                    ✨
-                                    {userProfile?.profile?.fullName}
-                                    ✨
+                                    ✨{userProfile?.profile?.fullName}✨
                                 </Heading>
                                 <Text fontSize={"14px"} color={fontColor}>
-                                    @
-                                    {userProfile?.username}
+                                    @{userProfile?.username}
                                 </Text>
                                 <Text fontSize={"14px"}>
                                     {userProfile?.profile?.bio}
@@ -478,12 +498,21 @@ export function SideBarRight() {
                                     h={"fit-content"}
                                     fontSize={"12px"}
                                     fontWeight={"medium"}
-                                    isLoading={isLoading || isSuggestedLoading}
-                                    onClick={() => {
-                                        handleFollowClick(user as FollowUser);
-                                        refetchData();
+                                    isLoading={loadingUserId === user.id}
+                                    onClick={async () => {
+                                        setLoadingUserId(user.id);
+                                        try {
+                                            await handleFollowClick(
+                                                user as FollowUser
+                                            );
+                                            refetchData();
+                                        } finally {
+                                            setLoadingUserId(null);
+                                        }
                                     }}
-                                    label={user.isFollowed ? "Following" : "Follow"}
+                                    label={
+                                        user.isFollowed ? "Following" : "Follow"
+                                    }
                                 />
                             </Flex>
                         ))}

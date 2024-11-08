@@ -12,7 +12,7 @@ export const useHandleLike = () => {
             await Promise.all([
                 queryClient.cancelQueries({ queryKey: ["threads"] }),
                 queryClient.cancelQueries({ queryKey: ["thread", threadId.toString()] }),
-                queryClient.cancelQueries({ queryKey: ["userThreads"] })
+                queryClient.cancelQueries({ queryKey: ["userThreads"] }),
             ]);
 
             // Simpan state sebelumnya
