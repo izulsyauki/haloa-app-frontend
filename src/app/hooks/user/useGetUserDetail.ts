@@ -1,13 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { getDetailUser } from "../../api/user";
 
-export const useGetUserDetail = (id: number) => {
-    const userDetail = useQuery({
-        queryKey: ["userDetail", id],
-        queryFn: () => getDetailUser(id),
-        staleTime: 1000 * 60,
-        gcTime: 1000 * 60,
-    });
+export const useGetUserDetail = (userId: number) => {
+    console.log("Getting user detail for userId:", userId);
 
-    return userDetail;
-}
+    return useQuery({
+        queryKey: ["userDetail", userId],
+        queryFn: () => getDetailUser(userId),
+        enabled: !!userId,
+        refetchOnMount: true,
+        refetchOnWindowFocus: true,
+        throwOnError: true,
+        select: (data) => {
+            console.log("User detail data:", data);
+            return data;
+        }
+    });
+};

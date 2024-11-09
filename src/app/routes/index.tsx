@@ -11,19 +11,21 @@ import { PostDetailRoute } from "./PostDetailRoute";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { PublicRoute } from "./PublicRoute";
 import { PreLoadPageRoute } from "./PreLoadPageRoute";
+import { DetailProfileRoute } from "./DetailProfileRoute";
 
 export const myRoutes = {
-  SignupRoute,
-  ErrorPageRoute,
-  HomeRoute,
-  SigninRoute,
-  ForgotPassRoute,
-  ResetPassRoute,
-  SearchUserRoute,
-  FollowsRoute,
-  ProfileRoute,
-  ProtectedRoute,
-  PostDetailRoute,
-  PublicRoute,
-  PreLoadPageRoute
+    SignupRoute,
+    ErrorPageRoute,
+    HomeRoute,
+    SigninRoute,
+    ForgotPassRoute,
+    ResetPassRoute,
+    SearchUserRoute,
+    FollowsRoute,
+    ProfileRoute,
+    ProtectedRoute,
+    PostDetailRoute,
+    PublicRoute,
+    PreLoadPageRoute,
+    DetailProfileRoute,
 };

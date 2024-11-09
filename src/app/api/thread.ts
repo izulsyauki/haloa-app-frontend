@@ -56,3 +56,13 @@ export const deleteThread = async (threadId: number): Promise<DeleteThreadRespon
     }
     return await API.delete<DeleteThreadResponse>(`/threads/${threadId}`).then((res) => res.data);
 };
+
+export const getOtherUserThreads = async (userId: number) => {
+    try {
+        const response = await API.get<Thread[]>(`/threads/user-threads/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error in getOtherUserThreads:", error);
+        throw error;
+    }
+}

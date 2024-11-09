@@ -25,7 +25,7 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import myIcons from "../assets/icons/myIcons";
 import coverImg from "../assets/images/cover.png";
@@ -35,7 +35,14 @@ import { useGetLoginUserProfile } from "../hooks/auth/useGetLoginUserProfile";
 import { useHandleFollowUser } from "../hooks/follows/useHandleFollowUser";
 import { useHandleEditProfile } from "../hooks/user/useHandleEditProfile";
 import { useSuggestedUsers } from "../hooks/user/useSuggestedUsers";
-import { FollowUser } from "../types/user";
+import { Follow, FollowUser } from "../types/user";
+import { useGetFollows } from "../hooks/follows/useGetFollows";
+
+interface FollowsProps {
+    followers: Follow[];
+    following: Follow[];
+    isLoading: boolean;
+}
 
 export function SideBarRight() {
     const location = useLocation();

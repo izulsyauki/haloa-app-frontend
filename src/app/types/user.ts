@@ -1,3 +1,5 @@
+import { Thread } from "./thread";
+
 export interface UserProfile {
     username: string;
     user: User;
@@ -19,6 +21,7 @@ export interface User {
         follower: number;
         following: number;
     };
+    threads: Thread[];
 }
 
 export interface Profile {
