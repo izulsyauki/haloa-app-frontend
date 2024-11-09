@@ -47,8 +47,6 @@ export function DetailProfile() {
     const { data: userDetail, isLoading } = useGetUserDetail(Number(id));
     const { otherUserThreadQuery } = useGetOtherUserThreads(Number(id));
 
-    console.log("Current userDetail data:", userDetail);
-
     const filteredOtherUserThreads = otherUserThreadQuery?.filter((thread: Thread) => {
         if (view === "all") {
             return true;

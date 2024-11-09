@@ -8,7 +8,6 @@ export const useHandleLike = () => {
     const mutateAsyncLike = useMutation({
         mutationFn: (threadId: number) => createLike(threadId),
         onMutate: async (threadId: number) => {
-            console.log("Starting mutation for threadId:", threadId);
 
             // Batalkan queries yang sedang berjalan
             await Promise.all([

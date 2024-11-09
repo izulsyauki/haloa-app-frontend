@@ -25,8 +25,8 @@ import {
     useColorModeValue,
     VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import myIcons from "../assets/icons/myIcons";
 import coverImg from "../assets/images/cover.png";
 import { CustomBtnPrimary, CustomBtnSecondary } from "../components/CustomBtn";
@@ -36,22 +36,16 @@ import { useHandleFollowUser } from "../hooks/follows/useHandleFollowUser";
 import { useHandleEditProfile } from "../hooks/user/useHandleEditProfile";
 import { useSuggestedUsers } from "../hooks/user/useSuggestedUsers";
 import { Follow, FollowUser } from "../types/user";
-import { useGetFollows } from "../hooks/follows/useGetFollows";
-
-interface FollowsProps {
-    followers: Follow[];
-    following: Follow[];
-    isLoading: boolean;
-}
 
 export function SideBarRight() {
     const location = useLocation();
-    const [ error ] = useState<string | null>(null);
+    const [error] = useState<string | null>(null);
     const fontColor = useColorModeValue("blackAlpha.700", "whiteAlpha.500");
     const outlineColor = useColorModeValue("white", "#2d3748");
     const galleryButtonBg = useColorModeValue("white", "#2d3748");
     const { userProfile, isLoadingProfile } = useGetLoginUserProfile();
     const [loadingUserId, setLoadingUserId] = useState<number | null>(null);
+    const navigate = useNavigate();
 
     // handle untuk edit profile
     const {
@@ -71,13 +65,12 @@ export function SideBarRight() {
         isLoading: isSuggestedLoading,
         refetchData,
     } = useSuggestedUsers(3);
-    const {
-        isOpen,
-        onClose,
-        selectedUser,
-        handleFollowClick,
-        handleUnfollow,
-    } = useHandleFollowUser();
+    const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } =
+        useHandleFollowUser();
+
+    const handleUserDetailClick = (userId: number) => {
+        navigate(`/user/detail/${userId}`);
+    };
 
     return (
         <Stack
@@ -483,22 +476,40 @@ export function SideBarRight() {
                                 opacity={user.isFollowed ? "0.5" : "1"}
                                 transition="all 0.5s ease"
                             >
-                                <Avatar
-                                    src={user.profile.avatar || undefined}
-                                    h={"36px"}
-                                    w={"36px"}
-                                />
-                                <Box flex={5} gap={"10px"}>
-                                    <Text
-                                        fontSize={"12px"}
-                                        fontWeight={"medium"}
-                                    >
-                                        {user.profile.fullName ??
-                                            "Nama pengguna"}
-                                    </Text>
-                                    <Text color={fontColor} fontSize={"12px"}>
-                                        @{user.username ?? "Username belum ada"}
-                                    </Text>
+                                <Box
+                                    onClick={() =>
+                                        handleUserDetailClick(user.id)
+                                    }
+                                    cursor={"pointer"}
+                                    margin={"0px"}
+                                    padding={"0px"}
+                                    gap={"15px"}
+                                    display={"flex"}
+                                    alignItems={"center"}
+                                    w={"100%"}
+                                >
+                                    <Avatar
+                                        src={user.profile.avatar || undefined}
+                                        h={"36px"}
+                                        w={"36px"}
+                                    />
+                                    <Box flex={5} gap={"10px"}>
+                                        <Text
+                                            fontSize={"12px"}
+                                            fontWeight={"medium"}
+                                        >
+                                            {user.profile.fullName ??
+                                                "Nama pengguna"}
+                                        </Text>
+                                        <Text
+                                            color={fontColor}
+                                            fontSize={"12px"}
+                                        >
+                                            @
+                                            {user.username ??
+                                                "Username belum ada"}
+                                        </Text>
+                                    </Box>
                                 </Box>
                                 <CustomBtnSecondary
                                     p={"6px 12px"}

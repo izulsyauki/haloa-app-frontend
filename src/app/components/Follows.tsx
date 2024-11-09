@@ -20,7 +20,7 @@ import { useGetFollows } from "../hooks/follows/useGetFollows";
 import { useHandleFollowUser } from "../hooks/follows/useHandleFollowUser";
 import { useFollowStore } from "../store/follow";
 import { Follow, FollowUser } from "../types/user";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface FollowsProps {
     followers: Follow[];
@@ -153,9 +153,11 @@ export function Follows() {
                                 label={user.isFollowed ? "Following" : "Follow"}
                             />
                         </Flex>
-                        <Text fontSize={"12px"} ml={"52px"}>
-                            {user.profile?.bio || ""}
-                        </Text>
+                        <Link to={`/user/detail/${user.id}`}>
+                            <Text fontSize={"12px"} ml={"52px"}>
+                                {user.profile?.bio || ""}
+                            </Text>
+                        </Link>
                     </Box>
                 ))}
             </Stack>

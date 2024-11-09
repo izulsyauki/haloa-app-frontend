@@ -23,6 +23,7 @@ import { useSearchUser } from "../hooks/user/useSearchUser";
 import { CustomBtnPrimary, CustomBtnSecondary } from "./CustomBtn";
 import { FollowUser } from "../types/user";
 import { useFollowStore } from "../store/follow";
+import { Link } from "react-router-dom";
 
 export function SearchUser() {
     const { register, watch, users, isLoading } = useSearchUser();
@@ -80,8 +81,9 @@ export function SearchUser() {
                                         fontSize={"12px"}
                                         alignItems={"center"}
                                     >
-                                        <Avatar
-                                            src={user.profile.avatar || undefined}
+                                        <Link to={`/user/detail/${user.id}`} style={{ cursor: "pointer", display: "flex", alignItems: "center", width: "100%", gap: "15px" }}>
+                                            <Avatar
+                                                src={user.profile.avatar || undefined}
                                             h={"36px"}
                                             w={"36px"}
                                         />
@@ -93,6 +95,7 @@ export function SearchUser() {
                                                 @{user.username}
                                             </Text>
                                         </Box>
+                                        </Link>
                                         <CustomBtnSecondary
                                             p={"6px 12px"}
                                             h={"fit-content"}
@@ -102,9 +105,11 @@ export function SearchUser() {
                                             label={followingIds.includes(user.id) ? "Following" : "Follow"}
                                         />
                                     </Flex>
+                                    <Link to={`/user/detail/${user.id}`}>
                                     <Text fontSize={"12px"} ml={"52px"}>
                                         {user.profile.bio}
                                     </Text>
+                                    </Link>
                                 </Box>
                             ))}
                         </>
