@@ -11,8 +11,7 @@ import { User } from "./types/user";
 function App() {
     const { setUser, setToken } = useAuthStore();
     const { isLoading, setIsLoading } = useLoadingStore();
-    // const [error] = useState<{ status?: number } | null>(null);
-    // const navigate = useNavigate();
+
 
     useEffect(() => {
         const initializeApp = async () => {
@@ -40,10 +39,6 @@ function App() {
 
         initializeApp();
     }, [setUser, setToken, setIsLoading]);
-
-    // if (error?.status === 500) {
-    //     navigate("/error");
-    // }
 
     if (isLoading) {
         return (
