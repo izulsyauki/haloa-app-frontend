@@ -11,16 +11,15 @@ import { User } from "./types/user";
 function App() {
     const { setUser, setToken } = useAuthStore();
     const { isLoading, setIsLoading } = useLoadingStore();
-    const [error, setError] = useState<{ status?: number } | null>(null);
+    const [error] = useState<{ status?: number } | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         const initializeApp = async () => {
             try {
-
                 const token = Cookies.get("token");
                 const user = Cookies.get("user");
-                
+
                 // Cek token dan user
                 if (token && user) {
                     setToken(token);
@@ -33,12 +32,11 @@ function App() {
                 console.error("Error initializing app:", err);
                 setToken("");
                 setUser({} as User);
-                setError({ status: 500 });
             } finally {
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                await new Promise((resolve) => setTimeout(resolve, 2000));
                 setIsLoading(false);
             }
-        }
+        };
 
         initializeApp();
     }, [setUser, setToken, setIsLoading]);
