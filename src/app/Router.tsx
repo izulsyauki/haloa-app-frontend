@@ -23,18 +23,22 @@ export const router = createBrowserRouter([
                     {
                         path: "/search",
                         element: <myRoutes.SearchUserRoute />,
+                        errorElement: <myRoutes.ErrorPageRoute />,
                     },
                     {
                         path: "/follows",
                         element: <myRoutes.FollowsRoute />,
+                        errorElement: <myRoutes.ErrorPageRoute />,
                     },
                     {
                         path: "/profile",
                         element: <myRoutes.ProfileRoute />,
+                        errorElement: <myRoutes.ErrorPageRoute />,
                     },
                     {
                         path: "/user/detail/:id",
                         element: <myRoutes.DetailProfileRoute />,
+                        errorElement: <myRoutes.ErrorPageRoute />,
                     },
                 ],
             },

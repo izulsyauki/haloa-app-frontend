@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { RouterProvider } from "react-router-dom";
 import { Providers } from "./providers";
 import { router } from "./Router";
@@ -7,10 +7,12 @@ import { PreLoadPageRoute } from "./routes/PreLoadPageRoute";
 import { useAuthStore } from "./store/auth";
 import { useLoadingStore } from "./store/loading";
 import { User } from "./types/user";
+import { ErrorPageRoute } from "./routes/ErrorPageRoute";
 
 function App() {
     const { setUser, setToken } = useAuthStore();
     const { isLoading, setIsLoading } = useLoadingStore();
+    const [error, setError] = useState<{ status?: number } | null>(null);
 
     useEffect(() => {
         const initializeApp = async () => {
@@ -31,6 +33,7 @@ function App() {
                 console.error("Error initializing app:", err);
                 setToken("");
                 setUser({} as User);
+                setError({ status: 500 });
             } finally {
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 setIsLoading(false);
@@ -39,6 +42,10 @@ function App() {
 
         initializeApp();
     }, [setUser, setToken, setIsLoading]);
+
+    if (error?.status === 500) {
+        return <ErrorPageRoute />
+    }
 
     if (isLoading) {
         return (
