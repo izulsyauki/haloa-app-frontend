@@ -6,7 +6,7 @@ import "@fontsource/plus-jakarta-sans/700.css";
 
 const theme = {
   config: {
-    initialColorMode: 'light',
+    initialColorMode: 'dark',
     useSystemColorMode: true,
   },
   fonts: {
