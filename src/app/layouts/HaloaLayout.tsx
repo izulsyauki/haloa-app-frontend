@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Flex } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { myRoutes } from "../routes";
 import { useAuthStore } from "../store/auth";
@@ -13,6 +13,7 @@ export function HaloaLayout() {
     const { isLoading, setIsLoading } = useLoadingStore();
     const navigate = useNavigate();
     const location = useLocation();
+    const [error] = useState<{ status?: number } | null>(null);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -33,6 +34,10 @@ export function HaloaLayout() {
 
         checkAuth();
     }, [navigate, setIsLoading, token, user, location.pathname]);
+
+    if (error?.status === 500) {
+        return <myRoutes.ErrorPageRoute />
+    }
 
     return (
         <>
