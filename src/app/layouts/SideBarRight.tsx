@@ -35,7 +35,7 @@ import { useGetLoginUserProfile } from "../hooks/auth/useGetLoginUserProfile";
 import { useHandleFollowUser } from "../hooks/follows/useHandleFollowUser";
 import { useHandleEditProfile } from "../hooks/user/useHandleEditProfile";
 import { useSuggestedUsers } from "../hooks/user/useSuggestedUsers";
-import { Follow, FollowUser } from "../types/user";
+import { FollowUser } from "../types/user";
 
 export function SideBarRight() {
     const location = useLocation();
@@ -62,7 +62,6 @@ export function SideBarRight() {
     } = useHandleEditProfile();
     const {
         suggestedUsers,
-        isLoading: isSuggestedLoading,
         refetchData,
     } = useSuggestedUsers(3);
     const { isOpen, onClose, selectedUser, handleFollowClick, handleUnfollow } =

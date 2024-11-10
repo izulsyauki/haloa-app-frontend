@@ -12,7 +12,7 @@ export const useCreateReply = ({ onSuccess }: { onSuccess?: () => void } = {}) =
 
     return useMutation({
         mutationFn: (params: CreateReplyParams) => createReply(params),
-        onSuccess: async (response, variables) => {
+        onSuccess: async (_, variables) => {
             // Update cache untuk semua thread yang mungkin terkait
             const queries = queryClient.getQueriesData<ThreadDetail>({ queryKey: ["thread"] });
             
