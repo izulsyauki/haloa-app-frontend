@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
-import { useNavigate, RouterProvider } from "react-router-dom";
+import { useEffect } from "react";
+import { RouterProvider } from "react-router-dom";
 import { Providers } from "./providers";
 import { router } from "./Router";
 import { PreLoadPageRoute } from "./routes/PreLoadPageRoute";
@@ -11,8 +11,8 @@ import { User } from "./types/user";
 function App() {
     const { setUser, setToken } = useAuthStore();
     const { isLoading, setIsLoading } = useLoadingStore();
-    const [error] = useState<{ status?: number } | null>(null);
-    const navigate = useNavigate();
+    // const [error] = useState<{ status?: number } | null>(null);
+    // const navigate = useNavigate();
 
     useEffect(() => {
         const initializeApp = async () => {
@@ -41,9 +41,9 @@ function App() {
         initializeApp();
     }, [setUser, setToken, setIsLoading]);
 
-    if (error?.status === 500) {
-        navigate("/error");
-    }
+    // if (error?.status === 500) {
+    //     navigate("/error");
+    // }
 
     if (isLoading) {
         return (
