@@ -67,7 +67,7 @@ export const router = createBrowserRouter([
         ],
     },
     {
-        path: "*",
+        path: "/error",
         element: <myRoutes.ErrorPageRoute />,
     },
 ]);

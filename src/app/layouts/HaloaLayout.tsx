@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Flex } from "@chakra-ui/react";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { myRoutes } from "../routes";
@@ -8,12 +9,18 @@ import { useLoadingStore } from "../store/loading";
 import { SideBarLeft } from "./SideBarLeft";
 import { SideBarRight } from "./SideBarRight";
 
+interface AxiosError {
+    response?: {
+        status?: number;
+    };
+}
+
 export function HaloaLayout() {
     const { token, user } = useAuthStore();
     const { isLoading, setIsLoading } = useLoadingStore();
     const navigate = useNavigate();
     const location = useLocation();
-    const [error] = useState<{ status?: number } | null>(null);
+    const [error, setError] = useState<{ status?: number } | null>(null);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -24,9 +31,23 @@ export function HaloaLayout() {
                     }
                 }
 
+                axios.interceptors.response.use(
+                    (response) => response,
+                    (error) => {
+                        if (error.response?.status === 500) {
+                            setError({ status: 500 });
+                        }
+                        return Promise.reject(error);
+                    }
+                );
+
                 await new Promise((resolve) => setTimeout(resolve, 1000));
             } catch (error) {
                 console.log(error);
+                const axiosError = error as AxiosError;
+                if (axiosError.response?.status === 500) {
+                    setError({ status: 500 });
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -36,7 +57,7 @@ export function HaloaLayout() {
     }, [navigate, setIsLoading, token, user, location.pathname]);
 
     if (error?.status === 500) {
-        return <myRoutes.ErrorPageRoute />
+        navigate("/error");
     }
 
     return (
