@@ -136,6 +136,7 @@ export function Home() {
                                         size="sm"
                                         resize="none"
                                         variant={"unstyled"}
+                                        required
                                         {...form.register("content")}
                                     />
                                 </Flex>

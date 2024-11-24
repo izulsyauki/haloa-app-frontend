@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { router } from "../Router";
 
 const API = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "https://haloa-app-backend.vercel.app/api",
+    baseURL: import.meta.env.VITE_API_URL_DEV || import.meta.env.VITE_API_URL,
 });
 
 API.interceptors.request.use(

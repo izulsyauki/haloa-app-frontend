@@ -1,127 +1,121 @@
 {
-  "hash": "8827f9c8",
-  "configHash": "ec1e20bc",
-  "lockfileHash": "66184418",
-  "browserHash": "01422425",
+  "hash": "1b93206d",
+  "configHash": "ea7e6935",
+  "lockfileHash": "443e7f13",
+  "browserHash": "c0f99f2c",
   "optimized": {
     "react": {
       "src": "../../node_modules/react/index.js",
       "file": "react.js",
-      "fileHash": "67c2c10c",
+      "fileHash": "5705b4bc",
       "needsInterop": true
     },
     "react/jsx-dev-runtime": {
       "src": "../../node_modules/react/jsx-dev-runtime.js",
       "file": "react_jsx-dev-runtime.js",
-      "fileHash": "73cf2499",
+      "fileHash": "99bed85a",
       "needsInterop": true
     },
     "react/jsx-runtime": {
       "src": "../../node_modules/react/jsx-runtime.js",
       "file": "react_jsx-runtime.js",
-      "fileHash": "91a97c3b",
+      "fileHash": "26185578",
       "needsInterop": true
     },
     "@chakra-ui/icons": {
       "src": "../../node_modules/@chakra-ui/icons/dist/esm/index.mjs",
       "file": "@chakra-ui_icons.js",
-      "fileHash": "c1d69f75",
+      "fileHash": "b8026fe8",
       "needsInterop": false
     },
     "@chakra-ui/react": {
       "src": "../../node_modules/@chakra-ui/react/dist/esm/index.mjs",
       "file": "@chakra-ui_react.js",
-      "fileHash": "a7eafc06",
+      "fileHash": "6411d51a",
       "needsInterop": false
     },
     "@hookform/resolvers/zod": {
       "src": "../../node_modules/@hookform/resolvers/zod/dist/zod.mjs",
       "file": "@hookform_resolvers_zod.js",
-      "fileHash": "509c969b",
-      "needsInterop": false
-    },
-    "@uidotdev/usehooks": {
-      "src": "../../node_modules/@uidotdev/usehooks/index.js",
-      "file": "@uidotdev_usehooks.js",
-      "fileHash": "f8cbcd78",
-      "needsInterop": false
-    },
-    "axios": {
-      "src": "../../node_modules/axios/index.js",
-      "file": "axios.js",
-      "fileHash": "0027c33e",
-      "needsInterop": false
-    },
-    "js-cookie": {
-      "src": "../../node_modules/js-cookie/dist/js.cookie.mjs",
-      "file": "js-cookie.js",
-      "fileHash": "d83ae137",
-      "needsInterop": false
-    },
-    "react-dom/client": {
-      "src": "../../node_modules/react-dom/client.js",
-      "file": "react-dom_client.js",
-      "fileHash": "53be54f8",
-      "needsInterop": true
-    },
-    "react-hook-form": {
-      "src": "../../node_modules/react-hook-form/dist/index.esm.mjs",
-      "file": "react-hook-form.js",
-      "fileHash": "e16ff6f9",
-      "needsInterop": false
-    },
-    "react-icons/fa": {
-      "src": "../../node_modules/react-icons/fa/index.mjs",
-      "file": "react-icons_fa.js",
-      "fileHash": "5accc427",
-      "needsInterop": false
-    },
-    "react-icons/hi": {
-      "src": "../../node_modules/react-icons/hi/index.mjs",
-      "file": "react-icons_hi.js",
-      "fileHash": "90c44785",
-      "needsInterop": false
-    },
-    "react-router-dom": {
-      "src": "../../node_modules/react-router-dom/dist/index.js",
-      "file": "react-router-dom.js",
-      "fileHash": "1fad4cba",
-      "needsInterop": false
-    },
-    "zod": {
-      "src": "../../node_modules/zod/lib/index.mjs",
-      "file": "zod.js",
-      "fileHash": "90952965",
-      "needsInterop": false
-    },
-    "zustand": {
-      "src": "../../node_modules/zustand/esm/index.mjs",
-      "file": "zustand.js",
-      "fileHash": "fcd53954",
-      "needsInterop": false
-    },
-    "zustand/middleware": {
-      "src": "../../node_modules/zustand/esm/middleware.mjs",
-      "file": "zustand_middleware.js",
-      "fileHash": "2e7f9f5a",
+      "fileHash": "71f9a909",
       "needsInterop": false
     },
     "@tanstack/react-query": {
       "src": "../../node_modules/@tanstack/react-query/build/modern/index.js",
       "file": "@tanstack_react-query.js",
-      "fileHash": "0c690199",
-      "needsInterop": false
-    },
-    "timeago.js": {
-      "src": "../../node_modules/timeago.js/esm/index.js",
-      "file": "timeago__js.js",
-      "fileHash": "3560aea3",
+      "fileHash": "f34f26e7",
       "needsInterop": false
     },
     "@tanstack/react-query-devtools": {
       "src": "../../node_modules/@tanstack/react-query-devtools/build/modern/index.js",
       "file": "@tanstack_react-query-devtools.js",
-      "fileHash": "df162e1f",
+      "fileHash": "2d4e6799",
+      "needsInterop": false
+    },
+    "@uidotdev/usehooks": {
+      "src": "../../node_modules/@uidotdev/usehooks/index.js",
+      "file": "@uidotdev_usehooks.js",
+      "fileHash": "a23beeb3",
+      "needsInterop": false
+    },
+    "axios": {
+      "src": "../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "048c2115",
+      "needsInterop": false
+    },
+    "js-cookie": {
+      "src": "../../node_modules/js-cookie/dist/js.cookie.mjs",
+      "file": "js-cookie.js",
+      "fileHash": "1de83d4c",
+      "needsInterop": false
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "8f2ec6b6",
+      "needsInterop": true
+    },
+    "react-hook-form": {
+      "src": "../../node_modules/react-hook-form/dist/index.esm.mjs",
+      "file": "react-hook-form.js",
+      "fileHash": "6d6f280f",
+      "needsInterop": false
+    },
+    "react-icons/fa": {
+      "src": "../../node_modules/react-icons/fa/index.mjs",
+      "file": "react-icons_fa.js",
+      "fileHash": "0d9c7e0c",
+      "needsInterop": false
+    },
+    "react-icons/hi": {
+      "src": "../../node_modules/react-icons/hi/index.mjs",
+      "file": "react-icons_hi.js",
+      "fileHash": "8590bfcf",
+      "needsInterop": false
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "9ae5ac11",
+      "needsInterop": false
+    },
+    "zod": {
+      "src": "../../node_modules/zod/lib/index.mjs",
+      "file": "zod.js",
+      "fileHash": "b9c72ac1",
+      "needsInterop": false
+    },
+    "zustand": {
+      "src": "../../node_modules/zustand/esm/index.mjs",
+      "file": "zustand.js",
+      "fileHash": "ac52bbb0",
+      "needsInterop": false
+    },
+    "zustand/middleware": {
+      "src": "../../node_modules/zustand/esm/middleware.mjs",
+      "file": "zustand_middleware.js",
+      "fileHash": "1cbfce06",
       "needsInterop": false
     }
   },
@@ -138,23 +132,23 @@
     "chunk-MOQMK7LP": {
       "file": "chunk-MOQMK7LP.js"
     },
+    "chunk-3VMSOCVI": {
+      "file": "chunk-3VMSOCVI.js"
+    },
+    "chunk-NEZJQHI7": {
+      "file": "chunk-NEZJQHI7.js"
+    },
+    "chunk-EGQYP3BB": {
+      "file": "chunk-EGQYP3BB.js"
+    },
     "chunk-YEMS42GQ": {
       "file": "chunk-YEMS42GQ.js"
     },
     "chunk-YV4Z5LR7": {
       "file": "chunk-YV4Z5LR7.js"
     },
-    "chunk-EGQYP3BB": {
-      "file": "chunk-EGQYP3BB.js"
-    },
-    "chunk-XM4QUR5O": {
-      "file": "chunk-XM4QUR5O.js"
-    },
     "chunk-G7Y47P27": {
       "file": "chunk-G7Y47P27.js"
-    },
-    "chunk-NEZJQHI7": {
-      "file": "chunk-NEZJQHI7.js"
     },
     "chunk-FXJVXTVJ": {
       "file": "chunk-FXJVXTVJ.js"

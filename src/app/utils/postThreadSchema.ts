@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const postThreadSchema = z.object({
-    content: z.string(),
+    content: z.string().min(1),
     media: z.array(z.instanceof(File)).optional(),
 });
 

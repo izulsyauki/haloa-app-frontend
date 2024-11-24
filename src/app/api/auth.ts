@@ -17,7 +17,9 @@ interface ResetPasswordResponse {
 }
 
 export const signIn = async (data: SigninFormInputs) => {
-    return await API.post<SignInResponse>("/auth/sign-in", data).then((res) => res.data);
+  const response = await API.post<SignInResponse>("/auth/sign-in", data).then((res) => res.data);
+  console.log(response);
+  return response;
 };
 
 export const signUp = async (data: SignupFormInputs) => {
